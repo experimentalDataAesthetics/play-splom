@@ -1,0 +1,4 @@
+{
+  "verbose": true,
+  "ignore": ["*.spec.js", "build/*"]
+}

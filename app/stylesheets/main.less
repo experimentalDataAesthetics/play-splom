@@ -1,0 +1,51 @@
+@import url(https://fonts.googleapis.com/css?family=Open+Sans);
+
+@import "normalize.less";
+@import "skeleton.less";
+@line-height: 15px;
+
+// @import "dark-theme.less";
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  display: flex;
+  font-family: 'Open Sans', sans-serif;
+  background: @bg;
+  color: @text;
+  overflow: hidden;
+}
+
+h1 {
+  color: @light-text;
+  font-size: 2em;
+  margin-left: 1rem
+}
+
+.content {
+  width: 100%;
+  height: 100%;
+  display: flex;
+}
+
+// #controls {
+//   // width: 300px;
+// }
+// #board {
+//   flex: 1;
+//   text-align: center;
+//   margin: 0 auto;
+//   svg {
+//     margin: 0 15px;
+//   }
+// }
+
+// @import "segregation.less";
+// @import "homeostat.less";
+// @import "dat-gui.less";

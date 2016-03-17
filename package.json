@@ -1,0 +1,65 @@
+{
+  "name": "playsplom",
+  "productName": "PlaySPLOM",
+  "companyName": "experimentalDataAesthetics",
+  "version": "0.0.0",
+  "description": "Scatter plot sonification for exploring datasets with sound",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/experimentalDataAesthetics/playsplom.git"
+  },
+  "author": {
+    "name": "crucialfelix",
+    "email": "crucialfelix@gmail.com",
+    "url": "http://ixdm.ch/critical-media-lab"
+  },
+  "electronVersion": "0.37.2",
+  "scripts": {
+    "postinstall": "node ./tasks/app_npm_install",
+    "app-install": "node ./tasks/app_npm_install",
+    "build": "gulp build",
+    "release": "gulp release --env=production",
+    "start": "node ./tasks/start",
+    "test": "node ./tasks/start --env=test",
+    "lint": "xo"
+  },
+  "files": [
+    "index.js",
+    "index.html",
+    "index.css"
+  ],
+  "keywords": [
+    "datavisualization",
+    "sonification",
+    "sound",
+    "supercolider",
+    "d3",
+    "electron-app",
+    "electron"
+  ],
+  "dependencies": {
+    "electron-debug": "^0.5.0"
+  },
+  "devDependencies": {
+    "electron-packager": "^5.0.0",
+    "electron-prebuilt": "^0.37.2",
+    "fs-jetpack": "^0.7.2",
+    "gulp": "^3.9.1",
+    "gulp-less": "^3.0.5",
+    "gulp-sass": "^2.2.0",
+    "gulp-util": "^3.0.7",
+    "q": "^1.4.1",
+    "rollup": "^0.25.4",
+    "tree-kill": "^1.0.0",
+    "xo": "^0.13.0",
+    "yargs": "^4.3.1"
+  },
+  "xo": {
+    "esnext": true,
+    "envs": [
+      "node",
+      "browser"
+    ]
+  }
+}

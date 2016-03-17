@@ -1,0 +1,15 @@
+{
+  "name": "playsplom",
+  "productName": "PlaySPLOM",
+  "identifier": "ch.ixdm.algorhythmics.playsplom",
+  "description": "Visualization and Sonification of Data sets",
+  "version": "0.1.0",
+  "author": "Chris Sattinger <crucialfelix@gmail.com>",
+  "license": "MIT",
+  "main": "background.js",
+  "config": {
+    "target": "development"
+  },
+  "dependencies": {
+  }
+}
