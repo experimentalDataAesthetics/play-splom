@@ -24,11 +24,6 @@
     "test": "node ./tasks/start --env=test",
     "lint": "xo"
   },
-  "files": [
-    "index.js",
-    "index.html",
-    "index.css"
-  ],
   "keywords": [
     "datavisualization",
     "sonification",

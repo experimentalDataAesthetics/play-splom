@@ -109,14 +109,16 @@ var mainWindowState = windowStateKeeper('main', {
 //           label: 'Reload',
 //           accelerator: 'Command+R',
 //           click: function() {
-//             BrowserWindow.getFocusedWindow().reloadIgnoringCache();
+//             BrowserWindow.getFocusedWindow()
+//              .webContents.reloadIgnoringCache();
 //           }
 //         },
 //         {
 //           label: 'Toggle DevTools',
 //           accelerator: 'Alt+Command+I',
 //           click: function() {
-//             BrowserWindow.getFocusedWindow().toggleDevTools();
+//             BrowserWindow.getFocusedWindow()
+//              .webContents.toggleDevTools();
 //           }
 //         }
 //       ]
@@ -172,6 +174,7 @@ app.on('ready', function() {
   });
 
   // makeMenu();
+  // mainWindow.webContents.reloadIgnoringCache();
 });
 
 app.on('window-all-closed', function() {
