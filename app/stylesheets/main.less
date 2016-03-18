@@ -4,7 +4,7 @@
 @import "skeleton.less";
 @line-height: 15px;
 
-// @import "dark-theme.less";
+@import "dark-theme.less";
 
 html,
 body {
@@ -22,29 +22,63 @@ body {
   overflow: hidden;
 }
 
-h1 {
-  color: @light-text;
-  font-size: 2em;
-  margin-left: 1rem
-}
 
-.content {
+#content {
   width: 100%;
   height: 100%;
-  display: flex;
 }
 
-// #controls {
-//   // width: 300px;
-// }
-// #board {
-//   flex: 1;
-//   text-align: center;
-//   margin: 0 auto;
-//   svg {
-//     margin: 0 15px;
-//   }
-// }
+#app {
+  width: 100%;
+  height: 100%;
+}
+
+.main {
+  display: flex;
+  height: 100vh;
+}
+
+#scatterplots {
+  flex: 1;
+  svg {
+    margin: 0 15px;
+  }
+}
+
+#sidebar {
+  width: 300px;
+  background: #111;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+
+  > div {
+    border: 1px solid #333333;
+    padding: .5rem;
+  }
+  .dataset-selector {
+    height: @line-height * 10;
+  }
+  .sound-selector {
+    height: @line-height * 20;
+  }
+  .param-mapping {
+    flex: 1;
+  }
+  .help {
+    height: @line-height * 10;
+  }
+}
+
+
+h1.dataset-title {
+  color: @light-text;
+  font-size: 5em;
+  position: absolute;
+  transform: rotate(90deg);
+  transform-origin: left bottom 0;
+}
+
 
 // @import "segregation.less";
 // @import "homeostat.less";
