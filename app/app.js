@@ -28,9 +28,7 @@ const ipc = require('electron').ipcRenderer;
 document.addEventListener('DOMContentLoaded', () => {
 
   ReactDOM.render(
-    // h('h1', 'hello'),
     h(Provider, {store}, [
-      // h('h1', 'hello inner')
       h(ReactRouter.Router, {history, routes})
     ]),
     document.getElementById('content')

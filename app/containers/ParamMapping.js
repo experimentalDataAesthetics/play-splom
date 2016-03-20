@@ -1,8 +1,10 @@
 const React = require('react');
 var h = require('react-hyperscript');
 
-export class ParamMapping extends React.Component {
+export default class ParamMapping extends React.Component {
   render() {
-    return h('div.param-mapping', 'param mapping');
+    return h('div.param-mapping', [
+      h('h6', 'Sound Params')
+    ]);
   }
 }

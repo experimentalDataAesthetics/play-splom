@@ -1,8 +1,36 @@
 const React = require('react');
-var h = require('react-hyperscript');
+let h = require('react-hyperscript');
+let connect = require('react-redux').connect;
 
-export class SoundSelector extends React.Component {
+import {selectSound} from '../actions/sounds';
+
+const mapStateToProps = (state) => {
+  return {
+    sounds: state.sounds
+  };
+};
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    onClick: (name) => {
+      dispatch(selectSound(name));
+    }
+  };
+};
+
+class SoundSelector extends React.Component {
   render() {
-    return h('div.sound-selector', 'sound selector');
+    return h('div.sound-selector', [
+      h('h6', 'Sounds'),
+      h('ul.menu',
+        this.props.sounds.map((sound) => {
+          return h('li', {
+            onClick: this.props.onClick
+          }, sound.name);
+        })
+      )
+    ]);
   }
 }
+
+export default connect(mapStateToProps, mapDispatchToProps)(SoundSelector);

@@ -1,8 +1,36 @@
 const React = require('react');
-var h = require('react-hyperscript');
+let h = require('react-hyperscript');
+let connect = require('react-redux').connect;
 
-export class DatasetSelector extends React.Component {
+import {loadDataset} from '../actions/datasets';
+
+const mapStateToProps = (state) => {
+  return {
+    datasets: state.datasets
+  };
+};
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    onClick: (path) => {
+      dispatch(loadDataset(path));
+    }
+  };
+};
+
+class DatasetSelector extends React.Component {
   render() {
-    return h('div.dataset-selector', 'dataset selector');
+    return h('div.dataset-selector', [
+      h('h6', 'Datasets'),
+      h('ul.menu',
+        this.props.datasets.map((dataset) => {
+          return h('li', {
+            onClick: this.props.onClick
+          }, dataset.name);
+        })
+      )
+    ]);
   }
 }
+
+export default connect(mapStateToProps, mapDispatchToProps)(DatasetSelector);

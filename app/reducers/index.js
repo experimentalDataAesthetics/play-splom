@@ -6,6 +6,7 @@ import mapping from './mapping';
 import sound from './sound';
 import sounds from './sounds';
 import ui from './ui';
+import transport from './transport';
 
 export default combineReducers({
   datasets,
@@ -14,6 +15,6 @@ export default combineReducers({
   sound,
   mapping,
   ui,
-  /// transport
+  transport
   // interacting
 });
