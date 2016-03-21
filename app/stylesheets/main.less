@@ -4,7 +4,13 @@
 @import "skeleton.less";
 @line-height: 15px;
 
-@import "dark-theme.less";
+// @import "dark-theme.less";
+// @import "light-theme.less";
+// temporary light theme to match material-ui
+@bg: #eeeeee;
+@text: #333333;
+@light-text: #666666;
+@bg-alt: #ddd;
 
 html,
 body {
@@ -16,7 +22,7 @@ body {
 
 body {
   display: flex;
-  font-family: 'Open Sans', sans-serif;
+  // font-family: 'Open Sans', sans-serif;
   background: @bg;
   color: @text;
   overflow: hidden;
@@ -47,13 +53,13 @@ body {
 
 #sidebar {
   width: 300px;
-  background: #111;
+  background: @bg-alt;;
   display: flex;
   flex-direction: column;
   height: 100vh;
 
   > div {
-    border: 1px solid #333333;
+    border: 1px solid #333;
     padding: .5rem;
   }
   .dataset-selector {

@@ -10,8 +10,8 @@ const Provider = require('react-redux').Provider;
 const ReactRouter = require('react-router');
 // where does history come from ?
 const createHashHistory = require('history').createHashHistory;
-
-var h = require('react-hyperscript');
+let injectTapEventPlugin = require('react-tap-event-plugin');
+let h = require('react-hyperscript');
 
 import configureStore from './store/configureStore';
 import routes from './routes';
@@ -24,6 +24,12 @@ const ipc = require('electron').ipcRenderer;
 
 // window.env contains data from config/env_XXX.json file.
 // var envName = window.env.name;
+
+// Needed for onTouchTap
+// Can go away when react 1.0 release
+// material-ui requires this for click events
+// as well as touch
+injectTapEventPlugin();
 
 document.addEventListener('DOMContentLoaded', () => {
 
