@@ -20,7 +20,13 @@ let qk = {queryKey: false};
 const history = ReactRouter.useRouterHistory(createHashHistory)(qk);
 const store = configureStore();
 
-const ipc = require('electron').ipcRenderer;
+// connect two-way calling of actions
+// the other half is in background.js
+const ipcRenderer = require('electron').ipcRenderer;
+import handleActionOnRenderer from './ipc/handleActionOnRenderer';
+ipcRenderer.on('dispatch-action', (sender, action) => {
+  handleActionOnRenderer(store.dispatch, sender, action);
+});
 
 // window.env contains data from config/env_XXX.json file.
 // var envName = window.env.name;

@@ -16,6 +16,12 @@ var _ = require('lodash');
 
 var mainWindow;
 
+// connect two-way calling of actions
+// the other half is in app.js
+const ipcMain = require('electron').ipcMain;
+import handleActionOnMain from './ipc/handleActionOnMain';
+ipcMain.on('call-action-on-main', handleActionOnMain);
+
 // Preserver of the window size and position between app launches.
 var mainWindowState = windowStateKeeper('main', {
   width: 1000,

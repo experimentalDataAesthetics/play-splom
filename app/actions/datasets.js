@@ -1,4 +1,5 @@
-import {SELECT_DATASET, SET_DATASETS} from '../actionTypes';
+import {SELECT_DATASET, SET_DATASETS, OPEN_DATASET_DIALOG} from '../actionTypes';
+import callActionOnMain from '../ipc/callActionOnMain';
 
 export function setDataset(path, data, metadata) {
   return {
@@ -13,9 +14,9 @@ export function setDataset(path, data, metadata) {
 
 export function openDatasetDialog() {
   return (dispatch) => {
-    // open dialog,
-    // dispatch a new action with the path
-    // dispatch(loadDataset(path));
+    callActionOnMain({
+      type: OPEN_DATASET_DIALOG
+    });
   };
 }
 

@@ -2,6 +2,7 @@
 // datasets
 export const SELECT_DATASET = 'SELECT_DATASET';
 export const SET_DATASETS = 'SET_DATASETS';
+export const LOAD_DATASET = 'LOAD_DATASET';
 
 // sounds
 export const SET_SOUNDS = 'SET_SOUNDS';
@@ -25,3 +26,6 @@ export const SET_LOOP = 'SET_LOOP';
 export const FOCUS_SCATTERPLOT = 'FOCUS_SCATTERPLOT';
 export const ZOOM_SCATTERPLOT = 'ZOOM_SCATTERPLOT';
 export const SET_HOVERING = 'SET_HOVERING';
+
+// main
+export const OPEN_DATASET_DIALOG = 'OPEN_DATASET_DIALOG';
