@@ -8,5 +8,6 @@
 	"disallowTrailingComma": true,
 	"requirePaddingNewLinesBeforeLineComments": false,
 	"requireShorthandArrowFunctions": false,
-	"requireSpacesInsideObjectBrackets": false
+	"requireSpacesInsideObjectBrackets": false,
+	"requireSpacesInAnonymousFunctionExpression": false
 }

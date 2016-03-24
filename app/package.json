@@ -6,6 +6,10 @@
   "version": "0.1.0",
   "author": "Chris Sattinger <crucialfelix@gmail.com>",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/experimentalDataAesthetics/playsplom.git"
+  },
   "main": "background.js",
   "config": {
     "target": "development"
