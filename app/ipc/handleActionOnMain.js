@@ -10,7 +10,7 @@ export default function(event, action) {
   switch (action.type) {
     case OPEN_DATASET_DIALOG:
       dialog.showOpenDialog(function(fileNames) {
-        if (fileNames.length) {
+        if (fileNames && fileNames.length) {
           reply(event, {
              type: LOAD_DATASET,
              payload: {
@@ -22,6 +22,7 @@ export default function(event, action) {
 
       break;
     default:
+      throw new Exception('Unmatched action', action);
   }
 }
 
@@ -30,6 +31,5 @@ export default function(event, action) {
  * in the form of a FSA (flux standard action)
  */
 function reply(event, action) {
-  console.log(event, action);
   event.sender.send('dispatch-action', action);
 }

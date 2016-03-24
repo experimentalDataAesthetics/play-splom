@@ -1,22 +1,22 @@
 
 const redux = require('redux');
-const thunkMiddleware = require('redux-thunk');
+const thunk = require('redux-thunk').default;
 const createLogger = require('redux-logger');
 
 import rootReducer from '../reducers/index';
 
-export default function configureStore(initialState) {
+export default function configureStore() {
 
-  const logger = createLogger({
-    collapsed: true,
-    predicate: () => process.env.NODE_ENV === `development`
+  let logger = createLogger({
+    collapsed: true
   });
 
-  const middleware = redux.applyMiddleware(thunkMiddleware, logger);
-
-  const store = middleware(redux.createStore)(rootReducer, initialState);
-  // 2.0 ?
-  // const store = redux.createStore(rootReducer, middleware);
+  let store = redux.createStore(
+    rootReducer,
+    // Logger must be last middleware in chain,
+    // otherwise it will log thunk and promise, not actual actions
+    redux.applyMiddleware(thunk, logger)
+  );
 
   return store;
 }
