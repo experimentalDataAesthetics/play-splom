@@ -37,6 +37,7 @@ var copyTask = function() {
     matching: paths.copyFromAppDir
   });
 };
+
 gulp.task('copy', ['clean'], copyTask);
 gulp.task('copy-watch', copyTask);
 
@@ -50,12 +51,12 @@ var bundle = function(src, dest) {
     var result = bundle.generate({
       format: 'iife',
       sourceMap: true,
-      sourceMapFile: jsFile,
+      sourceMapFile: jsFile
     });
     return Q.all([
       destDir.writeAsync(dest,
         result.code + '\n//# sourceMappingURL=' + jsFile + '.map'),
-      destDir.writeAsync(dest + '.map', result.map.toString()),
+      destDir.writeAsync(dest + '.map', result.map.toString())
     ]);
   }).then(function() {
     deferred.resolve();
@@ -69,7 +70,7 @@ var bundle = function(src, dest) {
 var bundleApplication = function() {
   return Q.all([
     bundle(srcDir.path('background.js'), destDir.path('background.js')),
-    bundle(srcDir.path('app.js'), destDir.path('app.js')),
+    bundle(srcDir.path('app.js'), destDir.path('app.js'))
   ]);
 };
 
@@ -77,7 +78,7 @@ var bundleSpecs = function() {
   generateSpecsImportFile().then(function(specEntryPointPath) {
     return Q.all([
       bundle(srcDir.path('background.js'), destDir.path('background.js')),
-      bundle(specEntryPointPath, destDir.path('spec.js')),
+      bundle(specEntryPointPath, destDir.path('spec.js'))
     ]);
   });
 };
@@ -86,8 +87,10 @@ var bundleTask = function() {
   if (utils.getEnvName() === 'test') {
     return bundleSpecs();
   }
+
   return bundleApplication();
 };
+
 gulp.task('bundle', ['clean'], bundleTask);
 gulp.task('bundle-watch', bundleTask);
 
@@ -96,6 +99,7 @@ var lessTask = function() {
   .pipe(less())
   .pipe(gulp.dest(destDir.path('stylesheets')));
 };
+
 gulp.task('less', ['clean'], lessTask);
 gulp.task('less-watch', lessTask);
 

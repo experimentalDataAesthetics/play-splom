@@ -13,7 +13,7 @@ var tmpDir;
 var finalAppDir;
 var manifest;
 
-var init = function () {
+var init = function() {
   projectDir = jetpack;
   tmpDir = projectDir.dir('./tmp', { empty: true });
   releasesDir = projectDir.dir('./releases');
@@ -23,7 +23,7 @@ var init = function () {
   return Q();
 };
 
-var copyRuntime = function () {
+var copyRuntime = function() {
   return projectDir.copyAsync('node_modules/electron-prebuilt/dist/Electron.app', finalAppDir.path());
 };
 
@@ -33,7 +33,7 @@ var cleanupRuntime = function() {
   return Q();
 }
 
-var packageBuiltApp = function () {
+var packageBuiltApp = function() {
   var deferred = Q.defer();
 
   asar.createPackage(projectDir.path('build'), finalAppDir.path('Contents/Resources/app.asar'), function() {
@@ -43,7 +43,7 @@ var packageBuiltApp = function () {
   return deferred.promise;
 };
 
-var finalize = function () {
+var finalize = function() {
   // Prepare main Info.plist
   var info = projectDir.read('resources/osx/Info.plist');
   info = utils.replace(info, {
@@ -54,7 +54,7 @@ var finalize = function () {
   finalAppDir.write('Contents/Info.plist', info);
 
   // Prepare Info.plist of Helper apps
-  [' EH', ' NP', ''].forEach(function (helper_suffix) {
+  [' EH', ' NP', ''].forEach(function(helper_suffix) {
     info = projectDir.read('resources/osx/helper_apps/Info' + helper_suffix + '.plist');
     info = utils.replace(info, {
       productName: manifest.productName,
@@ -71,8 +71,8 @@ var finalize = function () {
 
 var renameApp = function() {
   // Rename helpers
-  [' Helper EH', ' Helper NP', ' Helper'].forEach(function (helper_suffix) {
-    finalAppDir.rename('Contents/Frameworks/Electron' + helper_suffix + '.app/Contents/MacOS/Electron' + helper_suffix, manifest.productName + helper_suffix );
+  [' Helper EH', ' Helper NP', ' Helper'].forEach(function(helper_suffix) {
+    finalAppDir.rename('Contents/Frameworks/Electron' + helper_suffix + '.app/Contents/MacOS/Electron' + helper_suffix, manifest.productName + helper_suffix);
     finalAppDir.rename('Contents/Frameworks/Electron' + helper_suffix + '.app', manifest.productName + helper_suffix + '.app');
   });
   // Rename application
@@ -80,7 +80,7 @@ var renameApp = function() {
   return Q();
 }
 
-var signApp = function () {
+var signApp = function() {
   var identity = utils.getSigningId();
   if (identity) {
     var cmd = 'codesign --deep --force --sign "' + identity + '" "' + finalAppDir.path() + '"';
@@ -91,7 +91,7 @@ var signApp = function () {
   }
 }
 
-var packToDmgFile = function () {
+var packToDmgFile = function() {
   var deferred = Q.defer();
 
   var appdmg = require('appdmg');
@@ -102,8 +102,8 @@ var packToDmgFile = function () {
   dmgManifest = utils.replace(dmgManifest, {
     productName: manifest.productName,
     appPath: finalAppDir.path(),
-    dmgIcon: projectDir.path("resources/osx/dmg-icon.icns"),
-    dmgBackground: projectDir.path("resources/osx/dmg-background.png")
+    dmgIcon: projectDir.path('resources/osx/dmg-icon.icns'),
+    dmgBackground: projectDir.path('resources/osx/dmg-background.png')
   });
   tmpDir.write('appdmg.json', dmgManifest);
 
@@ -117,10 +117,10 @@ var packToDmgFile = function () {
     source: tmpDir.path('appdmg.json'),
     target: readyDmgPath
   })
-  .on('error', function (err) {
+  .on('error', function(err) {
     console.error(err);
   })
-  .on('finish', function () {
+  .on('finish', function() {
     gulpUtil.log('DMG file ready!', readyDmgPath);
     deferred.resolve();
   });
@@ -128,11 +128,11 @@ var packToDmgFile = function () {
   return deferred.promise;
 };
 
-var cleanClutter = function () {
+var cleanClutter = function() {
   return tmpDir.removeAsync('.');
 };
 
-module.exports = function () {
+module.exports = function() {
   return init()
   .then(copyRuntime)
   .then(cleanupRuntime)
