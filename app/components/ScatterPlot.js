@@ -32,12 +32,12 @@ export default class ScatterPlot extends React.Component {
     let yScale = autoScale(yValues, [0, innerHeight]);
 
     // draw a minimal L axis
-    let h1 = innerHeight - 2;
+    // let h1 = innerHeight - 2;
     const axis = h('polyline', {
-      points: `0,2 0,${innerHeight} ${h1},${innerHeight}`,
+      points: `0,0 0,${innerHeight} ${innerHeight},${innerHeight}`,
       strokeWidth: 1,
       stroke: '#888888',  // need access to theme here
-      className: 'minimal-axis',
+      // className: 'minimal-axis',
       fill: 'none'
     });
 

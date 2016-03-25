@@ -23,6 +23,9 @@ const mapDispatchToProps = (dispatch) => {
   };
 };
 
+const margin = 6;  // get from theme
+const bottomPadding = 20;
+
 class ScatterPlots extends React.Component {
 
   render() {
@@ -30,8 +33,9 @@ class ScatterPlots extends React.Component {
 
     if (this.props.dataset) {
       let title = h('text', {
-        x: 100,
-        y: 100
+        x: 50,
+        y: 50,
+        className: 'dataset-title'
         // transform: 'rotate(90)'
       }, [this.props.dataset.name]);
       children.push(title);
@@ -39,7 +43,7 @@ class ScatterPlots extends React.Component {
       let columnNames = this.props.dataset.data.columnNames();
       let numFeatures = columnNames.length;
 
-      let sideLength = this.props.containerWidth / numFeatures;
+      let sideLength = (this.props.containerWidth - bottomPadding) / numFeatures;
       for (let m = 0; m < numFeatures; m++) {
         let x = m * sideLength;
         for (let n = 0; n < numFeatures; n++) {
@@ -59,9 +63,9 @@ class ScatterPlots extends React.Component {
             xName: xName,
             yName: yName,
             plotKey: plotKey,
-            xOffset: x,
-            yOffset: y,
-            sideLength: sideLength
+            xOffset: x + margin,
+            yOffset: y + margin,
+            sideLength: sideLength - margin
           });
 
           children.push(sp);

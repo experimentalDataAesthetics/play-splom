@@ -26,8 +26,7 @@ class CenteredSquareFrame extends React.Component {
     let style = {
       margin: `0 ${widthMargin}px ${heightMargin}px`,
       width: `${innerLength}px`,
-      height: `${innerLength}px`,
-      border: '1px solid green'
+      height: `${innerLength}px`
     };
 
     return h('div.centered-square-frame', {style}, this.props.children);
