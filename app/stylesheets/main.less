@@ -70,8 +70,19 @@ body {
     border: 1px solid #333;
     padding: .5rem;
   }
+  h6 {
+    margin-bottom: 0;
+  }
+  .selectable-list {
+    overflow-y: scroll;
+    margin-bottom: 3px;  // or its the button's job
+  }
+  // @h6-height: 24px;
   .dataset-selector {
     height: @line-height * 10;
+    .selectable-list {
+      height: 73px;
+    }
   }
   .sound-selector {
     height: @line-height * 20;

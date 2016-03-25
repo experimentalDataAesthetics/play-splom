@@ -38,7 +38,8 @@ class DatasetSelector extends React.Component {
           valueLink: {
             value: this.props.selected,
             requestChange: this.props.onSelect
-          }
+          },
+          className: 'selectable-list'
         },
         this.props.datasets.map((dataset, i) => {
           return h(ListItem, {
