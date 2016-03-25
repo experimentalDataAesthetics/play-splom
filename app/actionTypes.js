@@ -26,6 +26,7 @@ export const SET_LOOP = 'SET_LOOP';
 export const FOCUS_SCATTERPLOT = 'FOCUS_SCATTERPLOT';
 export const ZOOM_SCATTERPLOT = 'ZOOM_SCATTERPLOT';
 export const SET_HOVERING = 'SET_HOVERING';
+export const MOUSE_MOVE = 'MOUSE_MOVE';
 
 // main
 export const OPEN_DATASET_DIALOG = 'OPEN_DATASET_DIALOG';

@@ -1,4 +1,4 @@
-import {FOCUS_SCATTERPLOT, SET_HOVERING, ZOOM_SCATTERPLOT} from '../actionTypes';
+import {MOUSE_MOVE, FOCUS_SCATTERPLOT, SET_HOVERING, ZOOM_SCATTERPLOT} from '../actionTypes';
 
 /**
  */
@@ -26,5 +26,13 @@ export function zoomScatterplot(id) {
     payload: {
       id
     }
+  };
+}
+
+export function mouseMove(event) {
+  // only need x / y and
+  return {
+    type: MOUSE_MOVE,
+    payload: event
   };
 }

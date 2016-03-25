@@ -42,7 +42,16 @@ export default class ScatterPlot extends React.Component {
     });
 
     let radius = innerHeight < 100 ? 1 : 3;
-    const children = xValues.map((v, i) => {
+    const children = [
+      h('rect', {
+        height: innerHeight,
+        width: innerWidth,
+        x: 0,
+        y: 0,
+        className: 'scatterplot__bg'
+      })
+    ];
+    const points = xValues.map((v, i) => {
       let x = xScale(v);
       let y = yScale(yValues[i]);
       return h(Point, {
@@ -60,7 +69,8 @@ export default class ScatterPlot extends React.Component {
     return h('g', {
       transform: `translate(${this.props.xOffset}, ${this.props.yOffset})`,
       width: this.props.sideLength,
-      height: this.props.sideLength
-    }, children);
+      height: this.props.sideLength,
+      className: 'scatterplot'
+    }, children.concat(points));
   }
 }

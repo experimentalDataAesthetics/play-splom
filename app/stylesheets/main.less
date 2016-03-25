@@ -47,6 +47,18 @@ body {
   flex: 1;
 }
 
+.scatterplot {
+  cursor: crosshair;
+  .scatterplot__bg {
+    fill: transparent;
+  }
+  &:hover {
+    .scatterplot__bg {
+      fill: rgba(217, 201, 3, 0.37);
+    }
+  }
+}
+
 #sidebar {
   width: 300px;
   background: @bg-alt;;
