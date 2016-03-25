@@ -26,6 +26,8 @@ body {
   background: @bg;
   color: @text;
   overflow: hidden;
+  -webkit-user-select: none;
+  user-select: none;
 }
 
 
@@ -42,13 +44,7 @@ body {
 .main {
   display: flex;
   height: 100vh;
-}
-
-#scatterplots {
   flex: 1;
-  svg {
-    margin: 0 15px;
-  }
 }
 
 #sidebar {
@@ -77,15 +73,10 @@ body {
 }
 
 
-h1.dataset-title {
+.dataset-title {
   color: @light-text;
-  font-size: 5em;
-  position: absolute;
-  transform: rotate(90deg);
-  transform-origin: left bottom 0;
+  font-size: 3em;
+  // position: absolute;
+  // transform: rotate(90deg);
+  // transform-origin: left bottom 0;
 }
-
-
-// @import "segregation.less";
-// @import "homeostat.less";
-// @import "dat-gui.less";

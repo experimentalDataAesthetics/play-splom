@@ -15,10 +15,13 @@
     "target": "development"
   },
   "dependencies": {
+    "d3": "^3.5.16",
     "fs-jetpack": "^0.7.3",
+    "lodash": "^4.6.1",
     "material-ui": "0.15.0-alpha.2",
     "miso.dataset": "^0.4.1",
     "react": "0.14.7",
+    "react-dimensions": "^1.0.2",
     "react-dom": "0.14.7",
     "react-hyperscript": "2.2.2",
     "react-redux": "4.4.1",
