@@ -39,6 +39,8 @@
   "devDependencies": {
     "electron-packager": "^5.0.0",
     "electron-prebuilt": "^0.37.2",
+    "eslint-config-airbnb": "^6.2.0",
+    "eslint-plugin-react": "^4.2.3",
     "fs-jetpack": "^0.7.2",
     "gulp": "^3.9.1",
     "gulp-less": "^3.0.5",
