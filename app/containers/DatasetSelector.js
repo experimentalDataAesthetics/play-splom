@@ -41,7 +41,7 @@ class DatasetSelector extends React.Component {
           },
           className: 'selectable-list'
         },
-        this.props.datasets.map((dataset, i) => {
+        this.props.datasets.map((dataset) => {
           return h(ListItem, {
             primaryText: dataset.name,
             selected: true,

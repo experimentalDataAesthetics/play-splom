@@ -6,7 +6,6 @@ export const LOAD_DATASET = 'LOAD_DATASET';
 
 // sounds
 export const SET_SOUNDS = 'SET_SOUNDS';
-export const SET_SOUND = 'SET_SOUND';
 export const SELECT_SOUND = 'SELECT_SOUND';
 
 export const SPAWN_SYNTH = 'SPAWN_SYNTH';

@@ -4,19 +4,19 @@
 // Node.js modules and those from npm
 // are required using require()
 
-const React = require('react');
 const ReactDOM = require('react-dom');
 const Provider = require('react-redux').Provider;
 const ReactRouter = require('react-router');
 // where does history come from ?
 const createHashHistory = require('history').createHashHistory;
-let injectTapEventPlugin = require('react-tap-event-plugin');
-let h = require('react-hyperscript');
+const injectTapEventPlugin = require('react-tap-event-plugin');
+const h = require('react-hyperscript');
+const path = require('path');
 
 import configureStore from './store/configureStore';
 import routes from './routes';
 
-let qk = {queryKey: false};
+const qk = {queryKey: false};
 const history = ReactRouter.useRouterHistory(createHashHistory)(qk);
 const store = configureStore();
 
@@ -37,6 +37,8 @@ ipcRenderer.on('dispatch-action', (sender, action) => {
 // as well as touch
 injectTapEventPlugin();
 
+import {loadSounds} from './actions/sounds';
+
 document.addEventListener('DOMContentLoaded', () => {
 
   ReactDOM.render(
@@ -46,4 +48,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('content')
   );
 
+  // you will be inside build
+  const synthDefsDir = path.join(__dirname, '../', window.env.synthDefsDir);
+  store.dispatch(loadSounds(synthDefsDir));
 });

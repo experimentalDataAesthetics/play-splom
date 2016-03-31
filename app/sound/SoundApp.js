@@ -26,7 +26,7 @@ const options = _.defaults(env.options || {}, {
   sclang_conf: null
 });
 
-const synthDefsDir = path.join(__dirname, '../app/sound/synthdefs/');
+const synthDefsDir = path.join(__dirname, '../', env.synthDefsDir);
 
 export default class SoundApp {
 
@@ -47,15 +47,20 @@ export default class SoundApp {
         throw new Error(err);
       }
 
-      let defs = files.map((p) => {
-        return [
-          'scsynthdef',
-          {
-            compileFrom: path.join(synthDefsDir, p)
-            // saveTo
-          }
-        ];
-      });
+      // TODO: if production then load compiled *.scsyndef
+      // different options
+      let defs = files
+        .filter((p) => path.extname(p) === '.scd')
+        .map((p) => {
+          return [
+            'scsynthdef',
+            {
+              compileFrom: path.join(synthDefsDir, p),
+              saveToDir: synthDefsDir,
+              watch: env.name === 'development'
+            }
+          ];
+        });
 
       this.root = sc.h([
         'sclang', options, [
