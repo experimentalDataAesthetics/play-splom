@@ -54,6 +54,9 @@ export function selectSound(name) {
   };
 }
 
+/**
+ * Spawn a Synth (from a brush event)
+ */
 export function spawnSynth(event) {
   callActionOnMain({
     type: SPAWN_SYNTH,
@@ -61,6 +64,11 @@ export function spawnSynth(event) {
   });
 }
 
+/**
+ * Set master level controls.
+ *
+ * amp:
+ */
 export function setMasterControls(event) {
   callActionOnMain({
     type: SET_MASTER_CONTROLS,
