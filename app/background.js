@@ -12,16 +12,18 @@ var devHelper = require('./vendor/electron_boilerplate/dev_helper');
 var windowStateKeeper = require('./vendor/electron_boilerplate/window_state');
 
 // var Menu = require('menu');
-var _ = require('lodash');
-
-var mainWindow;
+import SoundApp from './sound/SoundApp';
+var soundApp = new SoundApp();
 
 // connect two-way calling of actions
 // the other half is in app.js
 const ipcMain = require('electron').ipcMain;
 import handleActionOnMain from './ipc/handleActionOnMain';
-ipcMain.on('call-action-on-main', handleActionOnMain);
+ipcMain.on('call-action-on-main', (event, payload) => {
+  handleActionOnMain(event, payload, soundApp);
+});
 
+var mainWindow;
 // Preserver of the window size and position between app launches.
 var mainWindowState = windowStateKeeper('main', {
   width: 1000,
@@ -181,8 +183,14 @@ app.on('ready', function() {
 
   // makeMenu();
   // mainWindow.webContents.reloadIgnoringCache();
+
+  soundApp.start();
 });
 
 app.on('window-all-closed', function() {
   app.quit();
+});
+
+app.on('will-quit', function() {
+  soundApp.stop();
 });

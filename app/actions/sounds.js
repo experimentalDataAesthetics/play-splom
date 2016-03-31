@@ -32,3 +32,17 @@ export function selectSound(name) {
     }
   };
 }
+
+export function spawnSynth(event) {
+  callActionOnMain({
+    type: SPAWN_SYNTH,
+    payload: event
+  });
+}
+
+export function setMasterControls(event) {
+  callActionOnMain({
+    type: SET_MASTER_CONTROLS,
+    payload: event
+  });
+}

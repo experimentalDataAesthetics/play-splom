@@ -1,11 +1,11 @@
 const dialog = require('electron').dialog;
-import {OPEN_DATASET_DIALOG, LOAD_DATASET} from '../actionTypes';
+import {OPEN_DATASET_DIALOG, LOAD_DATASET, SET_MASTER_CONTROLS, SPAWN_SYNTH} from '../actionTypes';
 
 /**
  * This runs on the main process and should be included in background.js
  * It handles actions sent from callActionOnMain.
  */
-export default function(event, action) {
+export default function(event, action, soundApp) {
 
   switch (action.type) {
     case OPEN_DATASET_DIALOG:
@@ -21,8 +21,16 @@ export default function(event, action) {
       });
 
       break;
+    case SPAWN_SYNTH:
+      soundApp.spawnSynth(action.payload);
+      break;
+    case SET_MASTER_CONTROLS:
+      soundApp.setMasterControls(action.payload);
+      break;
+    // FREE_ALL
+    // SET_SEQUENCE
     default:
-      throw new Exception('Unmatched action', action);
+      throw new Error('Unmatched action', action);
   }
 }
 
