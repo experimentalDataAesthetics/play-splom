@@ -37,6 +37,11 @@ ipcRenderer.on('dispatch-action', (sender, action) => {
 // as well as touch
 injectTapEventPlugin();
 
+if (window.env.name === 'development') {
+  const debugMenu = require('debug-menu');
+  debugMenu.install();  // activate context menu
+}
+
 import {loadSounds} from './actions/sounds';
 
 document.addEventListener('DOMContentLoaded', () => {
