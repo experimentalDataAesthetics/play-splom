@@ -3,6 +3,7 @@ let h = require('react-hyperscript');
 let connect = require('react-redux').connect;
 
 import ScatterPlot from '../components/ScatterPlot';
+import {showBrush, setPointsUnderBrush} from '../actions/interaction';
 
 const mapStateToProps = (state) => {
   return {
@@ -10,16 +11,15 @@ const mapStateToProps = (state) => {
   };
 };
 
-const mapDispatchToProps = () => {
-  // dispatch
+const mapDispatchToProps = (dispatch) => {
   return {
-    // onSelect: (e, path) => {
-    //   dispatch(loadDataset(path));
-    // },
-    //
-    // openDialog: () => {
-    //   dispatch(openDatasetDialog());
-    // }
+    showBrush: (show, clientX, clientY) => {
+      dispatch(showBrush(show, clientX, clientY));
+    },
+
+    setPointsUnderBrush: (m, n, indices) => {
+      dispatch(setPointsUnderBrush(m, n, indices));
+    }
   };
 };
 
@@ -65,7 +65,9 @@ class ScatterPlots extends React.Component {
             plotKey: plotKey,
             xOffset: x + margin,
             yOffset: y + margin,
-            sideLength: sideLength - margin
+            sideLength: sideLength - margin,
+            showBrush: this.props.showBrush,
+            setPointsUnderBrush: this.props.setPointsUnderBrush
           });
 
           children.push(sp);

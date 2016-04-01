@@ -6,18 +6,15 @@ let Dimensions = require('react-dimensions');
 import ScatterPlots from './ScatterPlots';
 import SVGFilters from '../components/SVGFilters';
 import Brush from '../components/Brush';
-import {mouseMove} from '../actions/ui';
 
 const mapStateToProps = () => {
   // console.log('state to props');
   return {};
 };
 
-const mapDispatchToProps = (dispatch) => {
+const mapDispatchToProps = () => {
+  // dispatch
   return {
-    onMouseMove: (e) => {
-      dispatch(mouseMove(e));
-    }
   };
 };
 
@@ -30,7 +27,7 @@ class SVGFrame extends React.Component {
         width: this.props.containerWidth,
         height: this.props.containerHeight
       }),
-      h(Brush, {x: 0, y: 0, radius: 10})
+      h(Brush, {show: false, x: 0, y: 0, radius: 10})
     ];
 
     return h(
@@ -40,15 +37,7 @@ class SVGFrame extends React.Component {
         className: 'svg-frame',
         height: this.props.containerHeight,
         width: this.props.containerWidth,
-        ref: (svg) => this._svg = svg,
-        onMouseMove: (event) => {
-          // getDOMNode
-          let rect = this._svg.getBoundingClientRect();
-          this.props.onMouseMove({
-            x: event.pageX - rect.left,
-            y: event.pageY - rect.top
-          });
-        }
+        ref: (svg) => this._svg = svg
       },
       children
     );

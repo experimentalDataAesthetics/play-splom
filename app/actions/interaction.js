@@ -1,28 +1,23 @@
-import {BRUSH_DOWN} from '../actionTypes';
+import {SHOW_BRUSH, SET_POINTS_UNDER_BRUSH} from '../actionTypes';
 
-/**
- * Probably the animation can be kept local in d3
- * Just call higher level actions.
- */
-
-/**
- * brush interaction in a scatterplot at a point (0..1)
- *
- * @param {Point} point
- */
-export function brushDown(point) {
-  // show brush state
-  // trigger sounds
+export function showBrush(show, x, y) {
   return {
-    type: BRUSH_DOWN,
+    type: SHOW_BRUSH,
     payload: {
-      point
+      show,
+      x,
+      y
     }
   };
 }
-// move, up
 
-// select loop
-// export function shiftDrag() {
-//
-// }
+export function setPointsUnderBrush(m, n, indices) {
+  return {
+    type: SET_POINTS_UNDER_BRUSH,
+    payload: {
+      m,
+      n,
+      indices
+    }
+  };
+}

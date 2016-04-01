@@ -21,7 +21,8 @@ export const SET_PLAYING = 'SET_PLAYING';
 export const SET_RECORDING = 'SET_RECORDING';
 
 // interaction
-export const BRUSH = 'BRUSH';
+export const SHOW_BRUSH = 'SHOW_BRUSH';
+export const SET_POINTS_UNDER_BRUSH = 'SET_POINTS_UNDER_BRUSH';
 export const SET_LOOP = 'SET_LOOP';
 
 // ui

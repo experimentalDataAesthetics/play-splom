@@ -1,11 +1,12 @@
-import {FOCUS_SCATTERPLOT, SET_HOVERING, ZOOM_SCATTERPLOT, MOUSE_MOVE} from '../actionTypes';
+import {FOCUS_SCATTERPLOT, SET_HOVERING, ZOOM_SCATTERPLOT, MOUSE_MOVE,  SHOW_BRUSH} from '../actionTypes';
 const u = require('updeep');
 
 const initial = {
   focused: null,
   hovering: null,
   zoomed: null,
-  mouse: null
+  mouse: null,
+  brush: null
 };
 
 /**
@@ -33,6 +34,11 @@ export default function(state=initial, action) {
     case MOUSE_MOVE:
       return u({
         mouse: action.payload
+      }, state);
+
+    case SHOW_BRUSH:
+      return u({
+        brush: action.payload
       }, state);
 
     default:
