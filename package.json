@@ -38,19 +38,19 @@
   },
   "devDependencies": {
     "electron-packager": "^5.0.0",
-    "electron-prebuilt": "^0.37.2",
+    "electron-prebuilt": "^0.37.3",
     "eslint-config-airbnb": "^6.2.0",
     "eslint-plugin-react": "^4.2.3",
-    "fs-jetpack": "^0.7.2",
+    "fs-jetpack": "^0.7.3",
     "gulp": "^3.9.1",
     "gulp-less": "^3.0.5",
     "gulp-sass": "^2.2.0",
     "gulp-util": "^3.0.7",
     "q": "^1.4.1",
-    "rollup": "^0.25.4",
+    "rollup": "^0.25.7",
     "tree-kill": "^1.0.0",
     "xo": "^0.13.0",
-    "yargs": "^4.3.1"
+    "yargs": "^4.3.2"
   },
   "xo": {
     "esnext": true,
