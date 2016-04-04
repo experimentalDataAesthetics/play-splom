@@ -28,6 +28,12 @@ const options = _.defaults(env.options || {}, {
 
 const synthDefsDir = path.join(__dirname, '../', env.synthDefsDir);
 
+/**
+ * Runs in the background.js process
+ *
+ * Uses supercollider.js to spawn a tree of synths/groups
+ * and has streams that can be pushed to.
+ */
 export default class SoundApp {
 
   constructor() {
@@ -62,13 +68,12 @@ export default class SoundApp {
           ];
         });
 
-      this.root = sc.h([
-        'sclang', options, [
-          [
-            'scserver',
-            options,
+      this.root = sc.h(
+        ['sclang', options, [
+          ['scserver', options,
             defs.concat([
               ['group', [
+                // needs to mix back to master
                 ['audiobus', {numChannels: 2}, [
                   ['synthstream', {stream: this.synthStream}],
                   ['synth', this.masterArgs, [
@@ -93,6 +98,10 @@ export default class SoundApp {
 
   spawnSynth(event) {
     this.synthStream.push(event);
+  }
+
+  spawnSynths(synthEvents) {
+    synthEvents.forEach((synthEvent) => this.synthStream.push(synthEvent));
   }
 
   setMasterControls(event) {
