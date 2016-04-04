@@ -1,21 +1,21 @@
 
 const redux = require('redux');
 const thunk = require('redux-thunk').default;
-const createLogger = require('redux-logger');
+const devTools = require('remote-redux-devtools');
 
 import rootReducer from '../reducers/index';
 
-export default function configureStore() {
+export default function configureStore(initialState={}) {
 
-  let logger = createLogger({
-    collapsed: true
-  });
+  const enhancer = redux.compose(
+    redux.applyMiddleware(thunk),
+    devTools()
+  );
 
   let store = redux.createStore(
     rootReducer,
-    // Logger must be last middleware in chain,
-    // otherwise it will log thunk and promise, not actual actions
-    redux.applyMiddleware(thunk, logger)
+    initialState,
+    enhancer
   );
 
   return store;
