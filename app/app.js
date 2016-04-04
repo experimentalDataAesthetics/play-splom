@@ -28,6 +28,12 @@ ipcRenderer.on('dispatch-action', (sender, action) => {
   handleActionOnRenderer(store.dispatch, sender, action);
 });
 
+// listen to redux store changes and call actions on main thread
+// to create sounds
+import connectSoundApp from './sound/connectSoundApp';
+import callActionOnMain from './ipc/callActionOnMain';
+connectSoundApp(store, callActionOnMain);
+
 // window.env contains data from config/env_XXX.json file.
 // var envName = window.env.name;
 

@@ -9,6 +9,7 @@ export const SET_SOUNDS = 'SET_SOUNDS';
 export const SELECT_SOUND = 'SELECT_SOUND';
 
 export const SPAWN_SYNTH = 'SPAWN_SYNTH';
+export const SPAWN_SYNTHS = 'SPAWN_SYNTHS';
 export const SET_MASTER_CONTROLS = 'SET_MASTER_CONTROLS';
 
 // mapping
