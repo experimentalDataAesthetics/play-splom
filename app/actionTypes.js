@@ -14,6 +14,7 @@ export const SET_MASTER_CONTROLS = 'SET_MASTER_CONTROLS';
 
 // mapping
 export const SET_MAPPING = 'SET_MAPPING';
+export const MAP_XY_TO_PARAM = 'MAP_XY_TO_PARAM';
 export const SET_MAPPING_RANGE = 'SET_MAPPING_RANGE';
 export const SET_PCA = 'SET_PCA';
 

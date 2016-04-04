@@ -1,7 +1,21 @@
-import {SET_MAPPING, SET_MAPPING_RANGE, SET_PCA} from '../actionTypes';
+import {MAP_XY_TO_PARAM, SET_MAPPING, SET_MAPPING_RANGE, SET_PCA} from '../actionTypes';
 
 /**
- * connect dataset feature to sound param
+ * Connect X/Y to a sound param for xy mode
+ */
+export function mapXYtoParam(xy, param) {
+  return {
+    type: MAP_XY_TO_PARAM,
+    payload: {
+      mode: 'xy',
+      xy: xy,
+      param: param
+    }
+  };
+}
+
+/**
+ * Connect dataset feature to sound param for multi-variate mode
  */
 export function setMapping(feature, param) {
   return {
@@ -14,8 +28,7 @@ export function setMapping(feature, param) {
 }
 
 /**
- * set the target range for a sound parameter
- * to range (Object)
+ * Set the target range for a sound parameter to range (Object)
  */
 export function setMapperRange(feature, param, range) {
   return {
@@ -29,7 +42,8 @@ export function setMapperRange(feature, param, range) {
 }
 
 /**
- * set PCA for current dataset
+ * Set PCA for current dataset.
+ *
  * This could result in async calculation
  * and produces a new mapping metadata
  */
