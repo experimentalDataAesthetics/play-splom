@@ -1,20 +1,20 @@
 const createSelector = require('reselect').createSelector;
 const d3 = require('d3');
 const _ = require('lodash');
+const map = require('supercolliderjs').map;
 
 const getDataset = (state) => state.dataset;
-const getPointsUnderBrush = (state) => state.interation.pointsUnderBrush && state.pointsUnderBrush.indices;
-const getPointsEntering = (state) => state.interaction.pointsEntering;
-const getPreviousPointsUnderBrush = (state) => state.interaction.previousPointsUnderBrush && state.previousPointsUnderBrush.indices;
+const getPointsUnderBrush = (state) => _.get(state, 'interaction.pointsUnderBrush', []);
+const getPreviousPointsUnderBrush = (state) => _.get(state, 'interaction.previousPointsUnderBrush', []);
+const getInteraction = (state) => state.interaction || {};
 const getSoundName = (state) => state.sound;
 const getSounds = (state) => state.sounds;
+const getMapping = (state) => state.mapping || {};
 
 export const getSound = createSelector(
   [getSoundName, getSounds],
   (soundName, sounds) => {
-    console.log(sounds);
     for (let sound of sounds) {
-      console.log(sound);
       if (sound.name === soundName) {
         return sound;
       }
@@ -25,8 +25,7 @@ export const getSound = createSelector(
 );
 
 /**
- * Extract each column as values
- * with min, max, mean, std calculated
+ * Extract each column as values with min, max, mean, std calculated
  */
 export const getFeatures = createSelector(
   [getDataset],
@@ -51,7 +50,9 @@ export const getFeatures = createSelector(
   }
 );
 
-// points to normalized unipolar points
+/**
+ * Transform points to normalized unipolar points
+ */
 export const getNormalizedPoints = createSelector(
   [getFeatures],
   (features) => {
@@ -87,79 +88,100 @@ export const getNormalizedPoints = createSelector(
 //   }
 // );
 
+/**
+ * Normal function; not a selector.
+ */
 export const calcPointsEntering = (pointsUnderBrush, previousPointsUnderBrush) => {
   return _.difference(pointsUnderBrush || [], previousPointsUnderBrush || []);
-}
-//
-// export const getPointsExiting = createSelector(
-//   [getPointsUnderBrush, getPreviousPointsUnderBrush],
-//   (pointsUnderBrush, previousPointsUnderBrush) => _.difference(previousPointsUnderBrush || [], pointsUnderBrush || [])
-// );
+};
 
-// mappers for each feature to the args
-// changes when pointsUnderBrush are in different m/n
-//
-// this gets updated into .synth.spawnEvents
-// and forwarded to background thread
-// somewhere somebody has to ask for this
-// usually its the component
-// for sound it will be a subscribe
-export const spawnEventsFromPointsEntering = createSelector(
-  [getPointsEntering, getNormalizedPoints, getSound],
-  (pointsEntering, normalizedPoints, sound) => {
-    // never gets called again
-    // because SoundSelector never demands it
-    // because its props nor state never changes
-    if (!sound) {
-      return [];
+function makeXYMapper(mapping, sound, param, xy) {
+  if (param) {
+    // a custom mapper is set (not yet implemented, always blank)
+    let mapperOptions = _.get(mapping, `xy.${xy}.mapper`);
+    if (!mapperOptions) {
+      let control = _.find(sound.controls, {name: param});
+      if (!control.spec) {
+        // no spec so just return the defaultValue always
+        if (control.defaultValue) {
+          return function() {
+            return control.defaultValue;
+          };
+        } else {
+          // no way to map this one
+          // just guess with 0 though this can break things
+          return function() {
+            return 0;
+          };
+        }
+      }
+
+      mapperOptions = control.spec;
     }
 
-    console.log('pointsEntering', pointsEntering);
-    return (pointsEntering || []).map((index) => {
-      // which features are mapped to sound
-      // let v1 = normalizedPoints[feat1].values[index];
-      // build args
-      return {
-        defName: sound.name,
-        args: {
-          // something something something
-        }
-      };
-    });
+    return makeMapper(mapperOptions);
   }
-);
+}
 
 /**
  * A normal function; not a selector
  * Needs the full state
  */
-export const spawnEventsFromBrush = (state) => {
-  let pointsEntering = calcPointsEntering(state.pointsUnderBrush, state.previousPointsUnderBrush);
+export function spawnEventsFromBrush(state) {
+  let pointsUnderBrush = getPointsUnderBrush(state) || [];
+  let previousPointsUnderBrush = getPreviousPointsUnderBrush(state) || [];
+  let pointsEntering = calcPointsEntering(pointsUnderBrush, previousPointsUnderBrush);
+  let sound = getSound(state);
+  let mapping = getMapping(state);
+  let interaction = getInteraction(state);
+  let npoints = getNormalizedPoints(state);
 
+  return xyPointsEnteringToSynthEvents(pointsEntering, interaction.m, interaction.n, sound, mapping, npoints);
+}
+
+export function xyPointsEnteringToSynthEvents(pointsEntering, m, n, sound, mapping, npoints) {
   if (pointsEntering.length === 0) {
     return [];
   }
-  console.log('pointsEntering', pointsEntering);
 
-  let sound = getSound(state);
   if (!sound) {
-    console.log('no sound selected');
     return [];
   }
 
-  // which features are mapped to sound
-  // let v1 = normalizedPoints[feat1].values[index];
-  // build args
-  return (pointsEntering || []).map((index) => {
+  // these only change when mapping changes
+  let paramX = _.get(mapping, 'xy.x.param');
+  let paramY = _.get(mapping, 'xy.y.param');
+  let mapperX = makeXYMapper(mapping, sound, paramX, 'x');
+  let mapperY = makeXYMapper(mapping, sound, paramY, 'y');
+
+  return pointsEntering.map((index) => {
+    let x = npoints[m].values[index];
+    let y = npoints[n].values[index];
+    let args = {};
+    if (paramX) {
+      args[paramX] = mapperX(x);
+    }
+
+    if (paramY) {
+      args[paramY] = mapperY(y);
+    }
+
     return {
       defName: sound.name,
-      args: {
-        // something something something
-      }
+      args: args
     };
   });
-};
+}
 
-// export function brushPointsAction(indices, m, n) {
-//
-// }
+export function makeMapper(spec) {
+  switch (spec.warp) {
+    case 'exp':
+      return map.exp(spec);
+    case 'db':
+      return map.dB(spec);
+    case 'amp':
+      return map.fader(spec);
+    default:
+      return map.linear(spec);
+  }
+}

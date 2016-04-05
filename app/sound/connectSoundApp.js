@@ -1,4 +1,4 @@
-import {spawnEventsFromPointsEntering} from '../selectors/index';
+import {spawnEventsFromBrush} from '../selectors/index';
 
 /**
  * Runs in the renderer process.
@@ -30,13 +30,14 @@ const getPointsEntering = (state) => {
 };
 
 export default function connectSoundApp(store, callActionOnMain) {
+  // call handler on change of pointsEntering
   observeStore(store, getPointsEntering, (state) => {
     // pointsEntering changed: m n indices
     // generate synths from that
     // for now: send using callActionOnMain
     // later: set to state.synth.spawnEvents
     // and let redux-electron-store copy it over
-    let synthEvents = spawnEventsFromPointsEntering(state);
+    let synthEvents = spawnEventsFromBrush(state);
     if (synthEvents.length) {
       callActionOnMain({
         type: 'SPAWN_SYNTHS',
