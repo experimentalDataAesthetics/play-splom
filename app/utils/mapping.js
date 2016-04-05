@@ -12,7 +12,7 @@ export function autoScale(values, range) {
 
   // time series
   if (_.isDate(first)) {
-    let extent = d3.extend(values);
+    let extent = d3.extent(values);
     return d3.time.scale().domain(extent).nice().range([range[0], range[1] * 0.95]);
   }
 

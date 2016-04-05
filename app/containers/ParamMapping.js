@@ -1,10 +1,37 @@
 const React = require('react');
-var h = require('react-hyperscript');
+const h = require('react-hyperscript');
+const connect = require('react-redux').connect;
 
-export default class ParamMapping extends React.Component {
+import {getSound} from '../selectors/index';
+import {mapXYtoParam} from '../actions/mapping';
+import XYParamTable from '../components/XYParamTable';
+
+const mapStateToProps = (state) => {
+  return {
+    sound: getSound(state),
+    mapping: state.mapping
+  };
+};
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    mapXYtoParam: (xy, param) => {
+      dispatch(mapXYtoParam(xy, param));
+    }
+  };
+};
+
+class ParamMapping extends React.Component {
   render() {
     return h('div.param-mapping', [
-      h('h6', 'Sound Params')
+      h('h6', this.props.sound ? this.props.sound.name : ''),
+      h(XYParamTable, {
+        sound: this.props.sound,
+        mapping: this.props.mapping,
+        mapXYtoParam: this.props.mapXYtoParam
+      })
     ]);
   }
 }
+
+export default connect(mapStateToProps, mapDispatchToProps)(ParamMapping);

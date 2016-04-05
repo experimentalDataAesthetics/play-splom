@@ -1,8 +1,25 @@
-import {SET_MAPPING, SET_MAPPING_RANGE} from '../actionTypes';
+import {SET_MAPPING, SET_MAPPING_RANGE, MAP_XY_TO_PARAM} from '../actionTypes';
 const u = require('updeep');
+const _ = require('lodash');
 
 export default function(state={}, action) {
   switch (action.type) {
+
+    case MAP_XY_TO_PARAM:
+      // if not already mapped to this
+      if (_.get(state, `xy.${action.payload.xy}.param`) === action.payload.param) {
+        return state;
+      }
+
+      return u({
+        mode: 'xy',
+        xy: {
+          [action.payload.xy]: {
+            param: action.payload.param
+            // mapper: get default for this param
+          }
+        }
+      }, state);
 
     case SET_MAPPING:
       return u({
