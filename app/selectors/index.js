@@ -11,6 +11,8 @@ const getSoundName = (state) => state.sound;
 const getSounds = (state) => state.sounds;
 const getMapping = (state) => state.mapping || {};
 
+import {autoScale} from '../utils/mapping';
+
 export const getSound = createSelector(
   [getSoundName, getSounds],
   (soundName, sounds) => {
@@ -36,57 +38,75 @@ export const getFeatures = createSelector(
 
     return dataset.data.columnNames().map((name, i) => {
       let data = dataset.data.column(name).data;
-      let extent = d3.extent(data);
-      return {
+      let first = data[0];
+      let isDate = _.isDate(first);
+      let isString = _.isString(first);
+      let params = {
         name: name,
         index: i,
-        values: data,
-        min: extent[0],
-        max: extent[1],
-        mean: d3.mean(data),
-        std: d3.deviation(data)
+        values: data
       };
+      if (isString) {
+        params.typ = 'string';
+        params.domain = Array.from((new Set(data)));
+        return params;
+      }
+
+      let extent = d3.extent(data);
+      params.min = extent[0];
+      params.max = extent[1];
+
+      if (isDate) {
+        params.typ = 'date';
+        return params;
+      }
+
+      params.typ = 'number';
+      params.mean = d3.mean(data);
+      params.std = d3.deviation(data);
+      return params;
     });
   }
 );
 
 /**
- * Transform points to normalized unipolar points
+ * Transform points in each feature to normalized unipolar points
  */
 export const getNormalizedPoints = createSelector(
   [getFeatures],
   (features) => {
     return (features || []).map((feature) => {
-      // subtract mean
-      // divide by range
-      // or:
-      //  divide by std
-      //  clip
-      let range = feature.max - feature.min;
-      if (range === 0) {
-        range = 1;
-      }
+      var scaledValues;
+      if (feature.typ === 'number') {
+        // subtract mean
+        // divide by range
+        // or:
+        //  divide by std
+        //  clip
+        let range = feature.max - feature.min;
+        if (range === 0) {
+          range = 1;
+        }
 
-      let normalize = (v) => {
-        return (v - feature.mean) / range + 0.5;
-      };
+        let normalize = (v) => {
+          return (v - feature.mean) / range + 0.5;
+        };
+
+        scaledValues = feature.values.map(normalize);
+      } else {
+        // this handles dates and ordinal/class/categories
+        let scale = autoScale(feature.values);
+        scaledValues = features.values.map(scale);
+      }
 
       return {
         name: feature.name,
         index: feature.index,
-        values: feature.values.map(normalize)
+        values: scaledValues
       };
     });
   }
 );
-
-// export const getPointsEntering = createSelector(
-//   [getPointsUnderBrush, getPreviousPointsUnderBrush],
-//   (pointsUnderBrush, previousPointsUnderBrush) => {
-//     console.log(pointsUnderBrush, previousPointsUnderBrush);
-//     return _.difference(pointsUnderBrush || [], previousPointsUnderBrush || []);
-//   }
-// );
 
 /**
  * Normal function; not a selector.
