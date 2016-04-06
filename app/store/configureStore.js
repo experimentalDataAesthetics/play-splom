@@ -7,8 +7,10 @@ import rootReducer from '../reducers/index';
 
 export default function configureStore(initialState={}) {
 
+  let thunked = redux.applyMiddleware(thunk);
+
   const enhancer = redux.compose(
-    redux.applyMiddleware(thunk),
+    thunked,
     devTools()
   );
 
@@ -16,6 +18,7 @@ export default function configureStore(initialState={}) {
     rootReducer,
     initialState,
     enhancer
+    // thunked
   );
 
   return store;

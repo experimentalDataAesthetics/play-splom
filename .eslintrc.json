@@ -6,7 +6,16 @@
      "env": {
         "es6": true,
         "node": true,
-        "browser": true
+        "browser": true,
+        "jasmine": true
+    },
+    "globals": {
+      "jest": true,
+      "describe": true,
+      "expect": true,
+      "it": true,
+      "pit": true,
+      "spyOn": true
     },
     "parserOptions": {
         "ecmaVersion": 6,

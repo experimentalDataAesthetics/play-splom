@@ -93,7 +93,9 @@ export default class SoundApp {
   }
 
   stop() {
-    return this.player.stop();
+    if (this.player) {
+      return this.player.stop();
+    }
   }
 
   spawnSynth(event) {

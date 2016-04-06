@@ -1,4 +1,5 @@
 {
   "name": "test",
-  "description": "Add here any environment specific stuff you like."
+  "description": "environment variables for testing",
+  "synthDefsDir": "app/synthdefs"
 }

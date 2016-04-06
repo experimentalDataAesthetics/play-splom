@@ -183,8 +183,9 @@ app.on('ready', function() {
 
   // makeMenu();
   // mainWindow.webContents.reloadIgnoringCache();
-
-  soundApp.start();
+  if (env.name !== 'test') {
+    soundApp.start();
+  }
 });
 
 app.on('window-all-closed', function() {

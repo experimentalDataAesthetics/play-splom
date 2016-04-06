@@ -12,7 +12,7 @@ const initial = {
 /**
  * To unfocus, set focused to null. same with hovering and zoomed
  */
-export default function(state=initial, action) {
+export default function ui(state=initial, action) {
   switch (action.type) {
 
     case FOCUS_SCATTERPLOT:
