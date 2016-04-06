@@ -1,5 +1,6 @@
 
-const combineReducers = require('redux').combineReducers;
+import { combineReducers } from 'redux';
+import { routerReducer as routing } from 'react-router-redux';
 
 import dataset from './dataset';
 import datasets from './datasets';
@@ -18,5 +19,6 @@ export default combineReducers({
   mapping,
   ui,
   interaction,
-  transport
+  transport,
+  routing
 });
