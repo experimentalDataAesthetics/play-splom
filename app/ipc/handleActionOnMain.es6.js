@@ -1,26 +1,19 @@
-'use strict';
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = handleActionOnMain;
-
-var _actionTypes = require('../actionTypes');
-
-var dialog = require('electron').dialog;
-
+const dialog = require('electron').dialog;
+import {
+  OPEN_DATASET_DIALOG, LOAD_DATASET, SET_MASTER_CONTROLS, SPAWN_SYNTH, SPAWN_SYNTHS
+} from '../actionTypes';
 
 /**
  * This runs on the main process and should be included in background.js
  * It handles actions sent from callActionOnMain.
  */
-function handleActionOnMain(event, action, soundApp) {
+export default function handleActionOnMain(event, action, soundApp) {
   switch (action.type) {
-    case _actionTypes.OPEN_DATASET_DIALOG:
-      dialog.showOpenDialog(function (fileNames) {
+    case OPEN_DATASET_DIALOG:
+      dialog.showOpenDialog((fileNames) => {
         if (fileNames && fileNames.length) {
           reply(event, {
-            type: _actionTypes.LOAD_DATASET,
+            type: LOAD_DATASET,
             payload: {
               path: fileNames[0]
             }
@@ -29,13 +22,13 @@ function handleActionOnMain(event, action, soundApp) {
       });
 
       break;
-    case _actionTypes.SPAWN_SYNTH:
+    case SPAWN_SYNTH:
       soundApp.spawnSynth(action.payload);
       break;
-    case _actionTypes.SPAWN_SYNTHS:
+    case SPAWN_SYNTHS:
       soundApp.spawnSynths(action.payload);
       break;
-    case _actionTypes.SET_MASTER_CONTROLS:
+    case SET_MASTER_CONTROLS:
       soundApp.setMasterControls(action.payload);
       break;
     // FREE_ALL
@@ -52,5 +45,3 @@ function handleActionOnMain(event, action, soundApp) {
 function reply(event, action) {
   event.sender.send('dispatch-action', action);
 }
-module.exports = exports['default'];
-

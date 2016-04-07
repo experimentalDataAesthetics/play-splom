@@ -4,7 +4,6 @@ import { Provider } from 'react-redux';
 import { Router, hashHistory } from 'react-router';
 import { syncHistoryWithStore } from 'react-router-redux';
 import routes from './routes';
-import { join } from 'path';
 import configureStore from './store/configureStore';
 // import './stylesheets/main.less';
 import './app.global.css';
@@ -13,7 +12,19 @@ import config from '../config';
 const store = configureStore();
 const history = syncHistoryWithStore(hashHistory, store);
 
-// connect sound app etc
+// connect two-way calling of actions
+// the other half is in background.js
+const ipcRenderer = require('electron').ipcRenderer;
+import handleActionOnRenderer from './ipc/handleActionOnRenderer';
+ipcRenderer.on('dispatch-action', (sender, action) => {
+  handleActionOnRenderer(store.dispatch, sender, action);
+});
+
+// listen to redux store changes and call actions on main thread
+// to create sounds
+import connectSoundApp from './sound/connectSoundApp';
+import callActionOnMain from './ipc/callActionOnMain';
+connectSoundApp(store, callActionOnMain);
 
 // don't need DOMContentLoaded anymore
 render(
@@ -23,7 +34,4 @@ render(
   document.getElementById('root')
 );
 
-// possibly just config.synthDefsDir
-// as we will always be inside app now
-const synthDefsDir = join(__dirname, '../', config.synthDefsDir);
-store.dispatch(loadSounds(synthDefsDir));
+store.dispatch(loadSounds(config.synthDefsDir));

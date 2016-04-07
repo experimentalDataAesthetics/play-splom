@@ -1,6 +1,11 @@
 /* eslint strict: 0 */
 'use strict';
 
+/**
+ * All modules should use require, not import
+ * as this is not babel processed.
+ * `let` and `const` is fine
+ */
 process.env.NODE_ENV = process.env.NODE_ENV || 'production';
 
 const electron = require('electron');
@@ -9,29 +14,37 @@ const BrowserWindow = electron.BrowserWindow;
 const Menu = electron.Menu;
 const crashReporter = electron.crashReporter;
 const shell = electron.shell;
+
+crashReporter.start();
+
+const SoundApp = require('./app/sound/SoundApp');
 let menu;
 let template;
 let mainWindow = null;
 
-crashReporter.start();
+const soundApp = new SoundApp();
+soundApp.start();
 
-// import SoundApp from './sound/SoundApp';
-// var soundApp = new SoundApp();
-//
-// // connect two-way calling of actions
-// // the other half is in app.js
-// const ipcMain = require('electron').ipcMain;
-// import handleActionOnMain from './ipc/handleActionOnMain';
-// ipcMain.on('call-action-on-main', (event, payload) => {
-//   handleActionOnMain(event, payload, soundApp);
-// });
+// connect two-way calling of actions
+// the other half is in app.js
+const ipcMain = require('electron').ipcMain;
+const handleActionOnMain = require('./app/ipc/handleActionOnMain').default;
+ipcMain.on('call-action-on-main', (event, payload) => {
+  handleActionOnMain(event, payload, soundApp);
+});
 
 if (process.env.NODE_ENV === 'development') {
   require('electron-debug')();
 }
 
 app.on('window-all-closed', () => {
-  if (process.platform !== 'darwin') app.quit();
+  if (process.platform !== 'darwin') {
+    app.quit();
+  }
+});
+
+app.on('will-quit', () => {
+  soundApp.stop();
 });
 
 app.on('ready', () => {
@@ -255,12 +268,4 @@ app.on('ready', () => {
     menu = Menu.buildFromTemplate(template);
     mainWindow.setMenu(menu);
   }
-
-  // if (env.name !== 'test') {
-  //   soundApp.start();
-  // }
 });
-
-// app.on('will-quit', function() {
-//   soundApp.stop();
-// });

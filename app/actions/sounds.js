@@ -18,9 +18,6 @@ export function loadSounds(synthDefsDir) {
       let sounds = [];
 
       files.forEach((p) => {
-        // should be objects with synthdef descriptions
-        // loaded from ?
-        //
         if (path.extname(p) === '.json' && (p !== 'master.json')) {
           let fullpath = path.join(synthDefsDir, p);
           let data = jetpack.read(fullpath, 'json');
