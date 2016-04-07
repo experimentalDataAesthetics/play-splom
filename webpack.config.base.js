@@ -8,7 +8,7 @@ module.exports = {
     __dirname: true,
     __filename: true
   },
-  target: 'node',
+  target: 'electron',
   module: {
     loaders: [{
       test: /\.jsx?$/,
@@ -27,6 +27,10 @@ module.exports = {
   resolve: {
     extensions: ['', '.js', '.jsx'],
     packageMains: ['webpack', 'browser', 'web', 'browserify', ['jam', 'main'], 'main']
+  },
+  // https://github.com/webpack/webpack/issues/1260
+  resolveLoader: {
+    root: path.resolve('./node_modules')
   },
   plugins: [
 
