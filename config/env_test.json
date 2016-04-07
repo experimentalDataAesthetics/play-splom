@@ -1,5 +1,0 @@
-{
-  "name": "test",
-  "description": "environment variables for testing",
-  "synthDefsDir": "app/synthdefs"
-}

@@ -4,21 +4,23 @@ const _ = require('lodash');
 const path = require('path');
 const fs = require('fs');
 const Bacon = require('baconjs').Bacon;
-const env = require('./vendor/electron_boilerplate/env_config');
+import config from '../config';
+
 
 /**
- * env is loaded from config/env_(development|production|test).json
+ * config is loaded from config/(development|production|test).json
+ *
  * You can set options to pass in supercollider options,
  * specifically a path to a working sclang which will then be used
  * to compile synthDefs. If not set (the default) then the app will
- * load pre-compiled synthDefs from ./synthdefs
+ * only load pre-compiled synthDefs from ./synthdefs
  */
 
-const options = _.defaults(env.options || {}, {
+const options = _.defaults(config.get('supercolliderjs.options') || {}, {
   // sclang: path.join(__dirname, 'vendor/supercollider/osx/sclang'),
   // This copy was still not portable due to Qt dylib errors:
   // so it requires that a path to an external SuperCollider.app is supplied
-  // in config/env_development.json
+  // in config/development.json
   scsynth: path.join(__dirname, 'vendor/supercollider/osx/scsynth'),
   echo: false,
   debug: false,
@@ -26,7 +28,7 @@ const options = _.defaults(env.options || {}, {
   sclang_conf: null
 });
 
-const synthDefsDir = path.join(__dirname, '../', env.synthDefsDir);
+const synthDefsDir = path.join(__dirname, '../', config.get('synthDefsDir'));
 
 /**
  * Runs in the background.js process
