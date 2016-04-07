@@ -1,0 +1,12 @@
+
+.scatterplot {
+  cursor: crosshair;
+}
+
+.bg {
+  fill: transparent;
+}
+
+.scatterplot:hover .bg {
+  fill: rgba(217, 201, 3, 0.37);
+}

@@ -1,37 +1,41 @@
 
-// datasets
-export const SELECT_DATASET = 'SELECT_DATASET';
-export const SET_DATASETS = 'SET_DATASETS';
-export const LOAD_DATASET = 'LOAD_DATASET';
+var keyMirror = require('keyMirror');
 
-// sounds
-export const SET_SOUNDS = 'SET_SOUNDS';
-export const SELECT_SOUND = 'SELECT_SOUND';
+module.exports = keyMirror({
+  SELECT_DATASET: null,
+  SET_DATASETS: null,
+  LOAD_DATASET: null,
 
-export const SPAWN_SYNTH = 'SPAWN_SYNTH';
-export const SPAWN_SYNTHS = 'SPAWN_SYNTHS';
-export const SET_MASTER_CONTROLS = 'SET_MASTER_CONTROLS';
+  // sounds
+  SET_SOUNDS: null,
+  SELECT_SOUND: null,
 
-// mapping
-export const SET_MAPPING = 'SET_MAPPING';
-export const MAP_XY_TO_PARAM = 'MAP_XY_TO_PARAM';
-export const SET_MAPPING_RANGE = 'SET_MAPPING_RANGE';
-export const SET_PCA = 'SET_PCA';
+  SPAWN_SYNTH: null,
+  SPAWN_SYNTHS: null,
+  SET_MASTER_CONTROLS: null,
 
-// transport
-export const SET_PLAYING = 'SET_PLAYING';
-export const SET_RECORDING = 'SET_RECORDING';
+  // mapping
+  SET_MAPPING: null,
+  MAP_XY_TO_PARAM: null,
+  SET_MAPPING_RANGE: null,
+  SET_PCA: null,
 
-// interaction
-export const SHOW_BRUSH = 'SHOW_BRUSH';
-export const SET_POINTS_UNDER_BRUSH = 'SET_POINTS_UNDER_BRUSH';
-export const SET_LOOP = 'SET_LOOP';
+  // transport
+  SET_PLAYING: null,
+  SET_RECORDING: null,
 
-// ui
-export const FOCUS_SCATTERPLOT = 'FOCUS_SCATTERPLOT';
-export const ZOOM_SCATTERPLOT = 'ZOOM_SCATTERPLOT';
-export const SET_HOVERING = 'SET_HOVERING';
-export const MOUSE_MOVE = 'MOUSE_MOVE';
+  // interaction
+  SHOW_BRUSH: null,
+  SET_POINTS_UNDER_BRUSH: null,
+  SET_LOOP: null,
 
-// main
-export const OPEN_DATASET_DIALOG = 'OPEN_DATASET_DIALOG';
+  // ui
+  FOCUS_SCATTERPLOT: null,
+  ZOOM_SCATTERPLOT: null,
+  SET_HOVERING: null,
+  MOUSE_MOVE: null,
+
+  // main
+  OPEN_DATASET_DIALOG: null
+
+});

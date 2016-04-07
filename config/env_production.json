@@ -1,5 +1,0 @@
-{
-  "name": "production",
-  "description": "environment variables for production",
-  "synthDefsDir": "synthdefs"
-}
