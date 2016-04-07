@@ -3,6 +3,7 @@ const h = require('react-hyperscript');
 
 import Point from './Point';
 import {autoScale} from '../utils/mapping';
+import styles from './ScatterPlot.css';
 
 const RADIUS = 10;  // for now
 
@@ -68,7 +69,7 @@ export default class ScatterPlot extends React.Component {
       points: `0,0 0,${this.state.sideLength} ${this.state.sideLength},${this.state.sideLength}`,
       strokeWidth: 1,
       stroke: '#888888',  // need access to theme here
-      className: 'axis',
+      // className: 'axis',
       fill: 'none'
     });
 
@@ -77,7 +78,7 @@ export default class ScatterPlot extends React.Component {
             width: this.state.sideLength,
             x: 0,
             y: 0,
-            className: 'scatterplot__bg',
+            className: styles.bg,
 
             onMouseMove: (e) => {
               // clip if outside of my box
@@ -106,7 +107,7 @@ export default class ScatterPlot extends React.Component {
         y: p.y,
         radius,
         color: '#0000ff',  // get from theme
-        id: '' + i,
+        id: String(i),
         className: 'point'
       });
     }));
@@ -117,7 +118,7 @@ export default class ScatterPlot extends React.Component {
       transform: `translate(${this.props.xOffset}, ${this.props.yOffset})`,
       width: this.props.sideLength,
       height: this.props.sideLength,
-      className: 'scatterplot'
+      className: styles.scatterplot
     }, children);
   }
 

@@ -1,5 +1,6 @@
-const React = require('react');
-let h = require('react-hyperscript');
+import { Component } from 'react';
+import h from 'react-hyperscript';
+
 let connect = require('react-redux').connect;
 let RaisedButton = require('material-ui/lib/raised-button').default;
 
@@ -29,7 +30,7 @@ const mapDispatchToProps = (dispatch) => {
   };
 };
 
-class DatasetSelector extends React.Component {
+class DatasetSelector extends Component {
   render() {
     return h('div.dataset-selector', [
       h('h6', 'Datasets'),
