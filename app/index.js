@@ -3,10 +3,12 @@ import { render } from 'react-dom';
 import { Provider } from 'react-redux';
 import { Router, hashHistory } from 'react-router';
 import { syncHistoryWithStore } from 'react-router-redux';
+import injectTapEventPlugin from 'react-tap-event-plugin';
 import routes from './routes';
 import configureStore from './store/configureStore';
 // import './stylesheets/main.less';
 import './app.global.css';
+import { loadSounds } from './actions/sounds';
 import config from '../config';
 
 const store = configureStore();
@@ -26,7 +28,12 @@ import connectSoundApp from './sound/connectSoundApp';
 import callActionOnMain from './ipc/callActionOnMain';
 connectSoundApp(store, callActionOnMain);
 
-// don't need DOMContentLoaded anymore
+// Needed for onTouchTap and material-ui
+// Can go away when react 1.0 release
+// Check this repo:
+// https://github.com/zilverline/react-tap-event-plugin
+injectTapEventPlugin();
+
 render(
   <Provider store={store}>
     <Router history={history} routes={routes} />

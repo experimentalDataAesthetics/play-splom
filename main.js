@@ -28,7 +28,7 @@ soundApp.start();
 // connect two-way calling of actions
 // the other half is in app.js
 const ipcMain = require('electron').ipcMain;
-const handleActionOnMain = require('./app/ipc/handleActionOnMain').default;
+const handleActionOnMain = require('./app/ipc/handleActionOnMain');
 ipcMain.on('call-action-on-main', (event, payload) => {
   handleActionOnMain(event, payload, soundApp);
 });

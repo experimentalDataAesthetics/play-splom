@@ -9,7 +9,6 @@ var _createClass = function () { function defineProperties(target, props) { for 
 var _config = require('../../config');
 
 var _config2 = _interopRequireDefault(_config);
-console.log('config2', _config2);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -43,7 +42,8 @@ var options = _.defaults(_config2.default.supercolliderjs.options || {}, {
   sclang_conf: null
 });
 
-var synthDefsDir = path.join(__dirname, '../', _config2.default.synthDefsDir);
+var synthDefsDir = _config2.default.synthDefsDir;
+// path.join(__dirname, '../', config.synthDefsDir);
 
 /**
  * Runs in the background.js process
@@ -131,3 +131,4 @@ var SoundApp = function () {
 
 exports.default = SoundApp;
 module.exports = exports['default'];
+

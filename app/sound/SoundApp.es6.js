@@ -27,7 +27,7 @@ const options = _.defaults(config.supercolliderjs.options || {}, {
   sclang_conf: null
 });
 
-const synthDefsDir = path.join(__dirname, '../', config.synthDefsDir);
+const synthDefsDir = config.synthDefsDir;
 
 /**
  * Runs in the background.js process

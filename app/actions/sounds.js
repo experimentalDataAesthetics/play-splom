@@ -2,7 +2,9 @@ const fs = require('fs');
 const path = require('path');
 const jetpack = require('fs-jetpack');
 
-import {SET_SOUNDS, SELECT_SOUND, SPAWN_SYNTH, SET_MASTER_CONTROLS} from '../actionTypes';
+import {
+  SET_SOUNDS, SELECT_SOUND, SPAWN_SYNTH, SET_MASTER_CONTROLS
+} from '../actionTypes';
 import callActionOnMain from '../ipc/callActionOnMain';
 
 /**
@@ -15,12 +17,12 @@ export function loadSounds(synthDefsDir) {
         throw new Error(err);
       }
 
-      let sounds = [];
+      const sounds = [];
 
       files.forEach((p) => {
         if (path.extname(p) === '.json' && (p !== 'master.json')) {
-          let fullpath = path.join(synthDefsDir, p);
-          let data = jetpack.read(fullpath, 'json');
+          const fullpath = path.join(synthDefsDir, p);
+          const data = jetpack.read(fullpath, 'json');
           data.path = fullpath;
           sounds.push(data);
         }
