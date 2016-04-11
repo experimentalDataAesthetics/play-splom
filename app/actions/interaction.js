@@ -1,4 +1,4 @@
-import {SHOW_BRUSH, SET_POINTS_UNDER_BRUSH} from '../actionTypes';
+import { SHOW_BRUSH, SET_POINTS_UNDER_BRUSH } from '../actionTypes';
 
 export function showBrush(show, x, y) {
   return {

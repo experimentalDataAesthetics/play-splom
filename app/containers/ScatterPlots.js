@@ -59,11 +59,11 @@ class ScatterPlots extends React.Component {
 
             let sp = h(ScatterPlot, {
               dataset: this.props.dataset.data,
-              m: m,
-              n: n,
-              xName: xName,
-              yName: yName,
-              plotKey: plotKey,
+              m,
+              n,
+              xName,
+              yName,
+              plotKey,
               xOffset: x + margin,
               yOffset: y + margin,
               sideLength: sideLength - margin,

@@ -1,4 +1,4 @@
-import {spawnEventsFromBrush} from '../selectors/index';
+import { spawnEventsFromBrush } from '../selectors/index';
 
 /**
  * Runs in the renderer process.
@@ -20,14 +20,12 @@ function observeStore(store, select, onChange) {
     }
   }
 
-  let unsubscribe = store.subscribe(handleChange);
+  const unsubscribe = store.subscribe(handleChange);
   handleChange();
   return unsubscribe;
 }
 
-const getPointsEntering = (state) => {
-  return state.interaction.pointsEntering;
-};
+const getPointsEntering = (state) => state.interaction.pointsEntering;
 
 export default function connectSoundApp(store, callActionOnMain) {
   // call handler on change of pointsEntering
@@ -37,7 +35,7 @@ export default function connectSoundApp(store, callActionOnMain) {
     // for now: send using callActionOnMain
     // later: set to state.synth.spawnEvents
     // and let redux-electron-store copy it over
-    let synthEvents = spawnEventsFromBrush(state);
+    const synthEvents = spawnEventsFromBrush(state);
     if (synthEvents.length) {
       callActionOnMain({
         type: 'SPAWN_SYNTHS',
