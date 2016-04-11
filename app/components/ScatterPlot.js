@@ -1,8 +1,9 @@
 const React = require('react');
 const h = require('react-hyperscript');
+import { isEqual } from 'lodash';
 
 import Point from './Point';
-import {autoScale} from '../utils/mapping';
+import { autoScale } from '../utils/mapping';
 import styles from './ScatterPlot.css';
 
 const RADIUS = 10;  // for now
@@ -130,15 +131,19 @@ export default class ScatterPlot extends React.Component {
     // brush is too slow for now
     // this.props.showBrush(true, clientX, clientY);
     // diff from points that were under brush
-    let x = clientX - this.props.xOffset;
-    let y = clientY - this.props.yOffset;
-    // console.log('brush', x, y, this.props.xName, this.props.yName);
-    let minx = x - RADIUS;
-    let maxx = x + RADIUS;
-    let miny = y - RADIUS;
-    let maxy = y + RADIUS;
+    // this is screen
+    // and state is relative to this plot
+    // when did that change ?
+    // points have negative values ?
+    const x = clientX - this.props.xOffset;
+    const y = clientY - this.props.yOffset;
+    console.log('brush', x, y, this.props.xName, this.props.yName);
+    const minx = x - RADIUS;
+    const maxx = x + RADIUS;
+    const miny = y - RADIUS;
+    const maxy = y + RADIUS;
 
-    let pointsIn = [];
+    const pointsIn = [];
     this.state.points.forEach((p, i) => {
       if (
         (p.x >= minx) &&
@@ -148,13 +153,29 @@ export default class ScatterPlot extends React.Component {
         pointsIn.push(i);
       }
     });
-    this.props.setPointsUnderBrush(this.props.m, this.props.n, pointsIn);
+    this._setPointsIn(pointsIn);
   }
 
   _hover() {
-    this.props.setPointsUnderBrush(this.props.m, this.props.n, []);
+    this._setPointsIn([]);
     // console.log('hover');
     // this.props.showBrush(false);
     // console.log('hover', clientX, clientY, this.props.xName, this.props.yName);
+  }
+
+  _setPointsIn(pointsIn) {
+    // keeping some micro-state values in this.
+    // its not ui state, does not require a re-render
+    // and it is not application state.
+    // its just cacheing for performance
+    const next = {
+      m: this.props.m,
+      n: this.props.n,
+      pointsIn
+    };
+    if (!isEqual(this.last, next)) {
+      this.props.setPointsUnderBrush(this.props.m, this.props.n, pointsIn);
+      this.last = next;
+    }
   }
 }
