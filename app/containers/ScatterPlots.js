@@ -44,33 +44,35 @@ class ScatterPlots extends React.Component {
       let numFeatures = columnNames.length;
 
       let sideLength = (this.props.width - bottomPadding) / numFeatures;
-      for (let m = 0; m < numFeatures; m++) {
-        let x = m * sideLength;
-        for (let n = 0; n < numFeatures; n++) {
-          if (m >= n) {
-            continue;
+      if (sideLength > 0) {
+        for (let m = 0; m < numFeatures; m++) {
+          let x = m * sideLength;
+          for (let n = 0; n < numFeatures; n++) {
+            if (m >= n) {
+              continue;
+            }
+
+            let y = n * sideLength;
+            let plotKey = `${m}@${n}`;
+            let xName = columnNames[m];
+            let yName = columnNames[n];
+
+            let sp = h(ScatterPlot, {
+              dataset: this.props.dataset.data,
+              m: m,
+              n: n,
+              xName: xName,
+              yName: yName,
+              plotKey: plotKey,
+              xOffset: x + margin,
+              yOffset: y + margin,
+              sideLength: sideLength - margin,
+              showBrush: this.props.showBrush,
+              setPointsUnderBrush: this.props.setPointsUnderBrush
+            });
+
+            children.push(sp);
           }
-
-          let y = n * sideLength;
-          let plotKey = `${m}@${n}`;
-          let xName = columnNames[m];
-          let yName = columnNames[n];
-
-          let sp = h(ScatterPlot, {
-            dataset: this.props.dataset.data,
-            m: m,
-            n: n,
-            xName: xName,
-            yName: yName,
-            plotKey: plotKey,
-            xOffset: x + margin,
-            yOffset: y + margin,
-            sideLength: sideLength - margin,
-            showBrush: this.props.showBrush,
-            setPointsUnderBrush: this.props.setPointsUnderBrush
-          });
-
-          children.push(sp);
         }
       }
     }
