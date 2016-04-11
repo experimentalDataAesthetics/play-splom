@@ -37,12 +37,12 @@ export const getFeatures = createSelector(
     }
 
     return dataset.data.columnNames().map((name, i) => {
-      let data = dataset.data.column(name).data;
-      let first = data[0];
-      let isDate = _.isDate(first);
-      let isString = _.isString(first);
-      let params = {
-        name: name,
+      const data = dataset.data.column(name).data;
+      const first = data[0];
+      const isDate = _.isDate(first);
+      const isString = _.isString(first);
+      const params = {
+        name,
         index: i,
         values: data
       };
@@ -52,7 +52,7 @@ export const getFeatures = createSelector(
         return params;
       }
 
-      let extent = d3.extent(data);
+      const extent = d3.extent(data);
       params.min = extent[0];
       params.max = extent[1];
 
@@ -74,39 +74,37 @@ export const getFeatures = createSelector(
  */
 export const getNormalizedPoints = createSelector(
   [getFeatures],
-  (features) => {
-    return (features || []).map((feature) => {
-      var scaledValues;
-      if (feature.typ === 'number') {
-        // subtract mean
-        // divide by range
-        // or:
-        //  divide by std
-        //  clip
-        let range = feature.max - feature.min;
-        if (range === 0) {
-          range = 1;
-        }
-
-        let normalize = (v) => {
-          return (v - feature.mean) / range + 0.5;
-        };
-
-        scaledValues = feature.values.map(normalize);
-      } else {
-        // this handles dates and ordinal/class/categories
-        let scale = autoScale(feature.values);
-        scaledValues = features.values.map(scale);
-      }
-
-      return {
-        name: feature.name,
-        index: feature.index,
-        values: scaledValues
-      };
-    });
-  }
+  (features) => (features || []).map(normalizePoints)
 );
+
+export function normalizePoints(feature) {
+  let scaledValues;
+  if (feature.typ === 'number') {
+    // subtract mean
+    // divide by range
+    // or:
+    //  divide by std
+    //  clip
+    let range = feature.max - feature.min;
+    if (range === 0) {
+      range = 1;
+    }
+
+    const isNumber = (v) => _.isNumber(v) && _.isFinite(v);
+    const normalize = (v) => ((isNumber(v) ? v : feature.mean) - feature.mean) / range + 0.5;
+    scaledValues = feature.values.map(normalize);
+  } else {
+    // this handles dates and ordinal/class/categories
+    const scale = autoScale(feature.values);
+    scaledValues = feature.values.map(scale);
+  }
+
+  return {
+    name: feature.name,
+    index: feature.index,
+    values: scaledValues
+  };
+}
 
 /**
  * Normal function; not a selector.
@@ -118,28 +116,28 @@ export const calcPointsEntering = (pointsUnderBrush, previousPointsUnderBrush) =
 function makeXYMapper(mapping, sound, param, xy) {
   if (param) {
     // a custom mapper is set (not yet implemented, always blank)
-    let mapperOptions = _.get(mapping, `xy.${xy}.mapper`);
-    if (!mapperOptions) {
-      let control = _.find(sound.controls, {name: param});
+    let spec = _.get(mapping, `xy.${xy}.mapper`);
+    if (!spec) {
+      const control = _.find(sound.controls, { name: param });
       if (!control.spec) {
         // no spec so just return the defaultValue always
         if (control.defaultValue) {
-          return function() {
+          return function defaultValue() {
             return control.defaultValue;
           };
         } else {
           // no way to map this one
           // just guess with 0 though this can break things
-          return function() {
+          return function zero() {
             return 0;
           };
         }
       }
 
-      mapperOptions = control.spec;
+      spec = control.spec;
     }
 
-    return makeMapper(mapperOptions);
+    return makeMapper(spec);
   }
 }
 
@@ -148,15 +146,18 @@ function makeXYMapper(mapping, sound, param, xy) {
  * Needs the full state
  */
 export function spawnEventsFromBrush(state) {
-  let pointsUnderBrush = getPointsUnderBrush(state) || [];
-  let previousPointsUnderBrush = getPreviousPointsUnderBrush(state) || [];
-  let pointsEntering = calcPointsEntering(pointsUnderBrush, previousPointsUnderBrush);
-  let sound = getSound(state);
-  let mapping = getMapping(state);
-  let interaction = getInteraction(state);
-  let npoints = getNormalizedPoints(state);
+  const pointsUnderBrush = getPointsUnderBrush(state) || [];
+  const previousPointsUnderBrush = getPreviousPointsUnderBrush(state) || [];
+  const pointsEntering = calcPointsEntering(pointsUnderBrush, previousPointsUnderBrush);
+  const interaction = getInteraction(state);
+  const npoints = getNormalizedPoints(state);
 
-  return xyPointsEnteringToSynthEvents(pointsEntering, interaction.m, interaction.n, sound, mapping, npoints);
+  return xyPointsEnteringToSynthEvents(pointsEntering,
+    interaction.m,
+    interaction.n,
+    getSound(state),
+    getMapping(state),
+    npoints);
 }
 
 export function xyPointsEnteringToSynthEvents(pointsEntering, m, n, sound, mapping, npoints) {
@@ -169,15 +170,15 @@ export function xyPointsEnteringToSynthEvents(pointsEntering, m, n, sound, mappi
   }
 
   // these only change when mapping changes
-  let paramX = _.get(mapping, 'xy.x.param');
-  let paramY = _.get(mapping, 'xy.y.param');
-  let mapperX = makeXYMapper(mapping, sound, paramX, 'x');
-  let mapperY = makeXYMapper(mapping, sound, paramY, 'y');
+  const paramX = _.get(mapping, 'xy.x.param');
+  const paramY = _.get(mapping, 'xy.y.param');
+  const mapperX = makeXYMapper(mapping, sound, paramX, 'x');
+  const mapperY = makeXYMapper(mapping, sound, paramY, 'y');
 
   return pointsEntering.map((index) => {
-    let x = npoints[m].values[index];
-    let y = npoints[n].values[index];
-    let args = {};
+    const x = npoints[m].values[index];
+    const y = npoints[n].values[index];
+    const args = {};
     if (paramX) {
       args[paramX] = mapperX(x);
     }
@@ -188,7 +189,7 @@ export function xyPointsEnteringToSynthEvents(pointsEntering, m, n, sound, mappi
 
     return {
       defName: sound.name,
-      args: args
+      args
     };
   });
 }
