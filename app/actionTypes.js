@@ -28,6 +28,7 @@ module.exports = keyMirror({
   SHOW_BRUSH: null,
   SET_POINTS_UNDER_BRUSH: null,
   SET_LOOP: null,
+  TOGGLE_LOOP_MODE: null,
 
   // ui
   FOCUS_SCATTERPLOT: null,

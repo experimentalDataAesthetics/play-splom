@@ -3,7 +3,9 @@ let h = require('react-hyperscript');
 let connect = require('react-redux').connect;
 
 import ScatterPlot from '../components/ScatterPlot';
-import {showBrush, setPointsUnderBrush} from '../actions/interaction';
+import {
+  showBrush, setPointsUnderBrush, toggleLoopMode
+} from '../actions/interaction';
 
 const mapStateToProps = (state) => {
   return {
@@ -19,6 +21,10 @@ const mapDispatchToProps = (dispatch) => {
 
     setPointsUnderBrush: (m, n, indices) => {
       dispatch(setPointsUnderBrush(m, n, indices));
+    },
+
+    toggleLoopMode: (m, n) => {
+      dispatch(toggleLoopMode(m, n));
     }
   };
 };
@@ -68,7 +74,8 @@ class ScatterPlots extends React.Component {
               yOffset: y + margin,
               sideLength: sideLength - margin,
               showBrush: this.props.showBrush,
-              setPointsUnderBrush: this.props.setPointsUnderBrush
+              setPointsUnderBrush: this.props.setPointsUnderBrush,
+              toggleLoopMode: this.props.toggleLoopMode
             });
 
             children.push(sp);

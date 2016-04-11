@@ -1,4 +1,8 @@
-import { SHOW_BRUSH, SET_POINTS_UNDER_BRUSH } from '../actionTypes';
+import {
+  SHOW_BRUSH,
+  SET_POINTS_UNDER_BRUSH,
+  TOGGLE_LOOP_MODE
+} from '../actionTypes';
 
 export function showBrush(show, x, y) {
   return {
@@ -18,6 +22,16 @@ export function setPointsUnderBrush(m, n, indices) {
       m,
       n,
       indices
+    }
+  };
+}
+
+export function toggleLoopMode(m, n) {
+  return {
+    type: TOGGLE_LOOP_MODE,
+    payload: {
+      m,
+      n
     }
   };
 }
