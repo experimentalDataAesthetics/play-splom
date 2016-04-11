@@ -1,33 +1,20 @@
-const React = require('react');
-let h = require('react-hyperscript');
-let Dimensions = require('react-dimensions');
+import { Component } from 'react';
+import h from 'react-hyperscript';
+import Dimensions from 'react-dimensions';
+import { centeredSquareMargin } from '../utils/layout';
 
 /**
  * Allocates the largest possible square area and places its child top and centered.
  *
  * There should only be one child
  */
-class CenteredSquareFrame extends React.Component {
+class CenteredSquareFrame extends Component {
 
   render() {
     let cw = this.props.containerWidth || 10;
     let ch = this.props.containerHeight || 10;
-    let innerLength = Math.min(cw, ch);
-    var widthMargin = cw - innerLength;
-    if (widthMargin) {
-      widthMargin = widthMargin / 2;
-    }
 
-    var heightMargin = ch - innerLength;
-    if (heightMargin) {
-      heightMargin = heightMargin / 2;
-    }
-
-    let style = {
-      margin: `0 ${widthMargin}px ${heightMargin}px`,
-      width: `${innerLength}px`,
-      height: `${innerLength}px`
-    };
+    let style = centeredSquareMargin(cw, ch);
 
     return h('div.centered-square-frame', {style}, this.props.children);
   }
