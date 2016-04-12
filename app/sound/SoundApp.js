@@ -43,7 +43,6 @@ var options = _.defaults(_config2.default.supercolliderjs.options || {}, {
 });
 
 var synthDefsDir = _config2.default.synthDefsDir;
-// path.join(__dirname, '../', config.synthDefsDir);
 
 /**
  * Runs in the background.js process
@@ -58,6 +57,7 @@ var SoundApp = function () {
 
     this.synthStream = new Bacon.Bus();
     this.masterControlStream = new Bacon.Bus();
+    this.loopModeEventStream = new Bacon.Bus();
     this.masterArgs = {
       def: 'master',
       args: {
@@ -90,7 +90,9 @@ var SoundApp = function () {
 
         _this.root = sc.h(['sclang', options, [['scserver', options, defs.concat([['group', [
         // needs to mix back to master
-        ['audiobus', { numChannels: 2 }, [['synthstream', { stream: _this.synthStream }], ['synth', _this.masterArgs, [['synthcontrol', {
+        ['audiobus', { numChannels: 2 }, [['synthstream', { stream: _this.synthStream }], ['syntheventlist', {
+          updateStream: _this.loopModeEventStream
+        }], ['synth', _this.masterArgs, [['synthcontrol', {
           stream: _this.masterControlStream
         }]]]]]]]])]]]);
 
@@ -119,10 +121,26 @@ var SoundApp = function () {
         return _this2.synthStream.push(synthEvent);
       });
     }
+
+    /**
+     * events: epoch:
+     */
+
+  }, {
+    key: 'setLoop',
+    value: function setLoop(payload) {
+      this.clearSched();
+      this.loopModeEventStream.push(payload);
+    }
   }, {
     key: 'setMasterControls',
     value: function setMasterControls(event) {
       this.masterControlStream.push(event);
+    }
+  }, {
+    key: 'clearSched',
+    value: function clearSched() {
+      // console.log(this.player);
     }
   }]);
 

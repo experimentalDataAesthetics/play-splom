@@ -40,6 +40,7 @@ export default class SoundApp {
   constructor() {
     this.synthStream = new Bacon.Bus();
     this.masterControlStream = new Bacon.Bus();
+    this.loopModeEventStream = new Bacon.Bus();
     this.masterArgs = {
       def: 'master',
       args: {
@@ -75,6 +76,9 @@ export default class SoundApp {
                 // needs to mix back to master
                 ['audiobus', { numChannels: 2 }, [
                   ['synthstream', { stream: this.synthStream }],
+                  ['syntheventlist', {
+                    updateStream: this.loopModeEventStream
+                  }],
                   ['synth', this.masterArgs, [
                     ['synthcontrol', {
                       stream: this.masterControlStream
@@ -105,7 +109,19 @@ export default class SoundApp {
     synthEvents.forEach((synthEvent) => this.synthStream.push(synthEvent));
   }
 
+  /**
+   * events: epoch:
+   */
+  setLoop(payload) {
+    this.clearSched();
+    this.loopModeEventStream.push(payload);
+  }
+
   setMasterControls(event) {
     this.masterControlStream.push(event);
+  }
+
+  clearSched() {
+    // console.log(this.player);
   }
 }

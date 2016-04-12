@@ -216,4 +216,30 @@ describe('selectors', () => {
     });
   });
 
+  describe('loopModeSynthEventList', function() {
+    const loopMode = {
+      m: 0,
+      n: 1,
+      looping: true,
+      loopTime: 10.0
+    };
+
+    it('should return a list of events for SynthEventList updateStream', function() {
+      const sel = selectors.loopModeSynthEventList(loopMode, sound, npoints, mapping);
+      expect(sel.length).to.equal(npoints[0].values.length);
+      let first = sel[0];
+      expect(first.defName).to.be.a('string');
+      expect(Object.keys(first.args).length).to.equal(2);
+    });
+
+    it('should return null if no sound', function() {
+      const sel = selectors.loopModeSynthEventList(loopMode, null, npoints, mapping);
+      expect(sel.length).to.equal(0);
+    });
+
+    it('should return null if not looping', function() {
+      const sel = selectors.loopModeSynthEventList({looping: false}, sound, npoints, mapping);
+      expect(sel.length).to.equal(0);
+    });
+  });
 });
