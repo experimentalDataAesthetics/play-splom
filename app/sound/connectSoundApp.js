@@ -1,4 +1,12 @@
-import { spawnEventsFromBrush } from '../selectors/index';
+import {
+  SPAWN_SYNTHS,
+  SET_LOOP
+} from '../actionTypes';
+
+import {
+  spawnEventsFromBrush,
+  loopModePayload
+} from '../selectors/index';
 
 /**
  * Runs in the renderer process.
@@ -12,8 +20,8 @@ function observeStore(store, select, onChange) {
   let currentState;
 
   function handleChange() {
-    let state = store.getState();
-    let nextState = select(state);
+    const state = store.getState();
+    const nextState = select(state);
     if (nextState !== currentState) {
       currentState = nextState;
       onChange(state);
@@ -26,6 +34,7 @@ function observeStore(store, select, onChange) {
 }
 
 const getPointsEntering = (state) => state.interaction.pointsEntering;
+const getLoopMode = (state) => state.interaction.loopMode;
 
 export default function connectSoundApp(store, callActionOnMain) {
   // call handler on change of pointsEntering
@@ -38,9 +47,20 @@ export default function connectSoundApp(store, callActionOnMain) {
     const synthEvents = spawnEventsFromBrush(state);
     if (synthEvents.length) {
       callActionOnMain({
-        type: 'SPAWN_SYNTHS',
+        type: SPAWN_SYNTHS,
         payload: synthEvents
       });
     }
+  });
+
+  observeStore(store, getLoopMode, (state) => {
+    // on toggleLoopMode collect and send the SynthEventList to the loop player
+    // or cancel it
+    const payload = loopModePayload(state);
+    console.log(payload);
+    callActionOnMain({
+      type: SET_LOOP,
+      payload
+    });
   });
 }

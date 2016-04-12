@@ -75,31 +75,51 @@ export default class ScatterPlot extends React.Component {
     });
 
     const bg = h('rect', {
-            height: this.state.sideLength,
-            width: this.state.sideLength,
-            x: 0,
-            y: 0,
-            className: styles.bg,
+      height: this.state.sideLength,
+      width: this.state.sideLength,
+      x: 0,
+      y: 0,
+      className: styles.bg,
 
-            onMouseMove: (e) => {
-              // clip if outside of my box
-              if (e.buttons) {
-                this._brush(e.clientX, e.clientY);
-              } else {
-                this._hover(e.clientX, e.clientY);
-              }
-            },
+      // onClick: (e) => {
+      //   if (e.buttons) {
+      //     if (e.metaKey) {
+      //       // toggle loop mode
+      //       this.props.toggleLoopMode(this.props.m, this.props.n);
+      //     } else {
+      //       this._brush(e.clientX, e.clientY);
+      //     }
+      //   }
+      // },
 
-            onMouseDown: (e) => {
-              if (e.buttons) {
-                this._brush(e.clientX, e.clientY);
-              }
-            },
+      onMouseDown: (e) => {
+        if (e.buttons) {
+          if (e.metaKey) {
+            // toggle loop mode
+            this.props.toggleLoopMode(this.props.m, this.props.n);
+          } else {
+            this._brush(e.clientX, e.clientY);
+          }
+        }
+      },
 
-            onMouseUp: (e) => {
-              this._hover(e.clientX, e.clientY);
-            }
-          });
+      onMouseMove: (e) => {
+        if (!e.metaKey) {
+          if (e.buttons) {
+            this._brush(e.clientX, e.clientY);
+          } else {
+            // only needs to send it once to clear it
+            this._hover(e.clientX, e.clientY);
+          }
+        }
+      },
+
+      onMouseUp: (e) => {
+        if (!e.metaKey) {
+          this._hover(e.clientX, e.clientY);
+        }
+      }
+    });
 
     const radius = this.state.sideLength < 100 ? 1 : 3;
     const points = h('g', this.state.points.map((p, i) => {
@@ -113,7 +133,7 @@ export default class ScatterPlot extends React.Component {
       });
     }));
 
-    const children = [axis, bg, points];
+    const children = [bg, axis, points];
 
     return h('g', {
       transform: `translate(${this.props.xOffset}, ${this.props.yOffset})`,
@@ -137,7 +157,6 @@ export default class ScatterPlot extends React.Component {
     // points have negative values ?
     const x = clientX - this.props.xOffset;
     const y = clientY - this.props.yOffset;
-    console.log('brush', x, y, this.props.xName, this.props.yName);
     const minx = x - RADIUS;
     const maxx = x + RADIUS;
     const miny = y - RADIUS;

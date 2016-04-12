@@ -38,6 +38,9 @@ function handleActionOnMain(event, action, soundApp) {
     case _actionTypes.SET_MASTER_CONTROLS:
       soundApp.setMasterControls(action.payload);
       break;
+    case _actionTypes.SET_LOOP:
+      soundApp.setLoop(action.payload);
+      break;
     // FREE_ALL
     // SET_SEQUENCE
     default:

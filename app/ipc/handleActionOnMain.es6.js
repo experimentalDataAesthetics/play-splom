@@ -1,6 +1,11 @@
 const dialog = require('electron').dialog;
 import {
-  OPEN_DATASET_DIALOG, LOAD_DATASET, SET_MASTER_CONTROLS, SPAWN_SYNTH, SPAWN_SYNTHS
+  OPEN_DATASET_DIALOG,
+  LOAD_DATASET,
+  SET_MASTER_CONTROLS,
+  SPAWN_SYNTH,
+  SPAWN_SYNTHS,
+  SET_LOOP
 } from '../actionTypes';
 
 /**
@@ -30,6 +35,9 @@ export default function handleActionOnMain(event, action, soundApp) {
       break;
     case SET_MASTER_CONTROLS:
       soundApp.setMasterControls(action.payload);
+      break;
+    case SET_LOOP:
+      soundApp.setLoop(action.payload);
       break;
     // FREE_ALL
     // SET_SEQUENCE

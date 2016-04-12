@@ -4,19 +4,21 @@ const _ = require('lodash');
 const map = require('supercolliderjs').map;
 
 const getDataset = (state) => state.dataset;
-const getPointsUnderBrush = (state) => _.get(state, 'interaction.pointsUnderBrush', []);
-const getPreviousPointsUnderBrush = (state) => _.get(state, 'interaction.previousPointsUnderBrush', []);
+const getPointsUnderBrush =
+  (state) => _.get(state, 'interaction.pointsUnderBrush', []);
+const getPreviousPointsUnderBrush =
+  (state) => _.get(state, 'interaction.previousPointsUnderBrush', []);
 const getInteraction = (state) => state.interaction || {};
 const getSoundName = (state) => state.sound;
 const getSounds = (state) => state.sounds;
 const getMapping = (state) => state.mapping || {};
 
-import {autoScale} from '../utils/mapping';
+import { autoScale } from '../utils/mapping';
 
 export const getSound = createSelector(
   [getSoundName, getSounds],
   (soundName, sounds) => {
-    for (let sound of sounds) {
+    for (const sound of sounds) {
       if (sound.name === soundName) {
         return sound;
       }
@@ -109,9 +111,8 @@ export function normalizePoints(feature) {
 /**
  * Normal function; not a selector.
  */
-export const calcPointsEntering = (pointsUnderBrush, previousPointsUnderBrush) => {
-  return _.difference(pointsUnderBrush || [], previousPointsUnderBrush || []);
-};
+export const calcPointsEntering = (pointsUnderBrush, previousPointsUnderBrush) =>
+  _.difference(pointsUnderBrush || [], previousPointsUnderBrush || []);
 
 function makeXYMapper(mapping, sound, param, xy) {
   if (param) {
@@ -205,4 +206,97 @@ export function makeMapper(spec) {
     default:
       return map.linear(spec);
   }
+}
+
+/**
+ * Builds the payload for SET_LOOP action
+ */
+export function loopModePayload(state) {
+  const loopMode = state.interaction.loopMode;
+  const sound = getSound(state);
+  const npoints = getNormalizedPoints(state);
+  const mapping = getMapping(state);
+  return {
+    events: loopModeSynthEventList(loopMode, sound, npoints, mapping),
+    epoch: _.now() + 300
+  };
+}
+
+/**
+ * Returns a dryadic json document
+ *
+ * ['syntheventlist', {
+   defaultParams: {
+     defName: 'blip',
+     args: {}
+   },
+   events: [
+     {
+       time:
+       args: {}
+     }
+   ]
+  }]
+ */
+// export function loopModeSynthEventList(loopMode, sound, npoints, mapping) {
+//   const loopTime = loopMode.loopTime || 10.0;
+//   if (loopMode.looping && sound) {
+//     // create list from m n npoints mapping
+//     return [
+//       'syntheventlist',
+//       {
+//         defaultParams: {
+//           defName: sound.name,
+//           args: {}  // fixed args
+//         },
+//         events: loopModeEvents(loopMode.m, loopMode.n, npoints, mapping, sound, loopTime)
+//       }
+//     ];
+//   } else {
+//     return null;  // delete current playing loop, replace with nothing
+//   }
+// }
+
+export function loopModeSynthEventList(loopMode, sound, npoints, mapping) {
+  const loopTime = loopMode.loopTime || 10.0;
+  if (loopMode.looping && sound) {
+    // create list from m n npoints mapping
+    return loopModeEvents(loopMode.m, loopMode.n, npoints, mapping, sound, loopTime);
+  } else {
+    return [];
+  }
+}
+
+export function loopModeEvents(m, n, npoints, mapping, sound, loopTime) {
+  // now you have time and x doing the same movement
+  // it will accentuate it I guess
+  const paramX = _.get(mapping, 'xy.x.param');
+  const paramY = _.get(mapping, 'xy.y.param');
+
+  const timeSpec = {
+    warp: 'lin',
+    minval: 0.0,
+    maxval: loopTime
+  };
+  const timeMapper = makeMapper(timeSpec);
+  const mapperX = makeXYMapper(mapping, sound, paramX, 'x');
+  const mapperY = makeXYMapper(mapping, sound, paramY, 'y');
+
+  return npoints[m].values.map((x, i) => {
+    const y = npoints[n].values[i];
+    const args = {};
+    if (paramX) {
+      args[paramX] = mapperX(x);
+    }
+
+    if (paramY) {
+      args[paramY] = mapperY(y);
+    }
+
+    return {
+      time: timeMapper(x),
+      defName: sound.name,
+      args
+    };
+  });
 }

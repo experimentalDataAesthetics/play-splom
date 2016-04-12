@@ -13,6 +13,7 @@ module.exports = keyMirror({
   SPAWN_SYNTH: null,
   SPAWN_SYNTHS: null,
   SET_MASTER_CONTROLS: null,
+  SET_LOOP: null,
 
   // mapping
   SET_MAPPING: null,
@@ -27,7 +28,7 @@ module.exports = keyMirror({
   // interaction
   SHOW_BRUSH: null,
   SET_POINTS_UNDER_BRUSH: null,
-  SET_LOOP: null,
+  TOGGLE_LOOP_MODE: null,
 
   // ui
   FOCUS_SCATTERPLOT: null,
