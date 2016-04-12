@@ -11,7 +11,14 @@
     "react/prefer-stateless-function": 0,
     "comma-dangle": 0,
     "no-use-before-define": 0,
-    "consistent-return": 0
+    "consistent-return": 0,
+    "no-else-return": 0,
+    "func-names": 1,
+    "prefer-arrow-callback": 1,
+    "space-before-function-paren": 0,
+    "padded-blocks": 0,
+    "prefer-const": 1,
+    "object-curly-spacing": 0
   },
   "plugins": [
     "react"
