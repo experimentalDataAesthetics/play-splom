@@ -81,16 +81,16 @@ export default class ScatterPlot extends React.Component {
       y: 0,
       className: styles.bg,
 
-      onMouseMove: (e) => {
-        if (!e.metaKey) {
-          if (e.buttons) {
-            this._brush(e.clientX, e.clientY);
-          } else {
-            // only needs to send it once to clear it
-            this._hover(e.clientX, e.clientY);
-          }
-        }
-      },
+      // onClick: (e) => {
+      //   if (e.buttons) {
+      //     if (e.metaKey) {
+      //       // toggle loop mode
+      //       this.props.toggleLoopMode(this.props.m, this.props.n);
+      //     } else {
+      //       this._brush(e.clientX, e.clientY);
+      //     }
+      //   }
+      // },
 
       onMouseDown: (e) => {
         if (e.buttons) {
@@ -103,8 +103,21 @@ export default class ScatterPlot extends React.Component {
         }
       },
 
+      onMouseMove: (e) => {
+        if (!e.metaKey) {
+          if (e.buttons) {
+            this._brush(e.clientX, e.clientY);
+          } else {
+            // only needs to send it once to clear it
+            this._hover(e.clientX, e.clientY);
+          }
+        }
+      },
+
       onMouseUp: (e) => {
-        this._hover(e.clientX, e.clientY);
+        if (!e.metaKey) {
+          this._hover(e.clientX, e.clientY);
+        }
       }
     });
 
@@ -120,7 +133,7 @@ export default class ScatterPlot extends React.Component {
       });
     }));
 
-    const children = [axis, bg, points];
+    const children = [bg, axis, points];
 
     return h('g', {
       transform: `translate(${this.props.xOffset}, ${this.props.yOffset})`,
