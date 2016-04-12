@@ -206,3 +206,66 @@ export function makeMapper(spec) {
       return map.linear(spec);
   }
 }
+
+/**
+ * events
+ * loopTime
+ */
+export function loopModePayload(state) {
+  const loopMode = state.interaction.loopMode;
+  const payload = {
+    loopTime: loopMode.loopTime || 1
+  };
+  const sound = getSound(state);
+
+  if (loopMode.looping && sound) {
+    // create list from m n npoints mapping
+    const npoints = getNormalizedPoints(state);
+    const mapping = getMapping(state);
+    payload.events = loopModeEvents(
+      loopMode.m,
+      loopMode.n,
+      npoints,
+      mapping,
+      sound,
+      payload.loopTime);
+  } else {
+    payload.events = [];
+  }
+
+  return payload;
+}
+
+export function loopModeEvents(m, n, npoints, mapping, sound, loopTime) {
+  // now you have time and x doing the same movement
+  // it will accentuate it I guess
+  const paramX = _.get(mapping, 'xy.x.param');
+  const paramY = _.get(mapping, 'xy.y.param');
+
+  const timeSpec = {
+    warp: 'lin',
+    minval: 0.0,
+    maxval: loopTime
+  };
+  const timeMapper = makeMapper(timeSpec);
+  const mapperX = makeXYMapper(mapping, sound, paramX, 'x');
+  const mapperY = makeXYMapper(mapping, sound, paramY, 'y');
+
+  return npoints[m].values.map((x, i) => {
+    const y = npoints[n].values[i];
+    const args = {};
+    if (paramX) {
+      args[paramX] = mapperX(x);
+    }
+
+    if (paramY) {
+      args[paramY] = mapperY(y);
+    }
+
+    return {
+      defName: sound.name,
+      args,
+      time: timeMapper(x)
+    };
+  });
+}

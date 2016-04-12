@@ -2,7 +2,7 @@
 import {
   expect
 } from 'chai';
-// import { spy } from 'sinon';
+// import { spy, stub } from 'sinon';
 import * as selectors from '../../app/selectors/index';
 import * as _ from 'lodash';
 
@@ -110,41 +110,43 @@ describe('selectors', () => {
     ]
   };
 
+  const npoints = [{
+    name: 'a',
+    index: 0,
+    values: [0, 0.25, 0.5, 1.0]
+  }, {
+    name: 'b',
+    index: 1,
+    values: [0, 0.25, 0.5, 1.0]
+  }, {
+    name: 'c',
+    index: 2,
+    values: [0, 0.25, 0.5, 1.0]
+  }];
+
+  const mapping = {
+    xy: {
+      x: {
+        param: 'pan',
+        mapper: {
+          rate: 'control',
+          minval: 0.25,
+          maxval: 0.75
+        }
+      },
+      y: {
+        param: 'wobble',
+        mapper: {
+          rate: 'control',
+          minval: 0.25,
+          maxval: 0.75
+        }
+      }
+    }
+  };
+
   describe('xyPointsEnteringToSynthEvents', () => {
     it('should return synth events', () => {
-      const npoints = [{
-        name: 'a',
-        index: 0,
-        values: [0, 0.25, 0.5, 1.0]
-      }, {
-        name: 'b',
-        index: 1,
-        values: [0, 0.25, 0.5, 1.0]
-      }, {
-        name: 'c',
-        index: 2,
-        values: [0, 0.25, 0.5, 1.0]
-      }];
-      const mapping = {
-        xy: {
-          x: {
-            param: 'pan',
-            mapper: {
-              rate: 'control',
-              minval: 0.25,
-              maxval: 0.75
-            }
-          },
-          y: {
-            param: 'wobble',
-            mapper: {
-              rate: 'control',
-              minval: 0.25,
-              maxval: 0.75
-            }
-          }
-        }
-      };
       const synths = selectors.xyPointsEnteringToSynthEvents([1, 3],
         0,
         1,
@@ -172,9 +174,46 @@ describe('selectors', () => {
         std: 9.958246164193104
       };
 
-      const npoints = selectors.normalizePoints(feature);
-      const all = _.every(npoints.values, (v) => v >= 0.0 && v <= 1.0);
+      const npoints2 = selectors.normalizePoints(feature);
+      const all = _.every(npoints2.values, (v) => v >= 0.0 && v <= 1.0);
       expect(all).to.equal(true);
     });
   });
+
+  // describe('loopModePayload', function() {
+  //   let state = {
+  //     sounds: [sound],
+  //     sound: sound.name,
+  //     interaction: {
+  //       loopMode: {
+  //         looping: true,
+  //         m: 0,
+  //         n: 1,
+  //         loopTime: 10.0
+  //       }
+  //     }
+  //   };
+  //   let st = stub(selectors, 'getNormalizedPoints').returns(npoints);
+  //   selectors.getNormalizedPoints = st;
+  //
+  //   console.log('giviein', npoints);
+  //
+  //   let payload = selectors.loopModePayload(state);
+  //   expect(payload).to.be.a('object');
+  // });
+
+  describe('loopModeEvents', function() {
+    it('should return an array of objects', function() {
+      const loopTime = 10.0;
+      const events = selectors.loopModeEvents(0, 1, npoints, mapping, sound, loopTime);
+
+      // expect(events).to.be.a('array');
+      expect(events.length).to.equal(npoints[0].values.length);
+      let first = events[0];
+      expect(first.defName).to.be.a('string');
+      expect(first.args).to.be.a('object');
+      expect(first.time).to.be.a('number');
+    });
+  });
+
 });
