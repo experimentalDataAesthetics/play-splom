@@ -1,19 +1,25 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { setWindowSize } from '../actions/ui';
+import MainLayout from '../containers/MainLayout';
 // import { debounce } from 'lodash';
 
-import Sidebar from './Sidebar';
-import SVGFrame from './SVGFrame';
-import { centeredSquare } from '../utils/layout';
-import styles from './Main.css';
+const mapStateToProps = null;
 
-const SIDEBAR_WIDTH = 300;
+const mapDispatchToProps = (dispatch) => {
+  return {
+    setWindowSize: (size) => {
+      dispatch(setWindowSize(size));
+    }
+  };
+};
 
-export default class Main extends Component {
+class Main extends Component {
+
   componentDidMount() {
     // this._debouncedHandleResize = debounce(() => this.handleResize(), 50);
     this._debouncedHandleResize = () => this.handleResize();
     window.addEventListener('resize', this._debouncedHandleResize);
-    this.handleResize();
   }
 
   componentWillUnmount() {
@@ -21,46 +27,17 @@ export default class Main extends Component {
   }
 
   handleResize() {
-    this.setState({
+    this.props.setWindowSize({
       width: window.innerWidth,
       height: window.innerHeight
     });
   }
 
   render() {
-    const svgWidth = this.state.width - SIDEBAR_WIDTH;
-    const sideBarStyle = {
-      position: 'absolute',
-      left: svgWidth,
-      right: this.state.width,
-      width: SIDEBAR_WIDTH,
-      top: 0,
-      bottom: this.state.height
-    };
-    let svgStyle;
-
-    if (svgWidth < 600) {
-      svgStyle = centeredSquare(this.state.width, this.state.height);
-      return (
-        <section className={styles.main}>
-          <div style={svgStyle}>
-            <SVGFrame containerWidth={svgStyle.width} containerHeight={svgStyle.height} />
-          </div>
-        </section>
-      );
-    }
-
-    svgStyle = centeredSquare(svgWidth, this.state.height);
-
     return (
-      <section className={styles.main}>
-        <div style={svgStyle}>
-          <SVGFrame containerWidth={svgStyle.width} containerHeight={svgStyle.height} />
-        </div>
-        <div style={sideBarStyle}>
-          <Sidebar />
-        </div>
-      </section>
+      <MainLayout />
     );
   }
 }
+
+export default connect(mapStateToProps, mapDispatchToProps)(Main);

@@ -1,15 +1,26 @@
 const React = require('react');
-let h = require('react-hyperscript');
+import h from 'react-hyperscript';
 let connect = require('react-redux').connect;
+import * as _ from 'lodash';
 
 import ScatterPlot from '../components/ScatterPlot';
 import {
-  showBrush, setPointsUnderBrush, toggleLoopMode
+  showBrush,
+  setPointsUnderBrush,
+  toggleLoopMode
 } from '../actions/interaction';
+import {
+  getPointsForPlot,
+  getLayout,
+  getNumFeatures
+} from '../selectors/index';
 
 const mapStateToProps = (state) => {
   return {
-    dataset: state.dataset
+    dataset: state.dataset,
+    features: getPointsForPlot(state),
+    layout: getLayout(state),
+    numFeatures: getNumFeatures(state)
   };
 };
 
@@ -30,7 +41,6 @@ const mapDispatchToProps = (dispatch) => {
 };
 
 const margin = 6;  // get from theme
-const bottomPadding = 20;
 
 class ScatterPlots extends React.Component {
 
@@ -46,14 +56,13 @@ class ScatterPlots extends React.Component {
       }, [this.props.dataset.name]);
       children.push(title);
 
-      let columnNames = this.props.dataset.data.columnNames();
-      let numFeatures = columnNames.length;
+      const sideLength = this.props.layout.sideLength;
+      const columnNames = this.props.dataset.data.columnNames();
 
-      let sideLength = (this.props.width - bottomPadding) / numFeatures;
       if (sideLength > 0) {
-        for (let m = 0; m < numFeatures; m++) {
-          let x = m * sideLength;
-          for (let n = 0; n < numFeatures; n++) {
+        for (let m = 0; m < this.props.numFeatures; m++) {
+          const x = m * sideLength;
+          for (let n = 0; n < this.props.numFeatures; n++) {
             if (m >= n) {
               continue;
             }
@@ -63,8 +72,12 @@ class ScatterPlots extends React.Component {
             let xName = columnNames[m];
             let yName = columnNames[n];
 
-            let sp = h(ScatterPlot, {
-              dataset: this.props.dataset.data,
+            const featx = this.props.features[m].values;
+            const featy = this.props.features[n].values;
+            let points = _.zip(featx, featy);
+
+            const sp = h(ScatterPlot, {
+              points,
               m,
               n,
               xName,

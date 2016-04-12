@@ -1,6 +1,9 @@
+import { centeredSquare } from '../utils/layout';
+import { autoScale } from '../utils/mapping';
+
 const createSelector = require('reselect').createSelector;
 const d3 = require('d3');
-const _ = require('lodash');
+import * as _ from 'lodash';
 const map = require('supercolliderjs').map;
 
 const getDataset = (state) => state.dataset;
@@ -12,8 +15,60 @@ const getInteraction = (state) => state.interaction || {};
 const getSoundName = (state) => state.sound;
 const getSounds = (state) => state.sounds;
 const getMapping = (state) => state.mapping || {};
+export const getWindowSize = (state) => {
+  if (state.ui.windowSize) {
+    return state.ui.windowSize;
+  }
 
-import { autoScale } from '../utils/mapping';
+  return {
+    width: window.innerWidth,
+    height: window.innerHeight
+  };
+};
+
+export const getNumFeatures = createSelector(
+  [getDataset],
+  (dataset) => {
+    if (!dataset) {
+      return 0;
+    }
+
+    return dataset.data.columnNames().length;
+  }
+);
+
+/**
+ * Layout sizes and style depending on windowSize
+ * and the dataset numFeatures
+ * Will also include theme when that is added.
+ */
+export const getLayout = createSelector(
+  [getWindowSize, getNumFeatures],
+  (windowSize, numFeatures) => {
+    const layout = {};
+    const big = windowSize.width > 600;
+    const sidebarWidth = big ? 300 : 0;
+    layout.showSidebar = big;
+    layout.svgWidth = windowSize.width - sidebarWidth;
+
+    if (layout.showSidebar) {
+      layout.sideBarStyle = {
+        position: 'absolute',
+        left: layout.svgWidth,
+        right: windowSize.width,
+        width: sidebarWidth,
+        top: 0,
+        bottom: windowSize.height
+      };
+    }
+
+    layout.svgStyle = centeredSquare(layout.svgWidth, windowSize.height);
+
+    layout.sideLength = layout.svgWidth / (numFeatures || 1);
+
+    return layout;
+  }
+);
 
 export const getSound = createSelector(
   [getSoundName, getSounds],
@@ -79,6 +134,9 @@ export const getNormalizedPoints = createSelector(
   (features) => (features || []).map(normalizePoints)
 );
 
+/**
+ * normalize each feature to 0..1
+ */
 export function normalizePoints(feature) {
   let scaledValues;
   if (feature.typ === 'number') {
@@ -107,6 +165,20 @@ export function normalizePoints(feature) {
     values: scaledValues
   };
 }
+
+export const getPointsForPlot = createSelector(
+  [getNormalizedPoints, getLayout],
+  (npoints, layout) => {
+    const scaler = d3.scale.linear().domain([0, 1]).range([0, layout.sideLength]);
+    return npoints.map((feature) => {
+      return {
+        name: feature.name,
+        index: feature.index,
+        values: feature.values.map(scaler)
+      };
+    });
+  }
+);
 
 /**
  * Normal function; not a selector.

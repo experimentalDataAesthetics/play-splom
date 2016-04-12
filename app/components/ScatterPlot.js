@@ -1,9 +1,9 @@
 const React = require('react');
-const h = require('react-hyperscript');
+import h from 'react-hyperscript';
 import { isEqual } from 'lodash';
 
 import Point from './Point';
-import { autoScale } from '../utils/mapping';
+// import { autoScale } from '../utils/mapping';
 import styles from './ScatterPlot.css';
 
 const RADIUS = 10;  // for now
@@ -21,53 +21,10 @@ const RADIUS = 10;  // for now
  */
 export default class ScatterPlot extends React.Component {
 
-  constructor(props) {
-    super(props);
-    this._calcState();
-  }
-
-  _calcState() {
-    let sideLength = this.props.sideLength;
-
-    let ds = this.props.dataset;
-    let xCol = ds.column(this.props.xName);
-    let yCol = ds.column(this.props.yName);
-    let xValues = xCol.data;
-    let yValues = yCol.data;
-
-    let xScale = autoScale(xValues, [0, sideLength]);
-    let yScale = autoScale(yValues, [0, sideLength]);
-
-    this.state = {
-      sideLength,
-      points: xValues.map((v, i) => {
-        return {
-          x: xScale(v),
-          y: yScale(yValues[i])
-        };
-      })
-    };
-  }
-
-  componentWillReceiveProps(nextProps) {
-    // Does not happen on initial.
-    // Calc what you need put it in state.
-    let needsUpdate = (this.props.dataset !== nextProps.dataset) ||
-      (this.props.sideLength !== nextProps.sideLength);
-    if (needsUpdate) {
-      this._calcState();
-    }
-  }
-
-  // shouldComponentUpdate(nextProps, nextState) {
-  //   console.log('should update ?');
-  //   return true;
-  // }
-
   render() {
     // draw a minimal L-shaped axis
     const axis = h('polyline', {
-      points: `0,0 0,${this.state.sideLength} ${this.state.sideLength},${this.state.sideLength}`,
+      points: `0,0 0,${this.props.sideLength} ${this.props.sideLength},${this.props.sideLength}`,
       strokeWidth: 1,
       stroke: '#888888',  // need access to theme here
       // className: 'axis',
@@ -75,8 +32,8 @@ export default class ScatterPlot extends React.Component {
     });
 
     const bg = h('rect', {
-      height: this.state.sideLength,
-      width: this.state.sideLength,
+      height: this.props.sideLength,
+      width: this.props.sideLength,
       x: 0,
       y: 0,
       className: styles.bg,
@@ -121,11 +78,13 @@ export default class ScatterPlot extends React.Component {
       }
     });
 
-    const radius = this.state.sideLength < 100 ? 1 : 3;
-    const points = h('g', this.state.points.map((p, i) => {
+    const radius = this.props.sideLength < 100 ? 1 : 3;
+    // const featx = this.props.features[this.props.m];
+    // const featy = this.props.features[this.props.n];
+    const points = h('g', this.props.points.map((xy, i) => {
       return h(Point, {
-        x: p.x,
-        y: p.y,
+        x: xy[0],
+        y: xy[1],
         radius,
         color: '#0000ff',  // get from theme
         id: String(i),
@@ -163,12 +122,12 @@ export default class ScatterPlot extends React.Component {
     const maxy = y + RADIUS;
 
     const pointsIn = [];
-    this.state.points.forEach((p, i) => {
+    this.props.points.forEach((xy, i) => {
       if (
-        (p.x >= minx) &&
-        (p.x <= maxx) &&
-        (p.y >= miny) &&
-        (p.y <= maxy)) {
+        (xy[0] >= minx) &&
+        (xy[0] <= maxx) &&
+        (xy[1] >= miny) &&
+        (xy[1] <= maxy)) {
         pointsIn.push(i);
       }
     });

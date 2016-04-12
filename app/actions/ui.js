@@ -1,4 +1,10 @@
-import {MOUSE_MOVE, FOCUS_SCATTERPLOT, SET_HOVERING, ZOOM_SCATTERPLOT} from '../actionTypes';
+import {
+  MOUSE_MOVE,
+  FOCUS_SCATTERPLOT,
+  SET_HOVERING,
+  ZOOM_SCATTERPLOT,
+  SET_WINDOW_SIZE
+} from '../actionTypes';
 
 /**
  */
@@ -34,5 +40,12 @@ export function mouseMove(event) {
   return {
     type: MOUSE_MOVE,
     payload: event
+  };
+}
+
+export function setWindowSize(size) {
+  return {
+    type: SET_WINDOW_SIZE,
+    payload: size
   };
 }

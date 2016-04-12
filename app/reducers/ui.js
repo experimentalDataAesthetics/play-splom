@@ -1,5 +1,12 @@
-import {FOCUS_SCATTERPLOT, SET_HOVERING, ZOOM_SCATTERPLOT, MOUSE_MOVE,  SHOW_BRUSH} from '../actionTypes';
-const u = require('updeep');
+import {
+  FOCUS_SCATTERPLOT,
+  SET_HOVERING,
+  ZOOM_SCATTERPLOT,
+  MOUSE_MOVE,
+  SHOW_BRUSH,
+  SET_WINDOW_SIZE
+} from '../actionTypes';
+import u from 'updeep';
 
 const initial = {
   focused: null,
@@ -39,6 +46,11 @@ export default function ui(state=initial, action) {
     case SHOW_BRUSH:
       return u({
         brush: action.payload
+      }, state);
+
+    case SET_WINDOW_SIZE:
+      return u({
+        windowSize: action.payload
       }, state);
 
     default:
