@@ -45,13 +45,14 @@
 .rangeHandleMax {
   height: 18px;
   font-size: 9px;
+  cursor: pointer;
 }
 
 .rangeHandleMin {
-  border-left: 1px solid black;
+  border-left: 1px solid white;
   padding-left: .25em;
 }
 .rangeHandleMax {
-  border-right: 1px solid black;
+  border-right: 1px solid white;
   padding-right: .25em;
 }

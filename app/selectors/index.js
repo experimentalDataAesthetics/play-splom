@@ -181,6 +181,55 @@ export const getPointsForPlot = createSelector(
 );
 
 /**
+ * used by XYParamTable
+ */
+export const getXYMappingControls = createSelector(
+  [getMapping, getSound],
+  (mapping, sound) => {
+    if (!sound) {
+      return [];
+    }
+
+    const modulateable = (c) => (c.name !== 'out') && (c.rate === 'control' && (c.spec));
+
+    const isConnected = (xy, param) => {
+      if (!mapping) {
+        return false;
+      }
+
+      return _.get(mapping, `xy.${xy}.param`) === param;
+    };
+
+    return sound.controls.filter(modulateable)
+      .map((control) => {
+        const xcon = isConnected('x', control.name);
+        const ycon = isConnected('y', control.name);
+        const connected = xcon || ycon;
+        const spec = control.spec;
+        // const minval = _.get(mapping, '')
+
+        return {
+          name: control.name,
+          xConnected: xcon,
+          yConnected: ycon,
+          connected,
+          // defaults if nothing is changed yet
+          unipolar: {
+            value: 0.5,
+            minval: 0.0,
+            maxval: 1.0
+          },
+          natural: {
+            value: control.defaultValue || spec.defaultValue,
+            minval: spec.minval,
+            maxval: spec.maxval
+          }
+        };
+      });
+  }
+);
+
+/**
  * Normal function; not a selector.
  */
 export const calcPointsEntering = (pointsUnderBrush, previousPointsUnderBrush) =>
