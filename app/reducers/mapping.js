@@ -1,6 +1,6 @@
 import {SET_MAPPING, SET_MAPPING_RANGE, MAP_XY_TO_PARAM} from '../actionTypes';
-const u = require('updeep');
-const _ = require('lodash');
+import u from 'updeep';
+import * as _ from 'lodash';
 
 export default function(state={}, action) {
   switch (action.type) {

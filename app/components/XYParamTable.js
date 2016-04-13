@@ -1,7 +1,7 @@
 
-const React = require('react');
-const h = require('react-hyperscript');
-const _ = require('lodash');
+import React from 'react';
+import h from 'react-hyperscript';
+import * as _ from 'lodash';
 
 // requires the material-ui fonts in vendor
 const FontIcon  = require('material-ui/lib/font-icon').default;

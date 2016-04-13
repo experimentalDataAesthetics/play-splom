@@ -1,11 +1,7 @@
 
-const React = require('react');
-const reactRouter = require('react-router');
-var {Route, IndexRoute} = reactRouter;
+import { Route, IndexRoute } from 'react-router';
+import h from 'react-hyperscript';
 
-const h = require('react-hyperscript');
-
-/* containers */
 import App from './containers/App';
 import Main from './containers/Main';
 

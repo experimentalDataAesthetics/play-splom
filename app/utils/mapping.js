@@ -1,5 +1,5 @@
-const d3 = require('d3');
-const _ = require('lodash');
+import d3 from 'd3';
+import * as _ from 'lodash';
 
 export function autoScale(values, range) {
 

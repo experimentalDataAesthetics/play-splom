@@ -1,5 +1,5 @@
-const React = require('react');
-var h = require('react-hyperscript');
+import React from 'react';
+import h from 'react-hyperscript';
 
 /**
  * As UI focus or hover changes,

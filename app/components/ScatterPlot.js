@@ -1,4 +1,4 @@
-const React = require('react');
+import React from 'react';
 import h from 'react-hyperscript';
 import { isEqual } from 'lodash';
 

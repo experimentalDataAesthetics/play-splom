@@ -1,5 +1,5 @@
-const React = require('react');
-const h = require('react-hyperscript');
+import React from 'react';
+import h from 'react-hyperscript';
 
 export default class SVG extends React.Component {
 

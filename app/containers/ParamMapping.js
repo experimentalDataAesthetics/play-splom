@@ -1,6 +1,6 @@
-const React = require('react');
-const h = require('react-hyperscript');
-const connect = require('react-redux').connect;
+import React from 'react';
+import h from 'react-hyperscript';
+import { connect } from 'react-redux';
 
 import {getSound} from '../selectors/index';
 import {mapXYtoParam} from '../actions/mapping';

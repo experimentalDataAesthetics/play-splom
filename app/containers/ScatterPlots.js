@@ -1,6 +1,6 @@
-const React = require('react');
+import React from 'react';
 import h from 'react-hyperscript';
-let connect = require('react-redux').connect;
+import { connect } from 'react-redux';
 import * as _ from 'lodash';
 
 import ScatterPlot from '../components/ScatterPlot';

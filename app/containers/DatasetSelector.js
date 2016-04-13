@@ -1,15 +1,18 @@
 import { Component } from 'react';
 import h from 'react-hyperscript';
 
-let connect = require('react-redux').connect;
-let RaisedButton = require('material-ui/lib/raised-button').default;
+import { connect } from 'react-redux';
+import RaisedButton from 'material-ui/lib/raised-button';
+import List from 'material-ui/lib/lists/list';
+import ListItem from 'material-ui/lib/lists/list-item';
+import SelectableContainerEnhance from 'material-ui/lib/hoc/selectable-enhance';
 
-let List = require('material-ui/lib/lists/list').default;
-let ListItem = require('material-ui/lib/lists/list-item').default;
-let SelectableContainerEnhance = require('material-ui/lib/hoc/selectable-enhance').default;
-let SelectableList = SelectableContainerEnhance(List);
+const SelectableList = SelectableContainerEnhance(List);
 
-import {loadDataset, openDatasetDialog} from '../actions/datasets';
+import {
+  loadDataset,
+  openDatasetDialog
+} from '../actions/datasets';
 
 const mapStateToProps = (state) => {
   return {

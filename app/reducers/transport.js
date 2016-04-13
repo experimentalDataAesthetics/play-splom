@@ -1,5 +1,5 @@
 import {FOCUS_SCATTERPLOT, SET_HOVERING, ZOOM_SCATTERPLOT} from '../actionTypes';
-const u = require('updeep');
+import u from 'updeep';
 
 const initial = {
   playing: false,

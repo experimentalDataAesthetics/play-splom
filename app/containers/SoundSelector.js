@@ -1,7 +1,7 @@
 import React from 'react';
 
-let h = require('react-hyperscript');
-let connect = require('react-redux').connect;
+import h from 'react-hyperscript';
+import { connect } from 'react-redux';
 
 import List from 'material-ui/lib/lists/list';
 import ListItem from 'material-ui/lib/lists/list-item';
