@@ -2,29 +2,22 @@
 import React from 'react';
 import h from 'react-hyperscript';
 import * as _ from 'lodash';
-
-// requires the material-ui fonts in vendor
-const FontIcon  = require('material-ui/lib/font-icon').default;
-const IconButton = require('material-ui/lib/icon-button').default;
-const Colors = require('material-ui/lib/styles/colors');
+import MapButton from './MapButton';
 
 function modulateable(c) {
   return (c.name !== 'out') && (c.rate === 'control');
 }
 
-class MapButton extends React.Component {
-
-  render() {
-    return h(IconButton, {onClick: this.props.action}, [
-      h(FontIcon, {
-        className:'material-icons',
-        color: this.props.isActive ? Colors.amber500 : Colors.lightWhite
-      }, this.props.isActive ? 'radio_button_checked' : 'radio_button_unchecked')
-    ]);
-  }
-}
-
 export default class XYParamTable extends React.Component {
+
+  isConnected(xy, param) {
+    if (!this.props.mapping) {
+      return false;
+    }
+
+    return _.get(this.props.mapping, `xy.${xy}.param`) === param;
+  }
+
   render() {
     if (!this.props.sound) {
       return h('div.empty');
@@ -61,13 +54,4 @@ export default class XYParamTable extends React.Component {
       ].concat(rows))
     ]);
   }
-
-  isConnected(xy, param) {
-    if (!this.props.mapping) {
-      return false;
-    }
-
-    return _.get(this.props.mapping, `xy.${xy}.param`) === param;
-  }
-
 }
