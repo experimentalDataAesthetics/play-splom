@@ -9,16 +9,19 @@
   "rules": {
     "react/jsx-no-bind": 0,
     "react/prefer-stateless-function": 0,
+    "react/prop-types": 1,
     "comma-dangle": 0,
     "no-use-before-define": 0,
     "consistent-return": 0,
     "no-else-return": 0,
     "func-names": 1,
     "prefer-arrow-callback": 1,
+    "arrow-body-style": 0,
     "space-before-function-paren": 0,
     "padded-blocks": 0,
     "prefer-const": 1,
-    "object-curly-spacing": 0
+    "object-curly-spacing": 0,
+    "new-cap": 0
   },
   "plugins": [
     "react"
