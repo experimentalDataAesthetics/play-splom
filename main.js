@@ -12,10 +12,7 @@ const electron = require('electron');
 const app = electron.app;
 const BrowserWindow = electron.BrowserWindow;
 const Menu = electron.Menu;
-const crashReporter = electron.crashReporter;
 const shell = electron.shell;
-
-crashReporter.start();
 
 const SoundApp = require('./app/sound/SoundApp');
 let menu;
