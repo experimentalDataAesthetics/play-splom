@@ -1,0 +1,57 @@
+
+.table {
+  width: 100%;
+  line-height: 12px;
+}
+
+.table td,
+.table th {
+  padding: 0;
+  margin: 0;
+}
+
+.table th {
+  padding-left: .25em;
+}
+
+.table thead th {
+  text-align: center;
+}
+
+.range {
+  width: 100px;
+  padding-right: .5em;
+}
+
+.connected td,
+.connected th {
+  height: 75px;
+  background: rgba(116, 218, 69, 0.19);
+  transition: background-color 0.5s ease;
+}
+
+.fixed {
+  height: 75px;
+}
+
+.rangeSlider {
+  background: rgba(214, 236, 169, 0.86);
+  border: 1px solid white;
+  display: block;
+  height: 18px;
+}
+
+.rangeHandleMin,
+.rangeHandleMax {
+  height: 18px;
+  font-size: 9px;
+}
+
+.rangeHandleMin {
+  border-left: 1px solid black;
+  padding-left: .25em;
+}
+.rangeHandleMax {
+  border-right: 1px solid black;
+  padding-right: .25em;
+}
