@@ -135,7 +135,7 @@ describe('selectors', () => {
         }
       },
       y: {
-        param: 'wobble',
+        param: 'timeScale',
         mapper: {
           rate: 'control',
           minval: 0.25,
@@ -145,17 +145,23 @@ describe('selectors', () => {
     }
   };
 
+  const mappingControls = selectors.xyMappingControls(mapping, sound);
+
   describe('xyPointsEnteringToSynthEvents', () => {
-    it('should return synth events', () => {
-      const synths = selectors.xyPointsEnteringToSynthEvents([1, 3],
-        0,
-        1,
-        sound,
-        mapping,
-        npoints);
+    const synths = selectors.xyPointsEnteringToSynthEvents([1, 3],
+      0,
+      1,
+      sound,
+      mapping,
+      mappingControls,
+      npoints);
+    it('should return 2 synth events', () => {
       expect(synths.length).to.equal(2);
+    });
+    it('should have synth args of length 4', function() {
+      // 2 modulated and 2 fixed
       const args = synths[0].args;
-      expect(Object.keys(args).length).to.equal(2);
+      expect(Object.keys(args).length).to.equal(4);
     });
   });
 
@@ -247,7 +253,7 @@ describe('selectors', () => {
   describe('loopModeEvents', function() {
     it('should return an array of objects', function() {
       const loopTime = 10.0;
-      const events = selectors.loopModeEvents(0, 1, npoints, mapping, sound, loopTime);
+      const events = selectors.loopModeEvents(0, 1, npoints, mapping, mappingControls, sound, loopTime);
 
       // expect(events).to.be.a('array');
       expect(events.length).to.equal(npoints[0].values.length);
@@ -267,7 +273,7 @@ describe('selectors', () => {
     };
 
     it('should return a list of events for SynthEventList updateStream', function() {
-      const sel = selectors.loopModeSynthEventList(loopMode, sound, npoints, mapping);
+      const sel = selectors.loopModeSynthEventList(loopMode, sound, npoints, mapping, mappingControls);
       expect(sel.length).to.equal(npoints[0].values.length);
       let first = sel[0];
       expect(first.defName).to.be.a('string');
@@ -275,13 +281,22 @@ describe('selectors', () => {
     });
 
     it('should return null if no sound', function() {
-      const sel = selectors.loopModeSynthEventList(loopMode, null, npoints, mapping);
+      const sel = selectors.loopModeSynthEventList(loopMode, null, npoints, mapping, mappingControls);
       expect(sel.length).to.equal(0);
     });
 
     it('should return null if not looping', function() {
-      const sel = selectors.loopModeSynthEventList({looping: false}, sound, npoints, mapping);
+      const sel = selectors.loopModeSynthEventList({looping: false}, sound, npoints, mapping, mappingControls);
       expect(sel.length).to.equal(0);
     });
   });
+
+  describe('makeXYMapper', function() {
+    const fn = selectors.makeXYMapper(mappingControls, 'pan');
+    it('should be a function', function() {
+      expect(fn).to.be.a('function');
+    });
+
+  });
+
 });
