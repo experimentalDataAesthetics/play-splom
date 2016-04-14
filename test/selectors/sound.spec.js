@@ -3,7 +3,7 @@ import {
   expect
 } from 'chai';
 // import { spy, stub } from 'sinon';
-import * as selectors from '../../app/selectors/index';
+import * as selectors from '../../app/selectors/sound';
 import * as _ from 'lodash';
 
 describe('selectors', () => {
@@ -207,27 +207,6 @@ describe('selectors', () => {
 
   });
 
-  describe('normalizePoints', () => {
-    it('should gloss over nulls in values', function() {
-      const feature = {
-        name: 'year',
-        index: 0,
-        values: [2013, 2012, 2011, 2010, 2009, 2008, 2007, 2006, 2005, 2004, 2003, 2002, 2001, 2000,
-          1999, 1998, 1997, 1996, 1995, 1994, 1993, 1992, 1991, 1990, 1989, 1988, 1987, 1986, 1985,
-          1984, 1983, 1982, 1981, 1980, null],
-        min: 1980,
-        max: 2013,
-        typ: 'number',
-        mean: 1996.5,
-        std: 9.958246164193104
-      };
-
-      const npoints2 = selectors.normalizePoints(feature);
-      const all = _.every(npoints2.values, (v) => v >= 0.0 && v <= 1.0);
-      expect(all).to.equal(true);
-    });
-  });
-
   // describe('loopModePayload', function() {
   //   let state = {
   //     sounds: [sound],
@@ -253,7 +232,8 @@ describe('selectors', () => {
   describe('loopModeEvents', function() {
     it('should return an array of objects', function() {
       const loopTime = 10.0;
-      const events = selectors.loopModeEvents(0, 1, npoints, mapping, mappingControls, sound, loopTime);
+      const events = selectors.loopModeEvents(0, 1,
+        npoints, mapping, mappingControls, sound, loopTime);
 
       // expect(events).to.be.a('array');
       expect(events.length).to.equal(npoints[0].values.length);
@@ -273,7 +253,8 @@ describe('selectors', () => {
     };
 
     it('should return a list of events for SynthEventList updateStream', function() {
-      const sel = selectors.loopModeSynthEventList(loopMode, sound, npoints, mapping, mappingControls);
+      const sel = selectors.loopModeSynthEventList(
+        loopMode, sound, npoints, mapping, mappingControls);
       expect(sel.length).to.equal(npoints[0].values.length);
       let first = sel[0];
       expect(first.defName).to.be.a('string');
@@ -281,12 +262,14 @@ describe('selectors', () => {
     });
 
     it('should return null if no sound', function() {
-      const sel = selectors.loopModeSynthEventList(loopMode, null, npoints, mapping, mappingControls);
+      const sel = selectors.loopModeSynthEventList(
+        loopMode, null, npoints, mapping, mappingControls);
       expect(sel.length).to.equal(0);
     });
 
     it('should return null if not looping', function() {
-      const sel = selectors.loopModeSynthEventList({looping: false}, sound, npoints, mapping, mappingControls);
+      const sel = selectors.loopModeSynthEventList(
+        {looping: false}, sound, npoints, mapping, mappingControls);
       expect(sel.length).to.equal(0);
     });
   });
