@@ -19,6 +19,7 @@ module.exports = keyMirror({
   SET_MAPPING: null,
   MAP_XY_TO_PARAM: null,
   SET_MAPPING_RANGE: null,
+  SET_FIXED_PARAM: null,
   SET_PCA: null,
 
   // transport

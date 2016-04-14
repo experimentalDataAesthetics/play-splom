@@ -1,73 +1,113 @@
 
 import React from 'react';
 import h from 'react-hyperscript';
-import * as _ from 'lodash';
+import MapButton from './MapButton';
+import Slider from 'material-ui/lib/slider';
+// http://react-components.com/component/react-slider
+import ReactSlider from 'react-slider';
+import style from './XYParamTable.css';
+import { round } from 'd3';
+import { debounce } from 'lodash';
 
-// requires the material-ui fonts in vendor
-const FontIcon  = require('material-ui/lib/font-icon').default;
-const IconButton = require('material-ui/lib/icon-button').default;
-const Colors = require('material-ui/lib/styles/colors');
-
-function modulateable(c) {
-  return (c.name !== 'out') && (c.rate === 'control');
-}
-
-class MapButton extends React.Component {
-
-  render() {
-    return h(IconButton, {onClick: this.props.action}, [
-      h(FontIcon, {
-        className:'material-icons',
-        color: this.props.isActive ? Colors.amber500 : Colors.lightWhite
-      }, this.props.isActive ? 'radio_button_checked' : 'radio_button_unchecked')
-    ]);
-  }
-}
+// const round = format('g');
 
 export default class XYParamTable extends React.Component {
+
   render() {
     if (!this.props.sound) {
       return h('div.empty');
     }
 
     // material-ui buttons
-    let rows = this.props.sound.controls
-      .filter(modulateable)
-      .map((control) => {
-        return h('tr', [
+    /*
+      this.props.xyMappingControls
+        name
+        xConnected
+        yConnected
+        connected
+        unipolar
+          value
+          min
+          max
+        natural
+          value
+          min
+          max
+    */
+    const rows = this.props.xyMappingControls.map((control) => {
+      let range;
+      if (control.connected) {
+        // get min max uni values
+        // from mapping
+        // get text values of actual from mapping
+        range = h(ReactSlider, {
+          min: 0.0,
+          max: 1.0,
+          step: 0.01,
+          minDistance: 0.1,
+          defaultValue: [
+            control.unipolar.minval,
+            control.unipolar.maxval
+          ],
+          pearling: true,
+          withBars: true,
+          className: style.rangeSlider,
+          onAfterChange: (v) => this.props.setParamRangeUnipolar(control.name, v[0], v[1])
+        }, [
+          h('div',
+            {className: style.rangeHandleMin},
+            [round(control.natural.minval)]),
+          h('div',
+            {className: style.rangeHandleMax},
+            [round(control.natural.maxval)])
+        ]);
+
+      } else {
+        const sliderAction = (e, v) => this.props.setFixedParamUnipolar(control.name, v);
+        range = h(Slider, {
+          defaultValue: control.unipolar.value,
+          min: 0.0,
+          max: 1.0,
+          step: 0.01,
+          onChange: debounce(sliderAction, 300),
+          style: {
+            marginTop: 0,
+            marginBottom: 0
+          }
+        });
+        // show a caption with the value
+      }
+
+      return h('tr',
+        {className: control.connected ? style.connected : style.fixed},
+        [
           h('th', control.name),
           h('td', [
             h(MapButton, {
-              isActive: this.isConnected('x', control.name),
+              isActive: control.xConnected,
               action: () => this.props.mapXYtoParam('x', control.name)
             })
           ]),
           h('td', [
             h(MapButton, {
-              isActive: this.isConnected('y', control.name),
+              isActive: control.yConnected,
               action: () => this.props.mapXYtoParam('y', control.name)
             })
-          ])
+          ]),
+          h('td', {className: style.range}, [range])
         ]);
-      });
+    });
 
-    return h('table.xy-param-table', [
-      h('tbody', [
+    return h('table', {className: style.table}, [
+      h('thead', [
         h('tr', [
           h('th', ''),
           h('th', 'X'),
-          h('th', 'Y')
+          h('th', 'Y'),
+          h('th', '')
         ])
-      ].concat(rows))
+      ]),
+      h('tbody', rows)
     ]);
   }
-
-  isConnected(xy, param) {
-    if (!this.props.mapping) {
-      return false;
-    }
-
-    return _.get(this.props.mapping, `xy.${xy}.param`) === param;
-  }
-
 }

@@ -3,7 +3,7 @@ import {
   expect
 } from 'chai';
 // import { spy, stub } from 'sinon';
-import * as selectors from '../../app/selectors/index';
+import * as selectors from '../../app/selectors/sound';
 import * as _ from 'lodash';
 
 describe('selectors', () => {
@@ -135,7 +135,7 @@ describe('selectors', () => {
         }
       },
       y: {
-        param: 'wobble',
+        param: 'timeScale',
         mapper: {
           rate: 'control',
           minval: 0.25,
@@ -145,39 +145,66 @@ describe('selectors', () => {
     }
   };
 
+  const mappingControls = selectors.xyMappingControls(mapping, sound);
+
   describe('xyPointsEnteringToSynthEvents', () => {
-    it('should return synth events', () => {
-      const synths = selectors.xyPointsEnteringToSynthEvents([1, 3],
-        0,
-        1,
-        sound,
-        mapping,
-        npoints);
+    const synths = selectors.xyPointsEnteringToSynthEvents([1, 3],
+      0,
+      1,
+      sound,
+      mapping,
+      mappingControls,
+      npoints);
+    it('should return 2 synth events', () => {
       expect(synths.length).to.equal(2);
+    });
+    it('should have synth args of length 4', function() {
+      // 2 modulated and 2 fixed
       const args = synths[0].args;
-      expect(Object.keys(args).length).to.equal(2);
+      expect(Object.keys(args).length).to.equal(4);
     });
   });
 
-  describe('normalizePoints', () => {
-    it('should gloss over nulls in values', function() {
-      const feature = {
-        name: 'year',
-        index: 0,
-        values: [2013, 2012, 2011, 2010, 2009, 2008, 2007, 2006, 2005, 2004, 2003, 2002, 2001, 2000,
-          1999, 1998, 1997, 1996, 1995, 1994, 1993, 1992, 1991, 1990, 1989, 1988, 1987, 1986, 1985,
-          1984, 1983, 1982, 1981, 1980, null],
-        min: 1980,
-        max: 2013,
-        typ: 'number',
-        mean: 1996.5,
-        std: 9.958246164193104
+  describe('xyMappingControls', function() {
+    it('should make given no prior mapping', function() {
+      const xym = selectors.xyMappingControls(mapping, sound);
+      expect(xym.length).to.equal(4);  // 4 modulateable controls
+      const timeScale = xym[3];
+      expect(timeScale.natural.value).to.equal(1);
+    });
+
+    it('should have no NaN in controls', function() {
+      const xym = selectors.xyMappingControls(mapping, sound);
+      const pan = xym[1];
+      expect(_.isNaN(pan.unipolar.value)).to.be.false;
+    });
+
+    it('should set .natural', function() {
+      const xym = selectors.xyMappingControls(mapping, sound);
+      const pan = xym[1];
+      expect(pan.natural).to.be.a('object');
+    });
+
+    // if unipolarMappingRanges is set then use those
+    it('should use unipolarMappingRanges if set', function() {
+      const m2 = _.assign({}, mapping);
+      m2.unipolarMappingRanges = {
+        pan: {
+          minval: 0.25,
+          maxval: 0.75,
+          value: 0.5
+        }
       };
 
-      const npoints2 = selectors.normalizePoints(feature);
-      const all = _.every(npoints2.values, (v) => v >= 0.0 && v <= 1.0);
-      expect(all).to.equal(true);
+      const xym = selectors.xyMappingControls(m2, sound);
+      const pan = xym[1];
+
+      expect(pan.unipolar.minval).to.equal(0.25);
+      expect(pan.natural.minval).to.equal(-0.5);
+      expect(pan.unipolar.value).to.equal(0.5);
+      expect(pan.natural.value).to.equal(0);
     });
+
   });
 
   // describe('loopModePayload', function() {
@@ -205,7 +232,8 @@ describe('selectors', () => {
   describe('loopModeEvents', function() {
     it('should return an array of objects', function() {
       const loopTime = 10.0;
-      const events = selectors.loopModeEvents(0, 1, npoints, mapping, sound, loopTime);
+      const events = selectors.loopModeEvents(0, 1,
+        npoints, mapping, mappingControls, sound, loopTime);
 
       // expect(events).to.be.a('array');
       expect(events.length).to.equal(npoints[0].values.length);
@@ -225,7 +253,8 @@ describe('selectors', () => {
     };
 
     it('should return a list of events for SynthEventList updateStream', function() {
-      const sel = selectors.loopModeSynthEventList(loopMode, sound, npoints, mapping);
+      const sel = selectors.loopModeSynthEventList(
+        loopMode, sound, npoints, mapping, mappingControls);
       expect(sel.length).to.equal(npoints[0].values.length);
       let first = sel[0];
       expect(first.defName).to.be.a('string');
@@ -233,13 +262,24 @@ describe('selectors', () => {
     });
 
     it('should return null if no sound', function() {
-      const sel = selectors.loopModeSynthEventList(loopMode, null, npoints, mapping);
+      const sel = selectors.loopModeSynthEventList(
+        loopMode, null, npoints, mapping, mappingControls);
       expect(sel.length).to.equal(0);
     });
 
     it('should return null if not looping', function() {
-      const sel = selectors.loopModeSynthEventList({looping: false}, sound, npoints, mapping);
+      const sel = selectors.loopModeSynthEventList(
+        {looping: false}, sound, npoints, mapping, mappingControls);
       expect(sel.length).to.equal(0);
     });
   });
+
+  describe('makeXYMapper', function() {
+    const fn = selectors.makeXYMapper(mappingControls, 'pan');
+    it('should be a function', function() {
+      expect(fn).to.be.a('function');
+    });
+
+  });
+
 });
