@@ -1,10 +1,9 @@
 import { centeredSquare } from '../utils/layout';
 import { autoScale } from '../utils/mapping';
-
-const createSelector = require('reselect').createSelector;
-const d3 = require('d3');
+import { map } from 'supercolliderjs';
 import * as _ from 'lodash';
-const map = require('supercolliderjs').map;
+import { createSelector } from 'reselect';
+import d3 from 'd3';
 
 const getDataset = (state) => state.dataset;
 const getPointsUnderBrush =
@@ -182,52 +181,80 @@ export const getPointsForPlot = createSelector(
 
 /**
  * used by XYParamTable
+ * Generates an object for each modulateable control of the current sound.
+ *
+ * name
+ * xConnected
+ * yConnected
+ * connected
+ * unipolar
+ *   value
+ *   minval
+ *   maxval
+ * natural
+ *   value
+ *   minval
+ *   maxval
  */
 export const getXYMappingControls = createSelector(
   [getMapping, getSound],
-  (mapping, sound) => {
-    if (!sound) {
-      return [];
+  xyMappingControls);
+
+export function xyMappingControls(mapping, sound) {
+  if (!sound) {
+    return [];
+  }
+
+  const modulateable = (c) => (c.name !== 'out') && (c.rate === 'control' && (c.spec));
+
+  const isConnected = (xy, param) => {
+    if (!mapping) {
+      return false;
     }
 
-    const modulateable = (c) => (c.name !== 'out') && (c.rate === 'control' && (c.spec));
+    return _.get(mapping, `xy.${xy}.param`) === param;
+  };
 
-    const isConnected = (xy, param) => {
-      if (!mapping) {
-        return false;
-      }
+  const findDefault = (control) => {
+    let dv = _.find([control.defaultValue, control.spec.defaultValue], _.isNumber);
+    if (_.isUndefined(dv)) {
+      return 0.5;
+    }
 
-      return _.get(mapping, `xy.${xy}.param`) === param;
-    };
+    return map.unmapWithSpec(dv, control.spec);
+  };
 
-    return sound.controls.filter(modulateable)
-      .map((control) => {
-        const xcon = isConnected('x', control.name);
-        const ycon = isConnected('y', control.name);
-        const connected = xcon || ycon;
-        const spec = control.spec;
-        // const minval = _.get(mapping, '')
+  return sound.controls.filter(modulateable)
+    .map((control) => {
+      const xcon = isConnected('x', control.name);
+      const ycon = isConnected('y', control.name);
+      const connected = xcon || ycon;
+      const spec = control.spec;
+      // const minval = _.get(mapping, '')
 
-        return {
-          name: control.name,
-          xConnected: xcon,
-          yConnected: ycon,
-          connected,
-          // defaults if nothing is changed yet
-          unipolar: {
-            value: 0.5,
-            minval: 0.0,
-            maxval: 1.0
-          },
-          natural: {
-            value: control.defaultValue || spec.defaultValue,
-            minval: spec.minval,
-            maxval: spec.maxval
-          }
-        };
-      });
-  }
-);
+      // value should be unmapped defaultValue
+      const unipolar = _.defaults({},
+        _.get(mapping, `.unipolarMappingRanges.${control.name}`, {}),
+        {
+          value: findDefault(control),
+          minval: 0.0,
+          maxval: 1.0
+        });
+      // natural is mapping those three
+      const natural = _.mapValues(unipolar, (v) => map.mapWithSpec(v, spec));
+      // defaultValue can be wonky due to floating point math
+      // eg 440.0000000000001
+
+      return {
+        name: control.name,
+        xConnected: xcon,
+        yConnected: ycon,
+        connected,
+        unipolar,
+        natural
+      };
+    });
+}
 
 /**
  * Normal function; not a selector.

@@ -1,4 +1,10 @@
-import {MAP_XY_TO_PARAM, SET_MAPPING, SET_MAPPING_RANGE, SET_PCA} from '../actionTypes';
+import {
+  MAP_XY_TO_PARAM,
+  SET_MAPPING,
+  SET_MAPPING_RANGE,
+  SET_PCA,
+  SET_FIXED_PARAM
+} from '../actionTypes';
 
 /**
  * Connect X/Y to a sound param for xy mode
@@ -8,14 +14,50 @@ export function mapXYtoParam(xy, param) {
     type: MAP_XY_TO_PARAM,
     payload: {
       mode: 'xy',
-      xy: xy,
-      param: param
+      xy,
+      param
     }
   };
 }
 
 /**
- * Connect dataset feature to sound param for multi-variate mode
+ * Set a non-mapped sound param to a fixed value.
+ *
+ * Supplies the 0..1 unipolar value and maps it using the sound spec.
+ */
+export function setFixedParamUnipolar(param, value) {
+  return {
+    type: SET_FIXED_PARAM,
+    payload: {
+      param,
+      values: {
+        value
+      }
+    }
+  };
+}
+
+/**
+ * Sets the range for a mapped sound param,
+ * specified with 0..1 values
+ */
+export function setParamRangeUnipolar(param, minval, maxval) {
+  return {
+    type: SET_FIXED_PARAM,
+    payload: {
+      param,
+      values: {
+        minval,
+        maxval
+      }
+    }
+  };
+}
+
+/**
+ * Connect dataset feature to sound param for multi-variate mode.
+ *
+ * not yet used
  */
 export function setMapping(feature, param) {
   return {
@@ -29,6 +71,8 @@ export function setMapping(feature, param) {
 
 /**
  * Set the target range for a sound parameter to range (Object)
+ *
+ * not yet used
  */
 export function setMapperRange(feature, param, range) {
   return {
@@ -46,6 +90,8 @@ export function setMapperRange(feature, param, range) {
  *
  * This could result in async calculation
  * and produces a new mapping metadata
+ *
+ * not yet used
  */
 export function setPCA(bool) {
   return {

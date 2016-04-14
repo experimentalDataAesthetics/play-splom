@@ -1,13 +1,19 @@
 import React from 'react';
 import h from 'react-hyperscript';
 import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import XYParamTable from '../components/XYParamTable';
+import { pick } from 'lodash';
 
 import {
   getSound,
   getXYMappingControls
 } from '../selectors/index';
-import { mapXYtoParam } from '../actions/mapping';
-import XYParamTable from '../components/XYParamTable';
+import {
+  mapXYtoParam,
+  setFixedParamUnipolar,
+  setParamRangeUnipolar
+} from '../actions/mapping';
 
 const mapStateToProps = (state) => {
   return {
@@ -18,11 +24,7 @@ const mapStateToProps = (state) => {
 };
 
 const mapDispatchToProps = (dispatch) => {
-  return {
-    mapXYtoParam: (xy, param) => {
-      dispatch(mapXYtoParam(xy, param));
-    }
-  };
+  return bindActionCreators({mapXYtoParam, setFixedParamUnipolar, setParamRangeUnipolar}, dispatch);
 };
 
 class ParamMapping extends React.Component {
@@ -31,12 +33,15 @@ class ParamMapping extends React.Component {
       {className: this.props.className},
       [
         h('h6', this.props.sound ? this.props.sound.name : ''),
-        h(XYParamTable, {
-          sound: this.props.sound,
-          mapping: this.props.mapping,
-          xyMappingControls: this.props.xyMappingControls,
-          mapXYtoParam: this.props.mapXYtoParam
-        })
+        h(XYParamTable,
+          pick(this.props, [
+            'sound',
+            'mapping',
+            'xyMappingControls',
+            'mapXYtoParam',
+            'setFixedParamUnipolar',
+            'setParamRangeUnipolar'
+          ]))
       ]);
   }
 }

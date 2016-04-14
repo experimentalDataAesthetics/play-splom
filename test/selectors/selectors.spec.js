@@ -159,6 +159,48 @@ describe('selectors', () => {
     });
   });
 
+  describe('xyMappingControls', function() {
+    it('should make given no prior mapping', function() {
+      const xym = selectors.xyMappingControls(mapping, sound);
+      expect(xym.length).to.equal(4);  // 4 modulateable controls
+      const timeScale = xym[3];
+      expect(timeScale.natural.value).to.equal(1);
+    });
+
+    it('should have no NaN in controls', function() {
+      const xym = selectors.xyMappingControls(mapping, sound);
+      const pan = xym[1];
+      expect(_.isNaN(pan.unipolar.value)).to.be.false;
+    });
+
+    it('should set .natural', function() {
+      const xym = selectors.xyMappingControls(mapping, sound);
+      const pan = xym[1];
+      expect(pan.natural).to.be.a('object');
+    });
+
+    // if unipolarMappingRanges is set then use those
+    it('should use unipolarMappingRanges if set', function() {
+      const m2 = _.assign({}, mapping);
+      m2.unipolarMappingRanges = {
+        pan: {
+          minval: 0.25,
+          maxval: 0.75,
+          value: 0.5
+        }
+      };
+
+      const xym = selectors.xyMappingControls(m2, sound);
+      const pan = xym[1];
+
+      expect(pan.unipolar.minval).to.equal(0.25);
+      expect(pan.natural.minval).to.equal(-0.5);
+      expect(pan.unipolar.value).to.equal(0.5);
+      expect(pan.natural.value).to.equal(0);
+    });
+
+  });
+
   describe('normalizePoints', () => {
     it('should gloss over nulls in values', function() {
       const feature = {

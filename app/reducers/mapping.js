@@ -1,8 +1,13 @@
-import {SET_MAPPING, SET_MAPPING_RANGE, MAP_XY_TO_PARAM} from '../actionTypes';
+import {
+  MAP_XY_TO_PARAM,
+  SET_FIXED_PARAM,
+  SET_MAPPING,
+  SET_MAPPING_RANGE,
+} from '../actionTypes';
 import u from 'updeep';
 import * as _ from 'lodash';
 
-export default function(state={}, action) {
+export default function(state = {}, action) {
   switch (action.type) {
 
     case MAP_XY_TO_PARAM:
@@ -18,6 +23,16 @@ export default function(state={}, action) {
             param: action.payload.param
             // mapper: get default for this param
           }
+        }
+      }, state);
+
+    case SET_FIXED_PARAM:
+      // sets unipolar values to unipolarMappingRanges
+      // selector calculates natural mapped values for display
+      // and sending synths
+      return u({
+        unipolarMappingRanges: {
+          [action.payload.param]: action.payload.values
         }
       }, state);
 

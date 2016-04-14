@@ -6,6 +6,10 @@ import Slider from 'material-ui/lib/slider';
 // http://react-components.com/component/react-slider
 import ReactSlider from 'react-slider';
 import style from './XYParamTable.css';
+import { round } from 'd3';
+import { debounce } from 'lodash';
+
+// const round = format('g');
 
 export default class XYParamTable extends React.Component {
 
@@ -48,27 +52,30 @@ export default class XYParamTable extends React.Component {
           pearling: true,
           withBars: true,
           className: style.rangeSlider,
-          onAfterChange: (v) => console.log(v)
+          onAfterChange: (v) => this.props.setParamRangeUnipolar(control.name, v[0], v[1])
         }, [
           h('div',
             {className: style.rangeHandleMin},
-            [control.natural.minval]),
+            [round(control.natural.minval)]),
           h('div',
             {className: style.rangeHandleMax},
-            [control.natural.maxval])
+            [round(control.natural.maxval)])
         ]);
 
       } else {
-        // if controlspec staticspec staticintegerspec
-        // if rate === 'control'
+        const sliderAction = (e, v) => this.props.setFixedParamUnipolar(control.name, v);
         range = h(Slider, {
           defaultValue: control.unipolar.value,
           min: 0.0,
           max: 1.0,
-          step: 0.01
-          // onChange
+          step: 0.01,
+          onChange: debounce(sliderAction, 300),
+          style: {
+            marginTop: 0,
+            marginBottom: 0
+          }
         });
-        // add a caption
+        // show a caption with the value
       }
 
       return h('tr',
