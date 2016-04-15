@@ -18,12 +18,18 @@ export function showBrush(show, x, y) {
 }
 
 export function setPointsUnderBrush(m, n, indices) {
-  return {
-    type: SET_POINTS_UNDER_BRUSH,
-    payload: {
-      m,
-      n,
-      indices
+  return (dispatch, getState) => {
+    const s = getState().interaction;
+    const same = (_.isEqual(s.pointsUnderBrush, indices));
+    if (!same) {
+      dispatch({
+        type: SET_POINTS_UNDER_BRUSH,
+        payload: {
+          indices,
+          m,
+          n
+        }
+      });
     }
   };
 }

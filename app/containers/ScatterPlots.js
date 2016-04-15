@@ -2,6 +2,7 @@ import React from 'react';
 import h from 'react-hyperscript';
 import { connect } from 'react-redux';
 import * as _ from 'lodash';
+import { createSelector } from 'reselect';
 
 import ScatterPlot from '../components/ScatterPlot';
 import {
@@ -15,15 +16,19 @@ import {
   getNumFeatures
 } from '../selectors/index';
 
-const mapStateToProps = (state) => {
-  return {
-    dataset: state.dataset,
-    features: getPointsForPlot(state),
-    layout: getLayout(state),
-    numFeatures: getNumFeatures(state),
-    loopMode: state.interaction.loopMode || {}
-  };
-};
+// move up to ScatterPlotsContainer
+const mapStateToProps = createSelector(
+  [
+    (state) => state.dataset,
+    getPointsForPlot,
+    getLayout,
+    getNumFeatures,
+    // the performance killer
+    (state) => state.interaction.loopMode || {}
+  ],
+  (dataset, features, layout, numFeatures, loopMode) => ({
+    dataset, features, layout, numFeatures, loopMode
+  }));
 
 const mapDispatchToProps = (dispatch) => {
   return {
