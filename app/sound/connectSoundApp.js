@@ -61,11 +61,10 @@ export default function connectSoundApp(store, callActionOnMain) {
   function triggerLoop() {
     const state = store.getState();
     const payload = loopModePayload(state);
-    console.log(payload);
     if (payload.events.length === 0) {
       clearInterval(timer);
       timer = null;
-      store.dispatch(setLooping({}));
+      store.dispatch(setLooping({nowPlaying: {}, pending: {}}));
     } else {
       // tell the UI that we are not playing this
       // only if different than last
