@@ -20,7 +20,8 @@ const mapStateToProps = (state) => {
     dataset: state.dataset,
     features: getPointsForPlot(state),
     layout: getLayout(state),
-    numFeatures: getNumFeatures(state)
+    numFeatures: getNumFeatures(state),
+    loopMode: state.interaction.loopMode || {}
   };
 };
 
@@ -74,7 +75,16 @@ class ScatterPlots extends React.Component {
 
             const featx = this.props.features[m].values;
             const featy = this.props.features[n].values;
-            let points = _.zip(featx, featy);
+            const points = _.zip(featx, featy);
+            const loopMode = this.props.loopMode;
+
+            const isLooping =
+              (_.get(loopMode, 'nowPlaying.m') === m) &&
+              (_.get(loopMode, 'nowPlaying.n') === n);
+
+            const isPending =
+              (_.get(loopMode, 'pending.m') === m) &&
+              (_.get(loopMode, 'pending.n') === n);
 
             const sp = h(ScatterPlot, {
               points,
@@ -88,7 +98,9 @@ class ScatterPlots extends React.Component {
               sideLength: sideLength - margin,
               showBrush: this.props.showBrush,
               setPointsUnderBrush: this.props.setPointsUnderBrush,
-              toggleLoopMode: this.props.toggleLoopMode
+              toggleLoopMode: this.props.toggleLoopMode,
+              isLooping,
+              isPending
             });
 
             children.push(sp);

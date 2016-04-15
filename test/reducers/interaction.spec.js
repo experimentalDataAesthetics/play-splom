@@ -5,7 +5,8 @@ import {
 import interaction from '../../app/reducers/interaction';
 import {
   TOGGLE_LOOP_MODE,
-  SET_POINTS_UNDER_BRUSH
+  SET_POINTS_UNDER_BRUSH,
+  SET_LOOPING
 } from '../../app/actionTypes';
 
 describe('interaction', function() {
@@ -41,6 +42,58 @@ describe('interaction', function() {
       const initial = interaction({}, click1);
       const state = interaction(initial, click1);
       expect(state.loopMode.looping).to.equal(false);
+    });
+  });
+
+  describe('setLooping', function() {
+    const pending = {
+      type: SET_LOOPING,
+      payload: {
+        pending: {
+          m: 1,
+          n: 1
+        }
+      }
+    };
+
+    const blank = {
+      type: SET_LOOPING,
+      payload: {}
+    };
+
+    const playing = {
+      type: SET_LOOPING,
+      payload: {
+        nowPlaying: {
+          m: 1,
+          n: 1
+        },
+        pending: {}
+      }
+    };
+
+    it('should set pending', function() {
+      let s = interaction({}, pending);
+      expect(s.loopMode.pending.m).to.equal(1);
+      expect(s.loopMode.pending.n).to.equal(1);
+    });
+
+    it('should set playing', function() {
+      let s = interaction({}, pending);
+      let r = interaction(s, playing);
+      expect(r.loopMode.nowPlaying.m).to.equal(1);
+      expect(r.loopMode.nowPlaying.n).to.equal(1);
+      expect(r.loopMode.pending.m).to.be.undefined;
+      expect(r.loopMode.pending.n).to.be.undefined;
+    });
+
+    it('should unset on blank', function() {
+      let s = interaction({}, playing);
+      let r = interaction(s, blank);
+      expect(r.loopMode.pending.m).to.be.undefined;
+      expect(r.loopMode.pending.n).to.be.undefined;
+      expect(r.loopMode.nowPlaying.m).to.be.undefined;
+      expect(r.loopMode.nowPlaying.n).to.be.undefined;
     });
   });
 

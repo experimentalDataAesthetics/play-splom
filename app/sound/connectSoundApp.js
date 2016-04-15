@@ -7,6 +7,9 @@ import {
   spawnEventsFromBrush,
   loopModePayload
 } from '../selectors/index';
+import {
+  setLooping
+} from '../actions/interaction';
 
 /**
  * Runs in the renderer process.
@@ -53,14 +56,38 @@ export default function connectSoundApp(store, callActionOnMain) {
     }
   });
 
-  observeStore(store, getLoopMode, (state) => {
-    // on toggleLoopMode collect and send the SynthEventList to the loop player
-    // or cancel it
+  let timer;
+
+  function triggerLoop() {
+    const state = store.getState();
     const payload = loopModePayload(state);
     console.log(payload);
+    if (payload.events.length === 0) {
+      clearInterval(timer);
+      timer = null;
+      store.dispatch(setLooping({}));
+    } else {
+      // tell the UI that we are not playing this
+      // only if different than last
+      store.dispatch(setLooping({
+        nowPlaying: {
+          m: state.interaction.loopMode.m,
+          n: state.interaction.loopMode.n
+        },
+        pending: {}
+      }));
+    }
+
     callActionOnMain({
       type: SET_LOOP,
       payload
     });
+  }
+
+  observeStore(store, getLoopMode, () => {
+    if (!timer) {
+      timer = setInterval(triggerLoop, 10000);
+      triggerLoop();
+    }
   });
 }
