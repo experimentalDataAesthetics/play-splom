@@ -237,7 +237,7 @@ describe('selectors', () => {
 
       // expect(events).to.be.a('array');
       expect(events.length).to.equal(npoints[0].values.length);
-      let first = events[0];
+      const first = events[0];
       expect(first.defName).to.be.a('string');
       expect(first.args).to.be.a('object');
       expect(first.time).to.be.a('number');
@@ -256,9 +256,10 @@ describe('selectors', () => {
       const sel = selectors.loopModeSynthEventList(
         loopMode, sound, npoints, mapping, mappingControls);
       expect(sel.length).to.equal(npoints[0].values.length);
-      let first = sel[0];
+      const first = sel[0];
       expect(first.defName).to.be.a('string');
-      expect(Object.keys(first.args).length).to.equal(2);
+      // should be 4 now: 2 fixed, 2 modulated
+      expect(Object.keys(first.args).length).to.equal(4);
     });
 
     it('should return null if no sound', function() {
