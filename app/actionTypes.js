@@ -30,6 +30,7 @@ module.exports = keyMirror({
   SHOW_BRUSH: null,
   SET_POINTS_UNDER_BRUSH: null,
   TOGGLE_LOOP_MODE: null,
+  SET_LOOPING: null,
 
   // ui
   FOCUS_SCATTERPLOT: null,

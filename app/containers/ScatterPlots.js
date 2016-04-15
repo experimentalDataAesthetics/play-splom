@@ -2,6 +2,7 @@ import React from 'react';
 import h from 'react-hyperscript';
 import { connect } from 'react-redux';
 import * as _ from 'lodash';
+import { createSelector } from 'reselect';
 
 import ScatterPlot from '../components/ScatterPlot';
 import {
@@ -15,14 +16,19 @@ import {
   getNumFeatures
 } from '../selectors/index';
 
-const mapStateToProps = (state) => {
-  return {
-    dataset: state.dataset,
-    features: getPointsForPlot(state),
-    layout: getLayout(state),
-    numFeatures: getNumFeatures(state)
-  };
-};
+// move up to ScatterPlotsContainer
+const mapStateToProps = createSelector(
+  [
+    (state) => state.dataset,
+    getPointsForPlot,
+    getLayout,
+    getNumFeatures,
+    // the performance killer
+    (state) => state.interaction.loopMode || {}
+  ],
+  (dataset, features, layout, numFeatures, loopMode) => ({
+    dataset, features, layout, numFeatures, loopMode
+  }));
 
 const mapDispatchToProps = (dispatch) => {
   return {
@@ -74,7 +80,16 @@ class ScatterPlots extends React.Component {
 
             const featx = this.props.features[m].values;
             const featy = this.props.features[n].values;
-            let points = _.zip(featx, featy);
+            const points = _.zip(featx, featy);
+            const loopMode = this.props.loopMode;
+
+            const isLooping =
+              (_.get(loopMode, 'nowPlaying.m') === m) &&
+              (_.get(loopMode, 'nowPlaying.n') === n);
+
+            const isPending =
+              (_.get(loopMode, 'pending.m') === m) &&
+              (_.get(loopMode, 'pending.n') === n);
 
             const sp = h(ScatterPlot, {
               points,
@@ -88,7 +103,9 @@ class ScatterPlots extends React.Component {
               sideLength: sideLength - margin,
               showBrush: this.props.showBrush,
               setPointsUnderBrush: this.props.setPointsUnderBrush,
-              toggleLoopMode: this.props.toggleLoopMode
+              toggleLoopMode: this.props.toggleLoopMode,
+              isLooping,
+              isPending
             });
 
             children.push(sp);

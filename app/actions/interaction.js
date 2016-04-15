@@ -1,7 +1,9 @@
+import * as _ from 'lodash';
 import {
   SHOW_BRUSH,
   SET_POINTS_UNDER_BRUSH,
-  TOGGLE_LOOP_MODE
+  TOGGLE_LOOP_MODE,
+  SET_LOOPING
 } from '../actionTypes';
 
 export function showBrush(show, x, y) {
@@ -16,12 +18,18 @@ export function showBrush(show, x, y) {
 }
 
 export function setPointsUnderBrush(m, n, indices) {
-  return {
-    type: SET_POINTS_UNDER_BRUSH,
-    payload: {
-      m,
-      n,
-      indices
+  return (dispatch, getState) => {
+    const s = getState().interaction;
+    const same = (_.isEqual(s.pointsUnderBrush, indices));
+    if (!same) {
+      dispatch({
+        type: SET_POINTS_UNDER_BRUSH,
+        payload: {
+          indices,
+          m,
+          n
+        }
+      });
     }
   };
 }
@@ -32,6 +40,27 @@ export function toggleLoopMode(m, n) {
     payload: {
       m,
       n
+    }
+  };
+}
+
+/**
+ * @param {Object} loopingState
+ *
+ * May contain these:
+ *
+ *     nowPlaying: {m n}
+ *     pending: {m n}
+ */
+export function setLooping(loopingState) {
+  return (dispatch, getState) => {
+    const state = getState().interaction.loopMode;
+    const comp = {nowPlaying: state.nowPlaying, pending: state.pending};
+    if (!_.isEqual(comp, loopingState)) {
+      dispatch({
+        type: SET_LOOPING,
+        payload: loopingState
+      });
     }
   };
 }

@@ -3,7 +3,6 @@ import h from 'react-hyperscript';
 import { isEqual } from 'lodash';
 
 import Point from './Point';
-// import { autoScale } from '../utils/mapping';
 import styles from './ScatterPlot.css';
 
 const RADIUS = 10;  // for now
@@ -31,12 +30,15 @@ export default class ScatterPlot extends React.Component {
       fill: 'none'
     });
 
+    const className = this.props.isPending ? styles.pendingBg :
+      (this.props.isLooping ? styles.loopingBg : styles.bg);
+
     const bg = h('rect', {
       height: this.props.sideLength,
       width: this.props.sideLength,
       x: 0,
       y: 0,
-      className: styles.bg,
+      className: className,
 
       // onClick: (e) => {
       //   if (e.buttons) {
