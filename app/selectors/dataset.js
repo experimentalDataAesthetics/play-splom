@@ -2,9 +2,22 @@ import { autoScale } from '../utils/mapping';
 import * as _ from 'lodash';
 import { createSelector } from 'reselect';
 import d3 from 'd3';
-import { getLayout } from './ui';
 
-const getDataset = (state) => state.dataset;
+export const getDataset = (state) => state.dataset;
+
+export const getDatasetMetadata = createSelector(
+  [getDataset],
+  (dataset) => {
+    if (dataset) {
+      const columnNames = dataset.data.columnNames();
+      return {
+        name: dataset.name,
+        numFeatures: columnNames.length,
+        columnNames
+      };
+    }
+  }
+);
 
 /**
  * Extract each column as values with min, max, mean, std calculated
@@ -88,17 +101,3 @@ export function normalizePoints(feature) {
     values: scaledValues
   };
 }
-
-export const getPointsForPlot = createSelector(
-  [getNormalizedPoints, getLayout],
-  (npoints, layout) => {
-    const scaler = d3.scale.linear().domain([0, 1]).range([0, layout.sideLength]);
-    return npoints.map((feature) => {
-      return {
-        name: feature.name,
-        index: feature.index,
-        values: feature.values.map(scaler)
-      };
-    });
-  }
-);

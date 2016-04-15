@@ -1,25 +1,18 @@
 import { Component } from 'react';
 import h from 'react-hyperscript';
 
-import ScatterPlots from './ScatterPlots';
+import ScatterPlotsContainer from './ScatterPlotsContainer';
 import SVGFilters from '../components/SVGFilters';
-// import Brush from '../components/Brush';
 
 export default class SVGFrame extends Component {
 
   render() {
     const children = [
       h(SVGFilters),
-      h(ScatterPlots, {
+      h(ScatterPlotsContainer, {
         width: this.props.containerWidth,
         height: this.props.containerHeight
       })
-      // h(Brush, {
-      //   show: false,
-      //   x: 0,
-      //   y: 0,
-      //   radius: 10
-      // })
     ];
 
     return h(

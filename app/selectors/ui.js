@@ -1,7 +1,7 @@
 import { centeredSquare } from '../utils/layout';
 import { createSelector } from 'reselect';
-
-const getDataset = (state) => state.dataset;
+import { getDatasetMetadata, getNormalizedPoints } from './dataset';
+import d3 from 'd3';
 
 export const getWindowSize = (state) => {
   if (state.ui.windowSize) {
@@ -14,14 +14,15 @@ export const getWindowSize = (state) => {
   };
 };
 
+// deprec
 export const getNumFeatures = createSelector(
-  [getDataset],
+  [getDatasetMetadata],
   (dataset) => {
-    if (!dataset) {
-      return 0;
+    if (dataset) {
+      return dataset.numFeatures;
     }
 
-    return dataset.data.columnNames().length;
+    return 0;
   }
 );
 
@@ -38,6 +39,7 @@ export const getLayout = createSelector(
     const sidebarWidth = big ? 300 : 0;
     layout.showSidebar = big;
     layout.svgWidth = windowSize.width - sidebarWidth;
+    layout.margin = 6;
 
     if (layout.showSidebar) {
       layout.sideBarStyle = {
@@ -55,5 +57,19 @@ export const getLayout = createSelector(
     layout.sideLength = layout.svgWidth / (numFeatures || 1);
 
     return layout;
+  }
+);
+
+export const getPointsForPlot = createSelector(
+  [getNormalizedPoints, getLayout],
+  (npoints, layout) => {
+    const scaler = d3.scale.linear().domain([0, 1]).range([0, layout.sideLength]);
+    return npoints.map((feature) => {
+      return {
+        name: feature.name,
+        index: feature.index,
+        values: feature.values.map(scaler)
+      };
+    });
   }
 );
