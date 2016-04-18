@@ -96,19 +96,19 @@ export function normalizePoints(feature) {
       const cv = isNumber(v) ? v : feature.mean;
 
       // just scale it from min to max
-      // return (cv - feature.min) / range;
+      return (cv - feature.min) / range;
 
-      // normalize and clip it
-      const vvv = (cv - feature.mean) / (2 * feature.std);
-      if (vvv < 0) {
-        return 0;
-      }
-
-      if (vvv > 1) {
-        return 1;
-      }
-
-      return vvv;
+      // // normalize and clip it
+      // const vvv = (cv - feature.mean) / (2 * feature.std);
+      // if (vvv < 0) {
+      //   return 0;
+      // }
+      //
+      // if (vvv > 1) {
+      //   return 1;
+      // }
+      //
+      // return vvv;
     };
 
     scaledValues = feature.values.map(normalize);
