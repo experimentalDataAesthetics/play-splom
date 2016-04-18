@@ -242,9 +242,6 @@ export function loopModeEvents(m, n, npoints, mapping, mappingControls, sound, l
   const timeMapper = makeMapper(timeSpec);
   const mapperX = makeXYMapper(mappingControls, paramX);
   const mapperY = makeXYMapper(mappingControls, paramY);
-  // get fixed values, pick those in current sound
-  // what happend ?
-  // mappingControls that are in sound
   const fixedArgs = {};
   mappingControls.forEach((mc) => {
     if (!mc.connected) {
@@ -255,11 +252,11 @@ export function loopModeEvents(m, n, npoints, mapping, mappingControls, sound, l
   return npoints[m].values.map((x, i) => {
     const y = npoints[n].values[i];
     const args = {};
-    if (paramX) {
+    if (mapperX) {
       args[paramX] = mapperX(x);
     }
 
-    if (paramY) {
+    if (mapperY) {
       args[paramY] = mapperY(y);
     }
 
