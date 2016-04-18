@@ -21,6 +21,7 @@ export const getDatasetMetadata = createSelector(
 
 /**
  * Extract each column as values with min, max, mean, std calculated
+ * from a Miso dataset.
  */
 export const getFeatures = createSelector(
   [getDataset],
@@ -34,6 +35,7 @@ export const getFeatures = createSelector(
       const first = data[0];
       const isDate = _.isDate(first);
       const isString = _.isString(first);
+
       const params = {
         name,
         index: i,
@@ -81,17 +83,47 @@ export function normalizePoints(feature) {
     // or:
     //  divide by std
     //  clip
-    let range = feature.max - feature.min;
-    if (range === 0) {
-      range = 1;
-    }
+    const range = feature.max - feature.min;
 
     const isNumber = (v) => _.isNumber(v) && _.isFinite(v);
-    const normalize = (v) => ((isNumber(v) ? v : feature.mean) - feature.mean) / range + 0.5;
+    // .domain(d3.extent(values)).nice()
+    const normalize = (v) => {
+      if (range === 0) {
+        return 0.5;
+      }
+      // should actually reject this datapoint
+      // for now just setting it to mean
+      const cv = isNumber(v) ? v : feature.mean;
+
+      // just scale it from min to max
+      // return (cv - feature.min) / range;
+
+      // normalize and clip it
+      const vvv = (cv - feature.mean) / (2 * feature.std);
+      if (vvv < 0) {
+        return 0;
+      }
+
+      if (vvv > 1) {
+        return 1;
+      }
+
+      return vvv;
+    };
+
     scaledValues = feature.values.map(normalize);
+
+  } else if (feature.typ === 'string') {
+    const scale = d3.scale.ordinal().domain(feature.domain).range([0.05, 0.95]);
+    scaledValues = feature.values.map(scale);
+  } else if (feature.typ === 'date') {
+    const scale = d3.time.scale()
+        .domain(d3.extent([feature.min, feature.max])).nice()
+        .range([0.05, 0.95]);
+    scaledValues = feature.values.map(scale);
   } else {
-    // this handles dates and ordinal/class/categories
-    const scale = autoScale(feature.values);
+    // wasted. may only be linear or empty set
+    const scale = autoScale(feature.values, [feature.min, feature.max]);
     scaledValues = feature.values.map(scale);
   }
 
