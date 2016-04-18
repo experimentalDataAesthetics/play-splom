@@ -1,0 +1,80 @@
+{
+  "hasArrayArgs": false,
+  "inputs": [],
+  "hasGate": false,
+  "name": "noiseburst",
+  "hasVariants": false,
+  "output": [
+    {
+      "rate": "audio",
+      "startingChannel": "out",
+      "numberOfChannels": 2,
+      "type": "OffsetOut"
+    }
+  ],
+  "controls": [
+    {
+      "name": "out",
+      "defaultValue": 0,
+      "lag": 0,
+      "rate": "scalar",
+      "index": 0
+    },
+    {
+      "name": "amp",
+      "defaultValue": 0.10000000149012,
+      "lag": 0,
+      "rate": "scalar",
+      "spec": {
+        "default": 0,
+        "maxval": 1,
+        "class": "ControlSpec",
+        "minval": 0,
+        "warp": "amp",
+        "step": 0,
+        "units": ""
+      },
+      "index": 1
+    },
+    {
+      "name": "sustain",
+      "defaultValue": 0.0099999997764826,
+      "lag": 0,
+      "rate": "scalar",
+      "spec": {
+        "default": 1,
+        "maxval": 4,
+        "class": "ControlSpec",
+        "minval": 0,
+        "warp": "linear",
+        "step": 0,
+        "units": ""
+      },
+      "index": 2
+    },
+    {
+      "name": "pan",
+      "defaultValue": 0,
+      "lag": 0,
+      "rate": "scalar",
+      "spec": {
+        "default": 0,
+        "maxval": 1,
+        "class": "ControlSpec",
+        "minval": -1,
+        "warp": "linear",
+        "step": 0,
+        "units": ""
+      },
+      "index": 3
+    }
+  ],
+  "canFreeSynth": true,
+  "sourceCode": "SynthDef('noiseburst', { |out, amp=0.1, sustain=0.01, pan|var snd = PinkNoise.ar(1.0);var amp2 = amp * AmpComp.ir(1.max(50)) * 0.5;var env = EnvGen.ar(Env.sine(sustain, 1.0), levelScale: amp2, doneAction: 2);OffsetOut.ar(out, Pan2.ar(snd * env, pan));})",
+  "controlNames": [
+    "out",
+    "amp",
+    "sustain",
+    "pan"
+  ]
+}
