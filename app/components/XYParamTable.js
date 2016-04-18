@@ -2,7 +2,7 @@
 import React from 'react';
 import h from 'react-hyperscript';
 import MapButton from './MapButton';
-import Slider from 'material-ui/lib/slider';
+import { Slider } from 'material-ui';
 // http://react-components.com/component/react-slider
 import ReactSlider from 'react-slider';
 import style from './XYParamTable.css';

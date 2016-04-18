@@ -1,14 +1,10 @@
 import React from 'react';
-
 import h from 'react-hyperscript';
 import { connect } from 'react-redux';
-
-import List from 'material-ui/lib/lists/list';
-import ListItem from 'material-ui/lib/lists/list-item';
-import { SelectableContainerEnhance } from 'material-ui/lib/hoc/selectable-enhance';
+import { List, ListItem, MakeSelectable } from 'material-ui/List';
 import { selectSound } from '../actions/sounds';
 
-const SelectableList = SelectableContainerEnhance(List);
+const SelectableList = MakeSelectable(List);
 
 const mapStateToProps = (state) => {
   return {

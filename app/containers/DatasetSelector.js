@@ -2,12 +2,9 @@ import { Component } from 'react';
 import h from 'react-hyperscript';
 
 import { connect } from 'react-redux';
-import RaisedButton from 'material-ui/lib/raised-button';
-import List from 'material-ui/lib/lists/list';
-import ListItem from 'material-ui/lib/lists/list-item';
-import SelectableContainerEnhance from 'material-ui/lib/hoc/selectable-enhance';
-
-const SelectableList = SelectableContainerEnhance(List);
+import RaisedButton from 'material-ui/RaisedButton';
+import { List, ListItem, MakeSelectable } from 'material-ui/List';
+const SelectableList = MakeSelectable(List);
 
 import {
   loadDataset,

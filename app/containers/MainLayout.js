@@ -1,6 +1,11 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
+// import { grey800 } from 'material-ui/styles/colors';
+import darkBaseTheme from 'material-ui/styles/baseThemes/darkBaseTheme';
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+import getMuiTheme from 'material-ui/styles/getMuiTheme';
+
 // import { setWindowSize } from '../actions/ui';
 // import { debounce } from 'lodash';
 
@@ -10,6 +15,11 @@ import {
   getWindowSize,
   getLayout
 } from '../selectors/index';
+
+const muiTheme = getMuiTheme(darkBaseTheme);
+//   palette: {
+//     textColor: grey800
+//   }
 
 const mapStateToProps = (state) => ({
   windowSize: getWindowSize(state),
@@ -26,31 +36,29 @@ class MainLayout extends Component {
 
   render() {
     const layout = this.props.layout;
-    if (!layout.showSidebar) {
-      return (
-        <section>
-          <div style={layout.svgStyle}>
-            <SVGFrame
-              containerWidth={layout.svgStyle.width}
-              containerHeight={layout.svgStyle.height}
-            />
-          </div>
-        </section>
-      );
-    }
+
+    const svg = (
+      <div style={layout.svgStyle}>
+        <SVGFrame
+          containerWidth={layout.svgStyle.width}
+          containerHeight={layout.svgStyle.height}
+        />
+      </div>
+    );
+
+    const sidebar = layout.showSidebar ? (
+      <div style={layout.sideBarStyle}>
+        <Sidebar />
+      </div>
+    ) : <div />;
 
     return (
-      <section>
-        <div style={layout.svgStyle}>
-          <SVGFrame
-            containerWidth={layout.svgStyle.width}
-            containerHeight={layout.svgStyle.height}
-          />
-        </div>
-        <div style={layout.sideBarStyle}>
-          <Sidebar />
-        </div>
-      </section>
+      <MuiThemeProvider muiTheme={muiTheme}>
+        <section>
+          {svg}
+          {sidebar}
+        </section>
+      </MuiThemeProvider>
     );
   }
 }
