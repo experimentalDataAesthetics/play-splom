@@ -53,6 +53,7 @@ export default class ScatterPlots extends React.Component {
               n,
               xName,
               yName,
+              margin,
               xOffset: x + margin,
               yOffset: y + margin,
               sideLength: sideLength - margin

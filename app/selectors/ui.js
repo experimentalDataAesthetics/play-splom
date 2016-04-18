@@ -63,7 +63,8 @@ export const getLayout = createSelector(
 export const getPointsForPlot = createSelector(
   [getNormalizedPoints, getLayout],
   (npoints, layout) => {
-    const scaler = d3.scale.linear().domain([0, 1]).range([0, layout.sideLength]);
+    // y should be upside down
+    const scaler = d3.scale.linear().domain([0, 1]).range([0, layout.sideLength - layout.margin]);
     return npoints.map((feature) => {
       return {
         name: feature.name,

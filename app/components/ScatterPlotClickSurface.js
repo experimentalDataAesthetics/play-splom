@@ -7,14 +7,6 @@ const RADIUS = 10;  // for now
 
 /**
  * Renders a single scatter plot on a parent svg g
- * props:
- *   dataset: miso dataset
- *   m:
- *   n:
- *   xName
- *   yName
- *   plotKey
- *   sideLength
  */
 export default class ScatterPlotClickSurface extends React.Component {
 
@@ -25,6 +17,7 @@ export default class ScatterPlotClickSurface extends React.Component {
     sideLength: React.PropTypes.number.isRequired,
     xOffset: React.PropTypes.number.isRequired,
     yOffset: React.PropTypes.number.isRequired,
+    margin: React.PropTypes.number.isRequired,
     setPointsUnderBrush: React.PropTypes.func.isRequired,
     toggleLoopMode: React.PropTypes.func.isRequired,
     isLooping: React.PropTypes.bool.isRequired,
@@ -51,12 +44,14 @@ export default class ScatterPlotClickSurface extends React.Component {
     const maxy = y + RADIUS;
 
     const pointsIn = [];
+    const flip = this.props.sideLength - this.props.margin;
     this.props.points.forEach((xy, i) => {
+      let flipy = flip - xy[1];
       if (
         (xy[0] >= minx) &&
         (xy[0] <= maxx) &&
-        (xy[1] >= miny) &&
-        (xy[1] <= maxy)) {
+        (flipy >= miny) &&
+        (flipy <= maxy)) {
         pointsIn.push(i);
       }
     });

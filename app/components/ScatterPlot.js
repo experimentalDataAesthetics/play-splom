@@ -29,12 +29,14 @@ export default class ScatterPlot extends React.Component {
     });
 
     const radius = this.props.sideLength < 100 ? 1 : 3;
+    const flip = this.props.sideLength - this.props.margin;
     // const featx = this.props.features[this.props.m];
     // const featy = this.props.features[this.props.n];
     const points = h('g', this.props.points.map((xy, i) => {
+      const flipy = flip - xy[1];
       return h(Point, {
         x: xy[0],
-        y: xy[1],
+        y: flipy,
         radius,
         color: '#0000ff',  // get from theme
         id: String(i),

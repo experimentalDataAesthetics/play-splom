@@ -77,6 +77,7 @@ class ScatterPlotsInteractive extends React.Component {
             m,
             n,
             points,
+            margin: this.props.layout.margin,
             xOffset: x + this.props.layout.margin,
             yOffset: y + this.props.layout.margin,
             sideLength: sideLength - this.props.layout.margin,
