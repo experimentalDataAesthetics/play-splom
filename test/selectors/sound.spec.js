@@ -45,7 +45,14 @@ describe('selectors', () => {
       defaultValue: 200,
       lag: 0,
       rate: 'control',
-      index: 2
+      index: 2,
+      // note defaultValue > maxval
+      // should correct for this bad input
+      spec: {
+        minval: 1,
+        maxval: 128,
+        warp: 'lin'
+      }
     }, {
       name: 'pan',
       defaultValue: 0,
@@ -158,30 +165,30 @@ describe('selectors', () => {
     it('should return 2 synth events', () => {
       expect(synths.length).to.equal(2);
     });
-    it('should have synth args of length 4', function() {
-      // 2 modulated and 2 fixed
+    it('should have synth args of length 5', function() {
+      // 3 modulated and 2 fixed
       const args = synths[0].args;
-      expect(Object.keys(args).length).to.equal(4);
+      expect(Object.keys(args).length).to.equal(5);
     });
   });
 
   describe('xyMappingControls', function() {
     it('should make given no prior mapping', function() {
       const xym = selectors.xyMappingControls(mapping, sound);
-      expect(xym.length).to.equal(4);  // 4 modulateable controls
+      expect(xym.length).to.equal(5);  // 5 modulateable controls
       const timeScale = xym[3];
       expect(timeScale.natural.value).to.equal(1);
     });
 
     it('should have no NaN in controls', function() {
       const xym = selectors.xyMappingControls(mapping, sound);
-      const pan = xym[1];
+      const pan = xym[2];
       expect(_.isNaN(pan.unipolar.value)).to.be.false;
     });
 
     it('should set .natural', function() {
       const xym = selectors.xyMappingControls(mapping, sound);
-      const pan = xym[1];
+      const pan = xym[2];
       expect(pan.natural).to.be.a('object');
     });
 
@@ -197,14 +204,41 @@ describe('selectors', () => {
       };
 
       const xym = selectors.xyMappingControls(m2, sound);
-      const pan = xym[1];
+      const pan = xym[2];
 
       expect(pan.unipolar.minval).to.equal(0.25);
-      expect(pan.natural.minval).to.equal(-0.5);
       expect(pan.unipolar.value).to.equal(0.5);
+
+      expect(pan.natural.minval).to.equal(-0.5);
       expect(pan.natural.value).to.equal(0);
     });
 
+    describe('defaults if no unipolarMappingRanges supplied', function() {
+      const m2 = _.assign({}, mapping);
+      const xym = selectors.xyMappingControls(m2, sound);
+      const pan = xym[2];
+
+      it('minval', function() {
+        expect(pan.unipolar.minval).to.equal(0);
+      });
+
+      it('maxval', function() {
+        expect(pan.unipolar.maxval).to.equal(1);
+      });
+
+      it('should get value from spec and unmap it', function() {
+        expect(pan.unipolar.value).to.equal(0.5);
+      });
+    });
+
+    it('should clip a defaultValue to maxval of spec', function() {
+      const m2 = _.assign({}, mapping);
+      const xym = selectors.xyMappingControls(m2, sound);
+      const numharms = xym[1];
+
+      expect(numharms.unipolar.value).to.equal(1);
+      expect(numharms.natural.value).to.equal(128);
+    });
   });
 
   // describe('loopModePayload', function() {
@@ -258,8 +292,8 @@ describe('selectors', () => {
       expect(sel.length).to.equal(npoints[0].values.length);
       const first = sel[0];
       expect(first.defName).to.be.a('string');
-      // should be 4 now: 2 fixed, 2 modulated
-      expect(Object.keys(first.args).length).to.equal(4);
+      // 2 fixed, 3 modulated
+      expect(Object.keys(first.args).length).to.equal(5);
     });
 
     it('should return null if no sound', function() {

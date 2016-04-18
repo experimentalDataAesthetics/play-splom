@@ -51,7 +51,7 @@ export function xyMappingControls(mapping, sound) {
     return [];
   }
 
-  const modulateable = (c) => (c.name !== 'out') && (c.rate === 'control' && (c.spec));
+  const modulateable = (c) => (c.name !== 'out') && c.spec;
 
   const isConnected = (xy, param) => {
     if (!mapping) {
@@ -79,13 +79,12 @@ export function xyMappingControls(mapping, sound) {
       // const minval = _.get(mapping, '')
 
       // value should be unmapped defaultValue
-      const unipolar = _.defaults({},
-        _.get(mapping, `.unipolarMappingRanges.${control.name}`, {}),
-        {
-          value: findDefault(control),
-          minval: 0.0,
-          maxval: 1.0
-        });
+      const unipolar = _.assign({
+        value: _.clamp(findDefault(control), 0, 1),
+        minval: 0.0,
+        maxval: 1.0
+      }, _.get(mapping, `unipolarMappingRanges.${control.name}`));
+
       // natural is mapping those three
       const natural = _.mapValues(unipolar, (v) => map.mapWithSpec(v, spec));
       natural.spec = {
