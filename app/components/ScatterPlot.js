@@ -15,6 +15,7 @@ export default class ScatterPlot extends React.Component {
     m: React.PropTypes.number.isRequired,
     n: React.PropTypes.number.isRequired,
     sideLength: React.PropTypes.number.isRequired,
+    margin: React.PropTypes.number.isRequired,
     points: React.PropTypes.array.isRequired
   };
 
@@ -23,7 +24,7 @@ export default class ScatterPlot extends React.Component {
     const axis = h('polyline', {
       points: `0,0 0,${this.props.sideLength} ${this.props.sideLength},${this.props.sideLength}`,
       strokeWidth: 1,
-      stroke: '#888888',  // need access to theme here
+      stroke: '#AAAAAA',  // need access to theme here
       // className: 'axis',
       fill: 'none'
     });
@@ -38,7 +39,6 @@ export default class ScatterPlot extends React.Component {
         x: xy[0],
         y: flipy,
         radius,
-        color: '#0000ff',  // get from theme
         id: String(i),
         className: 'point'
       });

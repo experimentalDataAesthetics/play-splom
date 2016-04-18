@@ -8,7 +8,7 @@ import h from 'react-hyperscript';
 export default class Help extends React.Component {
   render() {
     return h('div.help', [
-      h('h6', 'Help'),
+      // h('h6', 'Help'),
       h('div', '')
     ]);
   }

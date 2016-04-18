@@ -51,6 +51,7 @@ export default class XYParamTable extends React.Component {
           ],
           pearling: true,
           withBars: true,
+          // TODO: get background from theme and fade it
           className: style.rangeSlider,
           onAfterChange: (v) => this.props.setParamRangeUnipolar(control.name, v[0], v[1])
         }, [
@@ -68,7 +69,7 @@ export default class XYParamTable extends React.Component {
           defaultValue: control.unipolar.value,
           min: 0.0,
           max: 1.0,
-          step: 0.01,
+          step: 0.001,
           onChange: debounce(sliderAction, 300),
           style: {
             marginTop: 0,

@@ -6,12 +6,14 @@
   height: 100vh;
 }
 
-.sidebar  > div {
+.sidebar > div {
   padding: .5rem;
 }
 
 .sidebar h6 {
   margin-bottom: 0;
+  font-weight: bold;
+  letter-spacing: .25em;
 }
 
 .sidebar .selectable-list {

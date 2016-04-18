@@ -13,7 +13,6 @@ import {
   getDatasetMetadata
 } from '../selectors/index';
 
-// need from dataset: name columnNames
 const mapStateToProps = createSelector(
   [
     getDatasetMetadata,
@@ -22,7 +21,6 @@ const mapStateToProps = createSelector(
     getNumFeatures
   ],
   (dataset, features, layout, numFeatures) => {
-    // dataset changes ?
     return ({
       dataset, features, layout, numFeatures
     });
@@ -39,11 +37,7 @@ class ScatterPlotsContainer extends Component {
     numFeatures: React.PropTypes.number.isRequired
   };
 
-
   render() {
-    // what changed ?
-
-    // new object each time
     const plots = h(ScatterPlots,
       _.pick(this.props, [
         'height',
