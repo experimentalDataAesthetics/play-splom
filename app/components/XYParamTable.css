@@ -6,12 +6,15 @@
 
 .table td,
 .table th {
-  padding: 0;
   margin: 0;
 }
 
+.table td {
+  padding: 0 .25em;
+}
+
 .table th {
-  padding-left: .25em;
+  padding: 0 .25em;
 }
 
 .table thead th {

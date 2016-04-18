@@ -1,14 +1,12 @@
 
 .sidebar {
   width: 300px;
-  background: #ddd;
   display: flex;
   flex-direction: column;
   height: 100vh;
 }
 
 .sidebar  > div {
-  border: 1px solid #333;
   padding: .5rem;
 }
 
@@ -22,7 +20,6 @@
 }
 
 .datasets {
-  /*height: @line-height * 10;*/
   height: 150px;
 }
 .datasets .selectable-list {
@@ -37,39 +34,3 @@
 .help {
   height: 150px;
 }
-
-/*#sidebar {
-  width: 300px;
-  background: @bg-alt;;
-  display: flex;
-  flex-direction: column;
-  height: 100vh;
-
-  > div {
-    border: 1px solid #333;
-    padding: .5rem;
-  }
-  h6 {
-    margin-bottom: 0;
-  }
-  .selectable-list {
-    overflow-y: scroll;
-    margin-bottom: 3px;  // or its the button's job
-  }
-  // @h6-height: 24px;
-  .dataset-selector {
-    height: @line-height * 10;
-    .selectable-list {
-      height: 73px;
-    }
-  }
-  .sound-selector {
-    height: @line-height * 20;
-  }
-  .param-mapping {
-    flex: 1;
-  }
-  .help {
-    height: @line-height * 10;
-  }
-}*/

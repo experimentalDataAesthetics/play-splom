@@ -2,9 +2,10 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
 // import { grey800 } from 'material-ui/styles/colors';
-import darkBaseTheme from 'material-ui/styles/baseThemes/darkBaseTheme';
+// import darkBaseTheme from 'material-ui/styles/baseThemes/darkBaseTheme';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
+import * as _ from 'lodash';
 
 // import { setWindowSize } from '../actions/ui';
 // import { debounce } from 'lodash';
@@ -16,7 +17,7 @@ import {
   getLayout
 } from '../selectors/index';
 
-const muiTheme = getMuiTheme(darkBaseTheme);
+const muiTheme = getMuiTheme(); // darkBaseTheme
 //   palette: {
 //     textColor: grey800
 //   }
@@ -30,15 +31,18 @@ const mapDispatchToProps = null;
 
 class MainLayout extends Component {
 
-  // static propTypes = {
-  //   children: PropTypes.element.isRequired
-  // };
-
   render() {
     const layout = this.props.layout;
 
+    const globalStyle = {
+      color: muiTheme.palette.textColor,
+      background: muiTheme.palette.canvasColor
+    };
+    // update svgStyle with that ?
+    const svgStyle = _.assign({}, layout.svgStyle, globalStyle);
+
     const svg = (
-      <div style={layout.svgStyle}>
+      <div style={svgStyle}>
         <SVGFrame
           containerWidth={layout.svgStyle.width}
           containerHeight={layout.svgStyle.height}
@@ -54,7 +58,7 @@ class MainLayout extends Component {
 
     return (
       <MuiThemeProvider muiTheme={muiTheme}>
-        <section>
+        <section className="MainLayout" style={globalStyle}>
           {svg}
           {sidebar}
         </section>
