@@ -1,6 +1,15 @@
 import React from 'react';
+import muiThemeable from 'material-ui/styles/muiThemeable';
+import * as _ from 'lodash';
 
-export default class Point extends React.Component {
+class Point extends React.Component {
+
+  static propTypes = {
+    x: React.PropTypes.number.isRequired,
+    y: React.PropTypes.number.isRequired,
+    radius: React.PropTypes.number.isRequired,
+    muiTheme: React.PropTypes.object.isRequired
+  };
 
   render() {
     const props = this.props;
@@ -8,9 +17,11 @@ export default class Point extends React.Component {
       cx: props.x,
       cy: props.y,
       r: props.radius,
-      fill: props.color,
-      id: props.id,
+      fill: props.muiTheme.palette.accent1Color,
+      key: props.id,  // or key ?
       className: props.className
     });
   }
 }
+
+export default muiThemeable()(Point);
