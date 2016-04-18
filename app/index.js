@@ -6,7 +6,6 @@ import { syncHistoryWithStore } from 'react-router-redux';
 import injectTapEventPlugin from 'react-tap-event-plugin';
 import routes from './routes';
 import configureStore from './store/configureStore';
-// import './stylesheets/main.less';
 import './app.global.css';
 import { loadSounds } from './actions/sounds';
 import config from '../config';
@@ -33,6 +32,11 @@ connectSoundApp(store, callActionOnMain);
 // Check this repo:
 // https://github.com/zilverline/react-tap-event-plugin
 injectTapEventPlugin();
+
+// add right click inspect element context menu
+if (process.env.NODE_ENV === 'development') {
+  require('debug-menu').install();
+}
 
 render(
   <Provider store={store}>

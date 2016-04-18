@@ -1,6 +1,6 @@
 import {SET_DATASETS, SELECT_DATASET} from '../actionTypes';
 
-export default function(state=[], action) {
+export default function(state = [], action) {
   switch (action.type) {
     case SET_DATASETS:
       return action.payload;
