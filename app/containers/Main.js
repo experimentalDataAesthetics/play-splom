@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { setWindowSize } from '../actions/ui';
 import MainLayout from '../containers/MainLayout';
-// import { debounce } from 'lodash';
+import { debounce } from 'lodash';
 
 const mapStateToProps = null;
 
@@ -17,8 +17,7 @@ const mapDispatchToProps = (dispatch) => {
 class Main extends Component {
 
   componentDidMount() {
-    // this._debouncedHandleResize = debounce(() => this.handleResize(), 50);
-    this._debouncedHandleResize = () => this.handleResize();
+    this._debouncedHandleResize = debounce(() => this.handleResize(), 300);
     window.addEventListener('resize', this._debouncedHandleResize);
   }
 
