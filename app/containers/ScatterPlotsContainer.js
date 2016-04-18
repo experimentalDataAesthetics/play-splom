@@ -22,7 +22,6 @@ const mapStateToProps = createSelector(
     getNumFeatures
   ],
   (dataset, features, layout, numFeatures) => {
-    console.log('selector reruns');
     // dataset changes ?
     return ({
       dataset, features, layout, numFeatures
@@ -40,26 +39,9 @@ class ScatterPlotsContainer extends Component {
     numFeatures: React.PropTypes.number.isRequired
   };
 
-  shouldComponentUpdate(nextProps, nextState) {
-
-    console.log('spc props', this.props === nextProps, this.props, nextProps);
-
-    // why is this changing ?
-    // is equal but not same object
-    console.log('dataset', this.props.dataset === nextProps.dataset);
-    console.log(_.isEqual(this.props.dataset, nextProps.dataset), 'isEqual');
-
-    console.log('features', this.props.features === nextProps.features);
-    console.log('layout', this.props.layout === nextProps.layout);
-    // both 14 ?
-    console.log('numFeatures', this.props.numFeatures === nextProps.numFeatures);
-
-    return true;
-  }
 
   render() {
     // what changed ?
-    console.log('spc renders');
 
     // new object each time
     const plots = h(ScatterPlots,
