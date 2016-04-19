@@ -1,9 +1,7 @@
 {
   "supercolliderjs": {
     "options": {
-      "sclang": "/Users/crucial/code/supercollider/build/Install/SuperCollider/SuperCollider.app/Contents/MacOS/sclang",
-      "debug": false
+      "sclang": "/Users/crucial/code/supercollider/build/Install/SuperCollider/SuperCollider.app/Contents/MacOS/sclang"
     }
-  },
-  "synthDefsDir": "app/synthdefs"
+  }
 }

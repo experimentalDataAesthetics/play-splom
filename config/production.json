@@ -1,3 +1,7 @@
 {
-  "synthDefsDir": "app/synthdefs"
+  "supercolliderjs": {
+    "options": {
+      "debug": false
+    }
+  }
 }

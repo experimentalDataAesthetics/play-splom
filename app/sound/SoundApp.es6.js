@@ -4,6 +4,8 @@ const _ = require('lodash');
 const path = require('path');
 const fs = require('fs');
 const Bacon = require('baconjs').Bacon;
+const jetpack = require('fs-jetpack');
+
 import config from '../../config';
 
 /**
@@ -15,19 +17,18 @@ import config from '../../config';
  * only load pre-compiled synthDefs from ./synthdefs
  */
 
-const options = _.defaults(config.supercolliderjs.options || {}, {
+const options = _.assign({}, config.supercolliderjs.options || {}, {
   // sclang: path.join(__dirname, 'vendor/supercollider/osx/sclang'),
   // This copy was still not portable due to Qt dylib errors:
   // so it requires that a path to an external SuperCollider.app is supplied
   // in config/development.json
-  scsynth: path.join(__dirname, 'vendor/supercollider/osx/scsynth'),
+  scsynth: path.join(__dirname, '../', 'vendor/supercollider/osx/scsynth'),
   echo: false,
   debug: false,
   includePaths: [],
   sclang_conf: null
 });
 
-const synthDefsDir = config.synthDefsDir;
 
 /**
  * Runs in the background.js process
@@ -49,46 +50,59 @@ export default class SoundApp {
     };
   }
 
-  start() {
+  start(synthDefsDir) {
     fs.readdir(synthDefsDir, (err, files) => {
       if (err) {
         throw new Error(err);
       }
 
-      // TODO: if production then load compiled *.scsyndef
-      // different options
+      const hasSclang = Boolean(config.supercolliderjs.options.sclang);
+
       const defs = files
         .filter((p) => path.extname(p) === '.scd')
-        .map((p) => [
-          'scsynthdef',
-          {
-            compileFrom: path.join(synthDefsDir, p),
-            saveToDir: synthDefsDir,
-            watch: Boolean(config.supercolliderjs.options.sclang)
+        .map((p) => {
+          let opts;
+          if (hasSclang) {
+            opts = {
+              compileFrom: path.join(synthDefsDir, p),
+              saveToDir: synthDefsDir,
+              watch: true
+            };
+          } else {
+            opts = {
+              loadFrom: path.join(synthDefsDir, `${path.basename(p)}.scsyndef`)
+            };
           }
-        ]);
 
-      this.root = sc.h(
-        ['sclang', options, [
-          ['scserver', options,
-            defs.concat([
-              ['group', [
-                // needs to mix back to master
-                ['audiobus', { numChannels: 2 }, [
-                  ['synthstream', { stream: this.synthStream }],
-                  ['syntheventlist', {
-                    updateStream: this.loopModeEventStream
-                  }],
-                  ['synth', this.masterArgs, [
-                    ['synthcontrol', {
-                      stream: this.masterControlStream
-                    }]
-                  ]]
-                ]]
+          return ['scsynthdef', opts];
+        });
+
+      const server = [
+        'scserver',
+        { options },
+        defs.concat([
+          ['group', [
+            // TODO: needs to mix back to master
+            ['audiobus', { numChannels: 2 }, [
+              ['synthstream', { stream: this.synthStream }],
+              ['syntheventlist', {
+                updateStream: this.loopModeEventStream
+              }],
+              ['synth', this.masterArgs, [
+                ['synthcontrol', {
+                  stream: this.masterControlStream
+                }]
               ]]
-            ])
-        ]]
-      ]);
+            ]]
+          ]]
+        ])
+      ];
+
+      if (hasSclang) {
+        this.root = sc.h(['sclang', { options }, [server]]);
+      } else {
+        this.root = server;
+      }
 
       this.player = sc.dryadic(this.root);
       this.player.play();
@@ -123,5 +137,32 @@ export default class SoundApp {
 
   clearSched() {
     // console.log(this.player);
+  }
+
+  /**
+   * Read sounds metadata files and dispatch setSounds action to renderer process.
+   */
+  loadSounds(synthDefsDir, dispatch) {
+    fs.readdir(synthDefsDir, (err, files) => {
+      if (err) {
+        throw new Error(err);
+      }
+
+      const sounds = [];
+
+      files.forEach((p) => {
+        if (path.extname(p) === '.json' && (p !== 'master.json')) {
+          const fullpath = path.join(synthDefsDir, p);
+          const data = jetpack.read(fullpath, 'json');
+          data.path = fullpath;
+          sounds.push(data);
+        }
+      });
+
+      dispatch({
+        type: 'SET_SOUNDS',
+        payload: sounds
+      });
+    });
   }
 }

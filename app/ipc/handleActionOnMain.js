@@ -7,7 +7,7 @@ exports.default = handleActionOnMain;
 
 var _actionTypes = require('../actionTypes');
 
-var dialog = require('electron').dialog;
+const dialog = require('electron').dialog;
 
 
 /**
@@ -17,7 +17,7 @@ var dialog = require('electron').dialog;
 function handleActionOnMain(event, action, soundApp) {
   switch (action.type) {
     case _actionTypes.OPEN_DATASET_DIALOG:
-      dialog.showOpenDialog(function (fileNames) {
+      dialog.showOpenDialog(fileNames => {
         if (fileNames && fileNames.length) {
           reply(event, {
             type: _actionTypes.LOAD_DATASET,

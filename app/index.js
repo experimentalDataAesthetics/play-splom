@@ -7,8 +7,7 @@ import injectTapEventPlugin from 'react-tap-event-plugin';
 import routes from './routes';
 import configureStore from './store/configureStore';
 import './app.global.css';
-import { loadSounds } from './actions/sounds';
-import config from '../config';
+import { join } from 'path';
 
 const store = configureStore();
 const history = syncHistoryWithStore(hashHistory, store);
@@ -44,5 +43,3 @@ render(
   </Provider>,
   document.getElementById('root')
 );
-
-store.dispatch(loadSounds(config.synthDefsDir));

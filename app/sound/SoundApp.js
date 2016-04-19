@@ -4,22 +4,18 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
 var _config = require('../../config');
 
 var _config2 = _interopRequireDefault(_config);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var sc = require('supercolliderjs');
-var _ = require('lodash');
-var path = require('path');
-var fs = require('fs');
-var Bacon = require('baconjs').Bacon;
-
+const sc = require('supercolliderjs');
+const _ = require('lodash');
+const path = require('path');
+const fs = require('fs');
+const Bacon = require('baconjs').Bacon;
+const jetpack = require('fs-jetpack');
 
 /**
  * config is loaded from config/(development|production|test).json
@@ -30,19 +26,19 @@ var Bacon = require('baconjs').Bacon;
  * only load pre-compiled synthDefs from ./synthdefs
  */
 
-var options = _.defaults(_config2.default.supercolliderjs.options || {}, {
+const options = _.assign({}, _config2.default.supercolliderjs.options || {}, {
   // sclang: path.join(__dirname, 'vendor/supercollider/osx/sclang'),
   // This copy was still not portable due to Qt dylib errors:
   // so it requires that a path to an external SuperCollider.app is supplied
   // in config/development.json
-  scsynth: path.join(__dirname, 'vendor/supercollider/osx/scsynth'),
+  scsynth: path.join(__dirname, '../', 'vendor/supercollider/osx/scsynth'),
   echo: false,
   debug: false,
   includePaths: [],
   sclang_conf: null
 });
 
-var synthDefsDir = _config2.default.synthDefsDir;
+// const synthDefsDir = path.join(__dirname, '../', 'synthdefs');
 
 /**
  * Runs in the background.js process
@@ -50,11 +46,9 @@ var synthDefsDir = _config2.default.synthDefsDir;
  * Uses supercollider.js to spawn a tree of synths/groups
  * and has streams that can be pushed to.
  */
+class SoundApp {
 
-var SoundApp = function () {
-  function SoundApp() {
-    _classCallCheck(this, SoundApp);
-
+  constructor() {
     this.synthStream = new Bacon.Bus();
     this.masterControlStream = new Bacon.Bus();
     this.loopModeEventStream = new Bacon.Bus();
@@ -66,87 +60,107 @@ var SoundApp = function () {
     };
   }
 
-  _createClass(SoundApp, [{
-    key: 'start',
-    value: function start() {
-      var _this = this;
+  start(synthDefsDir) {
+    fs.readdir(synthDefsDir, (err, files) => {
+      if (err) {
+        throw new Error(err);
+      }
 
-      fs.readdir(synthDefsDir, function (err, files) {
-        if (err) {
-          throw new Error(err);
-        }
+      const hasSclang = Boolean(_config2.default.supercolliderjs.options.sclang);
 
-        // TODO: if production then load compiled *.scsyndef
-        // different options
-        var defs = files.filter(function (p) {
-          return path.extname(p) === '.scd';
-        }).map(function (p) {
-          return ['scsynthdef', {
+      const defs = files.filter(p => path.extname(p) === '.scd').map(p => {
+        let opts;
+        if (hasSclang) {
+          opts = {
             compileFrom: path.join(synthDefsDir, p),
             saveToDir: synthDefsDir,
-            watch: Boolean(_config2.default.supercolliderjs.options.sclang)
-          }];
-        });
+            watch: true
+          };
+        } else {
+          opts = {
+            loadFrom: path.join(synthDefsDir, `${ path.basename(p) }.scsyndef`)
+          };
+        }
 
-        _this.root = sc.h(['sclang', options, [['scserver', options, defs.concat([['group', [
-        // needs to mix back to master
-        ['audiobus', { numChannels: 2 }, [['synthstream', { stream: _this.synthStream }], ['syntheventlist', {
-          updateStream: _this.loopModeEventStream
-        }], ['synth', _this.masterArgs, [['synthcontrol', {
-          stream: _this.masterControlStream
-        }]]]]]]]])]]]);
-
-        _this.player = sc.dryadic(_this.root);
-        _this.player.play();
+        return ['scsynthdef', opts];
       });
-    }
-  }, {
-    key: 'stop',
-    value: function stop() {
-      if (this.player) {
-        return this.player.stop();
+
+      const server = ['scserver', { options: options }, defs.concat([['group', [
+      // TODO: needs to mix back to master
+      ['audiobus', { numChannels: 2 }, [['synthstream', { stream: this.synthStream }], ['syntheventlist', {
+        updateStream: this.loopModeEventStream
+      }], ['synth', this.masterArgs, [['synthcontrol', {
+        stream: this.masterControlStream
+      }]]]]]]]])];
+
+      if (hasSclang) {
+        this.root = sc.h(['sclang', { options: options }, [server]]);
+      } else {
+        this.root = server;
       }
-    }
-  }, {
-    key: 'spawnSynth',
-    value: function spawnSynth(event) {
-      this.synthStream.push(event);
-    }
-  }, {
-    key: 'spawnSynths',
-    value: function spawnSynths(synthEvents) {
-      var _this2 = this;
 
-      synthEvents.forEach(function (synthEvent) {
-        return _this2.synthStream.push(synthEvent);
+      this.player = sc.dryadic(this.root);
+      this.player.play();
+    });
+  }
+
+  stop() {
+    if (this.player) {
+      return this.player.stop();
+    }
+  }
+
+  spawnSynth(event) {
+    this.synthStream.push(event);
+  }
+
+  spawnSynths(synthEvents) {
+    synthEvents.forEach(synthEvent => this.synthStream.push(synthEvent));
+  }
+
+  /**
+   * events: epoch:
+   */
+  setLoop(payload) {
+    this.clearSched();
+    this.loopModeEventStream.push(payload);
+  }
+
+  setMasterControls(event) {
+    this.masterControlStream.push(event);
+  }
+
+  clearSched() {}
+  // console.log(this.player);
+
+
+  /**
+   * Read sounds metadata files and dispatch setSounds action to renderer process.
+   */
+  loadSounds(synthDefsDir, dispatch) {
+    fs.readdir(synthDefsDir, (err, files) => {
+      if (err) {
+        throw new Error(err);
+      }
+
+      const sounds = [];
+
+      files.forEach(p => {
+        if (path.extname(p) === '.json' && p !== 'master.json') {
+          const fullpath = path.join(synthDefsDir, p);
+          const data = jetpack.read(fullpath, 'json');
+          data.path = fullpath;
+          sounds.push(data);
+        }
       });
-    }
 
-    /**
-     * events: epoch:
-     */
-
-  }, {
-    key: 'setLoop',
-    value: function setLoop(payload) {
-      this.clearSched();
-      this.loopModeEventStream.push(payload);
-    }
-  }, {
-    key: 'setMasterControls',
-    value: function setMasterControls(event) {
-      this.masterControlStream.push(event);
-    }
-  }, {
-    key: 'clearSched',
-    value: function clearSched() {
-      // console.log(this.player);
-    }
-  }]);
-
-  return SoundApp;
-}();
-
+      dispatch({
+        type: 'SET_SOUNDS',
+        payload: sounds
+      });
+    });
+  }
+}
 exports.default = SoundApp;
 module.exports = exports['default'];
 

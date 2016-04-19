@@ -8,32 +8,6 @@ import {
 import callActionOnMain from '../ipc/callActionOnMain';
 
 /**
- * Load synthdefs from included sound directory
- */
-export function loadSounds(synthDefsDir) {
-  return (dispatch) => {
-    fs.readdir(synthDefsDir, (err, files) => {
-      if (err) {
-        throw new Error(err);
-      }
-
-      const sounds = [];
-
-      files.forEach((p) => {
-        if (path.extname(p) === '.json' && (p !== 'master.json')) {
-          const fullpath = path.join(synthDefsDir, p);
-          const data = jetpack.read(fullpath, 'json');
-          data.path = fullpath;
-          sounds.push(data);
-        }
-      });
-
-      dispatch(setSounds(sounds));
-    });
-  };
-}
-
-/**
  * Set sounds (objects with synthdef descriptions) to store
  */
 export function setSounds(sounds) {

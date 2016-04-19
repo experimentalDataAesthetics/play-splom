@@ -13,14 +13,22 @@ const app = electron.app;
 const BrowserWindow = electron.BrowserWindow;
 const Menu = electron.Menu;
 const shell = electron.shell;
+const path = require('path');
 
 const SoundApp = require('./app/sound/SoundApp');
 let menu;
 let template;
 let mainWindow = null;
 
+const synthDefsDir = path.join(app.getAppPath(), 'app', 'synthdefs');
 const soundApp = new SoundApp();
-soundApp.start();
+soundApp.start(synthDefsDir);
+
+function loadSounds(window) {
+  soundApp.loadSounds(synthDefsDir, (action) => {
+    window.webContents.send('dispatch-action', action);
+  });
+}
 
 // connect two-way calling of actions
 // the other half is in app.js
@@ -56,6 +64,7 @@ app.on('ready', () => {
   mainWindow.webContents.on('did-finish-load', () => {
     mainWindow.show();
     mainWindow.focus();
+    loadSounds(mainWindow);
   });
 
   mainWindow.on('closed', () => {
