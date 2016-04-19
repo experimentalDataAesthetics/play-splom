@@ -15,15 +15,23 @@ const appName = argv.name || argv.n || pkg.productName;
 const shouldUseAsar = argv.asar || argv.a || false;
 const shouldBuildAll = argv.all || false;
 
-
 const DEFAULT_OPTS = {
   dir: './',
   name: appName,
   asar: shouldUseAsar,
   ignore: [
-    '/test($|/)',
-    '/tools($|/)',
-    '/release($|/)'
+    '^/test($|/)',
+    '^/tools($|/)',
+    '^/release($|/)',
+    '^/org($|/)',
+    // '/\.\*',
+    '^/webpack*',
+    '^/build-main.sh$'
+    // '/package.js'
+    // why am I including node_modules ?
+    // it should be just the bundle.js
+    // resources/ not the current app you are building
+    // app/vendor/supercollider/not-current
   ].concat(devDeps.map(name => `/node_modules/${name}($|/)`))
 };
 
@@ -42,7 +50,7 @@ if (version) {
   // use the same version as the currently-installed electron-prebuilt
   exec('npm list electron-prebuilt --dev', (err, stdout) => {
     if (err) {
-      DEFAULT_OPTS.version = '0.37.2';
+      DEFAULT_OPTS.version = '0.37.6';
     } else {
       DEFAULT_OPTS.version = stdout.split('electron-prebuilt@')[1].replace(/\s/g, '');
     }
@@ -50,7 +58,6 @@ if (version) {
     startPack();
   });
 }
-
 
 function startPack() {
   console.log('start pack...');
@@ -91,6 +98,7 @@ function pack(plat, arch, cb) {
       } else if (plat === 'win32') {
         extension = '.ico';
       }
+
       return extension;
     })()
   };
@@ -98,14 +106,13 @@ function pack(plat, arch, cb) {
   const opts = Object.assign({}, DEFAULT_OPTS, iconObj, {
     platform: plat,
     arch,
-    prune: true,
+    prune: true, // should we ?
     'app-version': pkg.version || DEFAULT_OPTS.version,
     out: `release/${plat}-${arch}`
   });
 
   packager(opts, cb);
 }
-
 
 function log(plat, arch) {
   return (err, filepath) => {

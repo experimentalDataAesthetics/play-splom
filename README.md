@@ -35,19 +35,6 @@ Later on this will be installable automatically by npm (node package manager), b
 
 ## Run
 
-    npm run start
+    npm run dev
 
 This will compile and open an Electron app in development mode.
-
-
-## Auto restarting with nodemon (optional)
-
-This will restart the app anytime you make a change to a source file.
-
-Install nodemon globally so it is on your command line path:
-
-    npm install -g nodemon
-
-and then start the app with:
-
-    nodemon ./tasks/start
