@@ -3,8 +3,10 @@ import h from 'react-hyperscript';
 import * as _ from 'lodash';
 
 import ScatterPlot from '../components/ScatterPlot';
+import muiThemeable from 'material-ui/styles/muiThemeable';
+import style from './ScatterPlots.css';
 
-export default class ScatterPlots extends React.Component {
+class ScatterPlots extends React.Component {
 
   static propTypes = {
     height: React.PropTypes.number.isRequired,
@@ -22,8 +24,10 @@ export default class ScatterPlots extends React.Component {
       const title = h('text', {
         x: 50,
         y: 50,
-        className: 'dataset-title'
-        // transform: 'rotate(90)'
+        className: style.title,
+        style: {
+          fill: this.props.muiTheme.palette.textColor
+        }
       }, [this.props.dataset.name]);
       children.push(title);
 
@@ -76,3 +80,5 @@ export default class ScatterPlots extends React.Component {
     );
   }
 }
+
+export default muiThemeable()(ScatterPlots);
