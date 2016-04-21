@@ -15,14 +15,29 @@ const Menu = electron.Menu;
 const shell = electron.shell;
 const path = require('path');
 
+let debugLevel = process.env.NODE_ENV === 'development' ? 'debug' : 'info';
+
+const winston = require('winston');
+winston.level = debugLevel;
+winston.loggers.add('sc', {
+  console: {
+    colorize: true,
+    level: debugLevel
+  }
+});
+const sclog = winston.loggers.get('sc');
+
 const SoundApp = require('./app/sound/SoundApp');
 let menu;
 let template;
 let mainWindow = null;
 
 const synthDefsDir = path.join(app.getAppPath(), 'app', 'synthdefs');
-const soundApp = new SoundApp();
-soundApp.start(synthDefsDir);
+const soundApp = new SoundApp(sclog);
+soundApp.start(synthDefsDir)
+  .catch((error) => {
+    throw error;
+  });
 
 function loadSounds(window) {
   soundApp.loadSounds(synthDefsDir, (action) => {
@@ -35,6 +50,7 @@ function loadSounds(window) {
 const ipcMain = require('electron').ipcMain;
 const handleActionOnMain = require('./app/ipc/handleActionOnMain');
 ipcMain.on('call-action-on-main', (event, payload) => {
+  winston.debug('call-action-on-main', payload);
   handleActionOnMain(event, payload, soundApp);
 });
 

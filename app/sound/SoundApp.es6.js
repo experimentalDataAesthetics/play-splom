@@ -23,12 +23,11 @@ const options = _.assign({}, config.supercolliderjs.options || {}, {
   // so it requires that a path to an external SuperCollider.app is supplied
   // in config/development.json
   scsynth: path.join(__dirname, '../', 'vendor/supercollider/osx/scsynth'),
-  echo: false,
-  debug: false,
+  echo: true,  // wonky. this means post osc
+  debug: true,
   includePaths: [],
   sclang_conf: null
 });
-
 
 /**
  * Runs in the background.js process
@@ -38,10 +37,13 @@ const options = _.assign({}, config.supercolliderjs.options || {}, {
  */
 export default class SoundApp {
 
-  constructor() {
+  constructor(log) {
     this.synthStream = new Bacon.Bus();
     this.masterControlStream = new Bacon.Bus();
     this.loopModeEventStream = new Bacon.Bus();
+    this.playing = false;
+    this.log = log;
+
     this.masterArgs = {
       def: 'master',
       args: {
@@ -51,61 +53,69 @@ export default class SoundApp {
   }
 
   start(synthDefsDir) {
-    fs.readdir(synthDefsDir, (err, files) => {
-      if (err) {
-        throw new Error(err);
-      }
+    return new Promise((resolve, reject) => {
+      fs.readdir(synthDefsDir, (err, files) => {
+        if (err) {
+          throw new Error(err);
+        }
 
-      const hasSclang = Boolean(config.supercolliderjs.options.sclang);
+        let hasSclang = Boolean(config.supercolliderjs.options.sclang)
+        && process.env.NODE_ENV === 'development';
+        hasSclang = false;
 
-      const defs = files
-        .filter((p) => path.extname(p) === '.scd')
-        .map((p) => {
-          let opts;
-          if (hasSclang) {
-            opts = {
-              compileFrom: path.join(synthDefsDir, p),
-              saveToDir: synthDefsDir,
-              watch: true
-            };
-          } else {
-            opts = {
-              loadFrom: path.join(synthDefsDir, `${path.basename(p)}.scsyndef`)
-            };
-          }
+        const defs = files.filter((p) => path.extname(p) === '.scd')
+          .map((p) => {
+            let opts;
+            if (hasSclang) {
+              opts = {
+                compileFrom: path.join(synthDefsDir, p),
+                saveToDir: synthDefsDir,
+                watch: true
+              };
+            } else {
+              opts = {
+                loadFrom: path.join(synthDefsDir, `${path.basename(p, '.scd')}.scsyndef`)
+              };
+            }
 
-          return ['scsynthdef', opts];
-        });
+            return ['scsynthdef', opts];
+          });
 
-      const server = [
-        'scserver',
-        { options },
-        defs.concat([
-          ['group', [
-            // TODO: needs to mix back to master
-            ['audiobus', { numChannels: 2 }, [
-              ['synthstream', { stream: this.synthStream }],
-              ['syntheventlist', {
-                updateStream: this.loopModeEventStream
-              }],
-              ['synth', this.masterArgs, [
-                ['synthcontrol', {
-                  stream: this.masterControlStream
-                }]
-              ]]
-            ]]
+        // TODO: needs to mix back to master
+        // const audiobus = (children) => ['audiobus', { numChannels: 2 }, children];
+
+        const body = [
+          ['synthstream', { stream: this.synthStream }],
+          ['syntheventlist', {
+            updateStream: this.loopModeEventStream
+          }],
+          ['synth', this.masterArgs, [
+            ['synthcontrol', {
+              stream: this.masterControlStream
+            }]
           ]]
-        ])
-      ];
+        ];
 
-      if (hasSclang) {
-        this.root = sc.h(['sclang', { options }, [server]]);
-      } else {
-        this.root = server;
-      }
+        const server = [
+          'scserver',
+          { options },
+          defs.concat([
+            ['group', body]
+          ])
+        ];
 
-      this.player = sc.dryadic(this.root);
-      this.player.play();
+        if (hasSclang) {
+          this.root = sc.h(['sclang', { options }, [server]]);
+        } else {
+          this.root = server;
+        }
+
+        this.player = sc.dryadic(this.root, [], {log: this.log});
+        this.player.play().then(() => {
+          this.playing = true;
+          resolve();
+        }, reject);
+      });
     });
   }
 
@@ -120,6 +130,7 @@ export default class SoundApp {
   }
 
   spawnSynths(synthEvents) {
+    this.log.debug(synthEvents);
     synthEvents.forEach((synthEvent) => this.synthStream.push(synthEvent));
   }
 
