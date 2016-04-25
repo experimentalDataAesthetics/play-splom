@@ -15,7 +15,6 @@ export default class ScatterPlot extends React.Component {
     m: React.PropTypes.number.isRequired,
     n: React.PropTypes.number.isRequired,
     sideLength: React.PropTypes.number.isRequired,
-    margin: React.PropTypes.number.isRequired,
     points: React.PropTypes.array.isRequired
   };
 
@@ -30,9 +29,7 @@ export default class ScatterPlot extends React.Component {
     });
 
     const radius = this.props.sideLength < 100 ? 1 : 3;
-    const flip = this.props.sideLength - this.props.margin;
-    // const featx = this.props.features[this.props.m];
-    // const featy = this.props.features[this.props.n];
+    const flip = this.props.sideLength;
     const points = h('g', this.props.points.map((xy, i) => {
       const flipy = flip - xy[1];
       return h(Point, {

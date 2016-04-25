@@ -54,7 +54,7 @@ class ScatterPlotsInteractive extends React.Component {
       for (let m = 0; m < this.props.numFeatures; m++) {
         const x = m * sideLength;
         for (let n = 0; n < this.props.numFeatures; n++) {
-          if (m >= n) {
+          if (m === n) {
             continue;
           }
 
@@ -77,9 +77,8 @@ class ScatterPlotsInteractive extends React.Component {
             m,
             n,
             points,
-            margin: this.props.layout.margin,
-            xOffset: x + this.props.layout.margin,
-            yOffset: y + this.props.layout.margin,
+            xOffset: x,
+            yOffset: y,
             sideLength: sideLength - this.props.layout.margin,
             setPointsUnderBrush: this.props.setPointsUnderBrush,
             toggleLoopMode: this.props.toggleLoopMode,

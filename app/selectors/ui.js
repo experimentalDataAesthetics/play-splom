@@ -53,17 +53,20 @@ export const getLayout = createSelector(
     }
 
     layout.svgStyle = centeredSquare(layout.svgWidth, windowSize.height);
+    layout.plotsWidth = layout.svgStyle.right - layout.svgStyle.left;
 
-    layout.sideLength = layout.svgWidth / (numFeatures || 1);
-
+    layout.sideLength = layout.plotsWidth / (numFeatures || 1);
     return layout;
   }
 );
 
+/**
+ * map each normalized feature to sideLength
+ * updating whenever the layout or dataset changes
+ */
 export const getPointsForPlot = createSelector(
   [getNormalizedPoints, getLayout],
   (npoints, layout) => {
-    // y should be upside down
     const scaler = d3.scale.linear().domain([0, 1]).range([0, layout.sideLength - layout.margin]);
     return npoints.map((feature) => {
       return {

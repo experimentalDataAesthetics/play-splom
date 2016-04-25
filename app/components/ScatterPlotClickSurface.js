@@ -17,7 +17,6 @@ export default class ScatterPlotClickSurface extends React.Component {
     sideLength: React.PropTypes.number.isRequired,
     xOffset: React.PropTypes.number.isRequired,
     yOffset: React.PropTypes.number.isRequired,
-    margin: React.PropTypes.number.isRequired,
     setPointsUnderBrush: React.PropTypes.func.isRequired,
     toggleLoopMode: React.PropTypes.func.isRequired,
     isLooping: React.PropTypes.bool.isRequired,
@@ -44,7 +43,7 @@ export default class ScatterPlotClickSurface extends React.Component {
     const maxy = y + RADIUS;
 
     const pointsIn = [];
-    const flip = this.props.sideLength - this.props.margin;
+    const flip = this.props.sideLength;
     this.props.points.forEach((xy, i) => {
       let flipy = flip - xy[1];
       if (

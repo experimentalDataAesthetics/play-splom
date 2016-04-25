@@ -22,7 +22,6 @@ export default class SVGFrame extends Component {
         className: 'svg-frame',
         height: this.props.containerHeight,
         width: this.props.containerWidth
-        // ref: (svg) => this._svg = svg
       },
       children
     );

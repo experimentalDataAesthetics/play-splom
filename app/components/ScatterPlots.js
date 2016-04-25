@@ -13,8 +13,9 @@ class ScatterPlots extends React.Component {
     width: React.PropTypes.number.isRequired,
     dataset: React.PropTypes.object,
     features: React.PropTypes.array.isRequired,
+    numFeatures: React.PropTypes.number.isRequired,
     layout: React.PropTypes.object.isRequired,
-    numFeatures: React.PropTypes.number.isRequired
+    muiTheme: React.PropTypes.object
   };
 
   render() {
@@ -39,10 +40,13 @@ class ScatterPlots extends React.Component {
         for (let m = 0; m < this.props.numFeatures; m++) {
           const x = m * sideLength;
           for (let n = 0; n < this.props.numFeatures; n++) {
-            if (m >= n) {
+            if (m === n) {
               continue;
             }
 
+            // features go across the x
+            // and down the y
+            // SVG coords also go down the y
             const y = n * sideLength;
             const xName = columnNames[m];
             const yName = columnNames[n];
@@ -57,9 +61,8 @@ class ScatterPlots extends React.Component {
               n,
               xName,
               yName,
-              margin,
-              xOffset: x + margin,
-              yOffset: y + margin,
+              xOffset: x,
+              yOffset: y,
               sideLength: sideLength - margin
             });
 
