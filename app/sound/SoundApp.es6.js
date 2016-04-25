@@ -45,7 +45,6 @@ export default class SoundApp {
     this.log = log;
 
     this.masterArgs = {
-      def: 'master',
       args: {
         amp: 0.5
       }
@@ -84,12 +83,24 @@ export default class SoundApp {
         // TODO: needs to mix back to master
         // const audiobus = (children) => ['audiobus', { numChannels: 2 }, children];
 
+        const masterArgs = _.assign({
+          def: sc.h([
+            'scsynthdef',
+            hasSclang ? {
+              compileFrom: path.join(synthDefsDir, 'master'),
+              saveToDir: synthDefsDir
+            } : {
+              loadFrom: path.join(synthDefsDir, 'master.scsyndef')
+            }
+          ])
+        }, this.masterArgs);
+
         const body = [
           ['synthstream', { stream: this.synthStream }],
           ['syntheventlist', {
             updateStream: this.loopModeEventStream
           }],
-          ['synth', this.masterArgs, [
+          ['synth', masterArgs, [
             ['synthcontrol', {
               stream: this.masterControlStream
             }]
