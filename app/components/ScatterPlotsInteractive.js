@@ -79,6 +79,8 @@ class ScatterPlotsInteractive extends React.Component {
             points,
             xOffset: x,
             yOffset: y,
+            baseClientX: x + this.props.layout.svgStyle.left,
+            baseClientY: y,
             sideLength: sideLength - this.props.layout.margin,
             setPointsUnderBrush: this.props.setPointsUnderBrush,
             toggleLoopMode: this.props.toggleLoopMode,

@@ -3,16 +3,7 @@ import { createSelector } from 'reselect';
 import { getDatasetMetadata, getNormalizedPoints } from './dataset';
 import d3 from 'd3';
 
-export const getWindowSize = (state) => {
-  if (state.ui.windowSize) {
-    return state.ui.windowSize;
-  }
-
-  return {
-    width: window.innerWidth,
-    height: window.innerHeight
-  };
-};
+export const getWindowSize = (state) => state.ui.windowSize;
 
 // deprec
 export const getNumFeatures = createSelector(

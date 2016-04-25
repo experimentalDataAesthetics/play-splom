@@ -17,6 +17,8 @@ export default class ScatterPlotClickSurface extends React.Component {
     sideLength: React.PropTypes.number.isRequired,
     xOffset: React.PropTypes.number.isRequired,
     yOffset: React.PropTypes.number.isRequired,
+    baseClientX: React.PropTypes.number.isRequired,
+    baseClientY: React.PropTypes.number.isRequired,
     setPointsUnderBrush: React.PropTypes.func.isRequired,
     toggleLoopMode: React.PropTypes.func.isRequired,
     isLooping: React.PropTypes.bool.isRequired,
@@ -30,27 +32,22 @@ export default class ScatterPlotClickSurface extends React.Component {
   _brush(clientX, clientY) {
     // brush is too slow for now
     // this.props.showBrush(true, clientX, clientY);
-    // diff from points that were under brush
-    // this is screen
-    // and state is relative to this plot
-    // when did that change ?
-    // points have negative values ?
-    const x = clientX - this.props.xOffset;
-    const y = clientY - this.props.yOffset;
+
+    const x = clientX - this.props.baseClientX;
+    const y = clientY - this.props.baseClientY;
+    const flipy = this.props.sideLength - y;
+
     const minx = x - RADIUS;
     const maxx = x + RADIUS;
-    const miny = y - RADIUS;
-    const maxy = y + RADIUS;
+    const miny = flipy - RADIUS;
+    const maxy = flipy + RADIUS;
 
     const pointsIn = [];
-    const flip = this.props.sideLength;
     this.props.points.forEach((xy, i) => {
-      let flipy = flip - xy[1];
-      if (
-        (xy[0] >= minx) &&
-        (xy[0] <= maxx) &&
-        (flipy >= miny) &&
-        (flipy <= maxy)) {
+      if ((xy[0] >= minx)
+          && (xy[0] <= maxx)
+          && (xy[1] >= miny)
+          && (xy[1] <= maxy)) {
         pointsIn.push(i);
       }
     });
@@ -59,9 +56,6 @@ export default class ScatterPlotClickSurface extends React.Component {
 
   _hover() {
     this._setPointsIn([]);
-    // console.log('hover');
-    // this.props.showBrush(false);
-    // console.log('hover', clientX, clientY, this.props.xName, this.props.yName);
   }
 
   _setPointsIn(pointsIn) {
@@ -77,6 +71,7 @@ export default class ScatterPlotClickSurface extends React.Component {
     if (!isEqual(this.last, next)) {
       this.props.setPointsUnderBrush(this.props.m, this.props.n, pointsIn);
       this.last = next;
+      // console.log(pointsIn);
     }
   }
 
@@ -96,17 +91,6 @@ export default class ScatterPlotClickSurface extends React.Component {
       x: 0,
       y: 0,
       className,
-
-      // onClick: (e) => {
-      //   if (e.buttons) {
-      //     if (e.metaKey) {
-      //       // toggle loop mode
-      //       this.props.toggleLoopMode(this.props.m, this.props.n);
-      //     } else {
-      //       this._brush(e.clientX, e.clientY);
-      //     }
-      //   }
-      // },
 
       onMouseDown: (e) => {
         if (e.buttons) {

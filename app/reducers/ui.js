@@ -13,13 +13,17 @@ const initial = {
   hovering: null,
   zoomed: null,
   mouse: null,
-  brush: null
+  brush: null,
+  windowSize: {
+    width: window.innerWidth,
+    height: window.innerHeight
+  }
 };
 
 /**
  * To unfocus, set focused to null. same with hovering and zoomed
  */
-export default function ui(state=initial, action) {
+export default function ui(state = initial, action) {
   switch (action.type) {
 
     case FOCUS_SCATTERPLOT:
