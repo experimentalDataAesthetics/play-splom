@@ -45,9 +45,7 @@ export default class SoundApp {
     this.log = log;
 
     this.masterArgs = {
-      args: {
-        amp: 0.5
-      }
+      amp: 0.5
     };
   }
 
@@ -60,59 +58,77 @@ export default class SoundApp {
 
         let hasSclang = Boolean(config.supercolliderjs.options.sclang)
         && process.env.NODE_ENV === 'development';
-        hasSclang = false;
+        hasSclang = true;
 
-        const defs = files.filter((p) => path.extname(p) === '.scd')
-          .map((p) => {
-            let opts;
-            if (hasSclang) {
-              opts = {
-                compileFrom: path.join(synthDefsDir, p),
-                saveToDir: synthDefsDir,
-                watch: true
-              };
-            } else {
-              opts = {
-                loadFrom: path.join(synthDefsDir, `${path.basename(p, '.scd')}.scsyndef`)
-              };
+        const synthDef = (name) => {
+          let opts;
+          if (hasSclang) {
+            opts = {
+              compileFrom: path.join(synthDefsDir, `${name}.scd`),
+              saveToDir: synthDefsDir,
+              watch: true
+            };
+          } else {
+            opts = {
+              loadFrom: path.join(synthDefsDir, `${name}.scsyndef`)
+            };
+          }
+
+          return ['scsynthdef', opts];
+        };
+
+        const defs = files
+          .filter((p) => path.extname(p) === '.scd')
+          .map((p) => path.basename(p, '.scd'))
+          .filter((name) => !(_.includes(['master', 'mixToMaster'], name)))
+          .map(synthDef);
+
+        const mixToMaster = [
+          'synth',
+          {
+            def: sc.h(synthDef('mixToMaster')),
+            args: {
+              in: (context) => context.out,
+              out: 0
             }
+          }
+        ];
 
-            return ['scsynthdef', opts];
-          });
-
-        // TODO: needs to mix back to master
-        // const audiobus = (children) => ['audiobus', { numChannels: 2 }, children];
-
-        const masterArgs = _.assign({
-          def: sc.h([
-            'scsynthdef',
-            hasSclang ? {
-              compileFrom: path.join(synthDefsDir, 'master'),
-              saveToDir: synthDefsDir
-            } : {
-              loadFrom: path.join(synthDefsDir, 'master.scsyndef')
-            }
-          ])
-        }, this.masterArgs);
+        const audiobus = (children) => [
+          'audiobus',
+          {
+            numChannels: 2
+          },
+          children.concat([mixToMaster])
+        ];
 
         const body = [
-          ['synthstream', { stream: this.synthStream }],
+          ['synthstream', {
+            stream: this.synthStream
+          }],
           ['syntheventlist', {
             updateStream: this.loopModeEventStream
           }],
-          ['synth', masterArgs, [
-            ['synthcontrol', {
-              stream: this.masterControlStream
-            }]
-          ]]
+          [
+            'synth',
+            {
+              def: sc.h(synthDef('master')),
+              args: this.masterArgs
+            },
+            [
+              ['synthcontrol', {
+                stream: this.masterControlStream
+              }]
+            ]
+          ]
         ];
 
         const server = [
           'scserver',
-          { options },
-          defs.concat([
-            ['group', body]
-          ])
+          {
+            options
+          },
+          defs.concat([audiobus(body)])
         ];
 
         if (hasSclang) {
@@ -131,9 +147,9 @@ export default class SoundApp {
   }
 
   stop() {
-    if (this.player) {
-      return this.player.stop();
-    }
+    // if (this.player) {
+    //   return this.player.stop();
+    // }
   }
 
   spawnSynth(event) {
@@ -173,7 +189,7 @@ export default class SoundApp {
       const sounds = [];
 
       files.forEach((p) => {
-        if (path.extname(p) === '.json' && (p !== 'master.json')) {
+        if (path.extname(p) === '.json' && (p !== 'master.json') && (p !== 'mixToMaster.json')) {
           const fullpath = path.join(synthDefsDir, p);
           const data = jetpack.read(fullpath, 'json');
           data.path = fullpath;

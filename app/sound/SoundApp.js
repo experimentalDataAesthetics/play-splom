@@ -54,10 +54,7 @@ class SoundApp {
     this.log = log;
 
     this.masterArgs = {
-      def: 'master',
-      args: {
-        amp: 0.5
-      }
+      amp: 0.5
     };
   }
 
@@ -69,35 +66,53 @@ class SoundApp {
         }
 
         let hasSclang = Boolean(_config2.default.supercolliderjs.options.sclang) && process.env.NODE_ENV === 'development';
-        hasSclang = false;
+        hasSclang = true;
 
-        const defs = files.filter(p => path.extname(p) === '.scd').map(p => {
+        const synthDef = name => {
           let opts;
           if (hasSclang) {
             opts = {
-              compileFrom: path.join(synthDefsDir, p),
+              compileFrom: path.join(synthDefsDir, `${ name }.scd`),
               saveToDir: synthDefsDir,
               watch: true
             };
           } else {
             opts = {
-              loadFrom: path.join(synthDefsDir, `${ path.basename(p, '.s') }.scsyndef`)
+              loadFrom: path.join(synthDefsDir, `${ name }.scsyndef`)
             };
           }
 
           return ['scsynthdef', opts];
-        });
+        };
 
-        // TODO: needs to mix back to master
-        // const audiobus = (children) => ['audiobus', { numChannels: 2 }, children];
+        const defs = files.filter(p => path.extname(p) === '.scd').map(p => path.basename(p, '.scd')).filter(name => !_.includes(['master', 'mixToMaster'], name)).map(synthDef);
 
-        const body = [['synthstream', { stream: this.synthStream }], ['syntheventlist', {
+        const mixToMaster = ['synth', {
+          def: sc.h(synthDef('mixToMaster')),
+          args: {
+            in: context => context.out,
+            out: 0
+          }
+        }];
+
+        const audiobus = children => ['audiobus', {
+          numChannels: 2
+        }, children.concat([mixToMaster])];
+
+        const body = [['synthstream', {
+          stream: this.synthStream
+        }], ['syntheventlist', {
           updateStream: this.loopModeEventStream
-        }], ['synth', this.masterArgs, [['synthcontrol', {
+        }], ['synth', {
+          def: sc.h(synthDef('master')),
+          args: this.masterArgs
+        }, [['synthcontrol', {
           stream: this.masterControlStream
         }]]]];
 
-        const server = ['scserver', { options: options }, defs.concat([['group', body]])];
+        const server = ['scserver', {
+          options: options
+        }, defs.concat([audiobus(body)])];
 
         if (hasSclang) {
           this.root = sc.h(['sclang', { options: options }, [server]]);
@@ -157,7 +172,7 @@ class SoundApp {
       const sounds = [];
 
       files.forEach(p => {
-        if (path.extname(p) === '.json' && p !== 'master.json') {
+        if (path.extname(p) === '.json' && p !== 'master.json' && p !== 'mixToMaster.json') {
           const fullpath = path.join(synthDefsDir, p);
           const data = jetpack.read(fullpath, 'json');
           data.path = fullpath;
