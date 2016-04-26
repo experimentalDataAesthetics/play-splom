@@ -20,11 +20,7 @@ const mapStateToProps = createSelector(
     getLayout,
     getNumFeatures
   ],
-  (dataset, features, layout, numFeatures) => {
-    return ({
-      dataset, features, layout, numFeatures
-    });
-  });
+  (dataset, features, layout, numFeatures) => ({ dataset, features, layout, numFeatures }));
 
 class ScatterPlotsContainer extends Component {
 

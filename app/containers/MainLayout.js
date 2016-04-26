@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 // import darkBaseTheme from 'material-ui/styles/baseThemes/darkBaseTheme';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
+import { createSelector } from 'reselect';
 import * as _ from 'lodash';
 
 // import { setWindowSize } from '../actions/ui';
@@ -22,10 +23,9 @@ const muiTheme = getMuiTheme(); // darkBaseTheme
 //     textColor: grey800
 //   }
 
-const mapStateToProps = (state) => ({
-  windowSize: getWindowSize(state),
-  layout: getLayout(state)
-});
+const mapStateToProps = createSelector(
+  [getWindowSize, getLayout],
+  (windowSize, layout) => ({windowSize, layout}));
 
 const mapDispatchToProps = null;
 
