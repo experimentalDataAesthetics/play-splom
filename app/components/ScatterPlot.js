@@ -24,17 +24,15 @@ export default class ScatterPlot extends React.Component {
       points: `0,0 0,${this.props.sideLength} ${this.props.sideLength},${this.props.sideLength}`,
       strokeWidth: 1,
       stroke: '#AAAAAA',  // need access to theme here
-      // className: 'axis',
       fill: 'none'
     });
 
     const radius = this.props.sideLength < 100 ? 1 : 3;
     const flip = this.props.sideLength;
     const points = h('g', this.props.points.map((xy, i) => {
-      const flipy = flip - xy[1];
       return h(Point, {
         x: xy[0],
-        y: flipy,
+        y: flip - xy[1],
         radius,
         id: String(i),
         className: 'point'

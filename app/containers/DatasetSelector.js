@@ -1,4 +1,4 @@
-import { Component } from 'react';
+import React, { Component } from 'react';
 import h from 'react-hyperscript';
 
 import { connect } from 'react-redux';
@@ -14,7 +14,7 @@ import {
 const mapStateToProps = (state) => {
   return {
     datasets: state.datasets,
-    selected: state.dataset && state.dataset.path
+    selected: Boolean(state.dataset && state.dataset.path)
   };
 };
 
@@ -31,6 +31,14 @@ const mapDispatchToProps = (dispatch) => {
 };
 
 class DatasetSelector extends Component {
+
+  static propTypes = {
+    selected: React.PropTypes.bool.isRequired,
+    datasets: React.PropTypes.array.isRequired,
+    openDialog: React.PropTypes.func.isRequired,
+    onSelect: React.PropTypes.func.isRequired
+  };
+
   render() {
     return h('div.dataset-selector', [
       h('h6', 'Datasets'),

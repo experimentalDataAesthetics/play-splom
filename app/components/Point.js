@@ -1,6 +1,5 @@
 import React from 'react';
 import muiThemeable from 'material-ui/styles/muiThemeable';
-import * as _ from 'lodash';
 
 class Point extends React.Component {
 
