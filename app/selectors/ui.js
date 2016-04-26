@@ -1,4 +1,4 @@
-import { centeredSquare } from '../utils/layout';
+import { centeredSquareWithMargin } from '../utils/layout';
 import { createSelector } from 'reselect';
 import { getDatasetMetadata, getFeatures } from './dataset';
 
@@ -42,7 +42,7 @@ export const getLayout = createSelector(
       };
     }
 
-    layout.svgStyle = centeredSquare(layout.svgWidth, windowSize.height);
+    layout.svgStyle = centeredSquareWithMargin(layout.svgWidth, windowSize.height, 24);
     layout.plotsWidth = layout.svgStyle.right - layout.svgStyle.left;
 
     layout.sideLength = layout.plotsWidth / (numFeatures || 1);
