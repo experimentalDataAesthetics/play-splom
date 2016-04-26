@@ -22,6 +22,17 @@ export const getDatasetMetadata = createSelector(
 /**
  * Extract each column as values with min, max, mean, std calculated
  * from a Miso dataset.
+ *
+ * Each feature is an object:
+ *  .name
+ *  .index
+ *  .values
+ *  .typ
+ *  .std
+ *  .min
+ *  .max
+ *  .domain
+ *  .scale - the appropriate scale (linear|ordinal|time) with domain set
  */
 export const getFeatures = createSelector(
   [getDataset],
@@ -37,13 +48,14 @@ export const getFeatures = createSelector(
       const isString = _.isString(first);
 
       const params = {
-        name,
+        name: name.trim(),
         index: i,
         values: data
       };
       if (isString) {
         params.typ = 'string';
         params.domain = Array.from((new Set(data)));
+        params.scale = d3.scale.ordinal().domain(params.domain);
         return params;
       }
 
@@ -53,12 +65,14 @@ export const getFeatures = createSelector(
 
       if (isDate) {
         params.typ = 'date';
+        params.scale = d3.time.scale().domain(extent).nice();
         return params;
       }
 
       params.typ = 'number';
       params.mean = d3.mean(data);
       params.std = d3.deviation(data);
+      params.scale = d3.scale.linear().domain(extent).nice();
       return params;
     });
   }
@@ -112,19 +126,8 @@ export function normalizePoints(feature) {
     };
 
     scaledValues = feature.values.map(normalize);
-
-  } else if (feature.typ === 'string') {
-    const scale = d3.scale.ordinal().domain(feature.domain).range([0.05, 0.95]);
-    scaledValues = feature.values.map(scale);
-  } else if (feature.typ === 'date') {
-    const scale = d3.time.scale()
-        .domain(d3.extent([feature.min, feature.max])).nice()
-        .range([0.05, 0.95]);
-    scaledValues = feature.values.map(scale);
   } else {
-    // wasted. may only be linear or empty set
-    const scale = autoScale(feature.values, [feature.min, feature.max]);
-    scaledValues = feature.values.map(scale);
+    scaledValues = feature.values.map(feature.scale.range([0, 1]));
   }
 
   return {

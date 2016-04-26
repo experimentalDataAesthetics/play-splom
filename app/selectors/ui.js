@@ -1,7 +1,6 @@
 import { centeredSquare } from '../utils/layout';
 import { createSelector } from 'reselect';
-import { getDatasetMetadata, getNormalizedPoints } from './dataset';
-import d3 from 'd3';
+import { getDatasetMetadata, getFeatures } from './dataset';
 
 export const getWindowSize = (state) => state.ui.windowSize;
 
@@ -52,18 +51,19 @@ export const getLayout = createSelector(
 );
 
 /**
- * map each normalized feature to sideLength
- * updating whenever the layout or dataset changes
+ * Map each feature to sideLength
+ * updating whenever the layout or dataset changes.
  */
 export const getPointsForPlot = createSelector(
-  [getNormalizedPoints, getLayout],
-  (npoints, layout) => {
-    const scaler = d3.scale.linear().domain([0, 1]).range([0, layout.sideLength - layout.margin]);
-    return npoints.map((feature) => {
+  [getFeatures, getLayout],
+  (features, layout) => {
+    return features.map((feature) => {
+      const scale = feature.scale.range([0, layout.sideLength - layout.margin]);
+
       return {
         name: feature.name,
         index: feature.index,
-        values: feature.values.map(scaler)
+        values: feature.values.map(scale)
       };
     });
   }
