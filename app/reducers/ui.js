@@ -1,3 +1,6 @@
+import getMuiTheme from 'material-ui/styles/getMuiTheme';
+import darkBaseTheme from 'material-ui/styles/baseThemes/darkBaseTheme';
+
 import {
   FOCUS_SCATTERPLOT,
   SET_HOVERING,
@@ -17,7 +20,8 @@ const initial = {
   windowSize: {
     width: window.innerWidth,
     height: window.innerHeight
-  }
+  },
+  muiTheme: getMuiTheme(darkBaseTheme)
 };
 
 /**

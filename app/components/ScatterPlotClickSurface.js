@@ -20,6 +20,7 @@ export default class ScatterPlotClickSurface extends React.Component {
     baseClientX: React.PropTypes.number.isRequired,
     baseClientY: React.PropTypes.number.isRequired,
     setPointsUnderBrush: React.PropTypes.func.isRequired,
+    muiTheme: React.PropTypes.object.isRequired,
     toggleLoopMode: React.PropTypes.func.isRequired,
     isLooping: React.PropTypes.bool.isRequired,
     isPending: React.PropTypes.bool.isRequired
@@ -76,13 +77,16 @@ export default class ScatterPlotClickSurface extends React.Component {
   }
 
   render() {
-    let className = styles.bg;
+    const bgStyle = {
+      fillOpacity: 0.1
+    };
+
     if (this.props.isLooping) {
-      className = styles.loopingBg;
+      bgStyle.fill = this.props.muiTheme.palette.accent2Color;
     }
 
     if (this.props.isPending) {
-      className = styles.pendingBg;
+      bgStyle.fill = this.props.muiTheme.palette.accent3Color;
     }
 
     const bg = h('rect', {
@@ -90,7 +94,8 @@ export default class ScatterPlotClickSurface extends React.Component {
       height: this.props.sideLength,
       x: 0,
       y: 0,
-      className,
+      className: styles.bg,
+      style: bgStyle,
 
       onMouseDown: (e) => {
         if (e.buttons) {

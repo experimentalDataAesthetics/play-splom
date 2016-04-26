@@ -3,19 +3,14 @@
   cursor: crosshair;
 }
 
+.surface:hover {
+  cursor: cell;
+}
+
 .bg {
   fill: transparent;
 }
 
 .surface:hover .bg {
-  fill: rgba(217, 144, 3, 0.08);
-}
-
-.loopingBg {
-  fill: rgba(3, 114, 217, 0.37);
-}
-
-
-.pendingBg {
-  fill: rgba(3, 217, 25, 0.37);
+  fill: rgb(217, 144, 3);
 }

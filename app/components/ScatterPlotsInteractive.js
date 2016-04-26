@@ -1,19 +1,25 @@
 import React from 'react';
 import h from 'react-hyperscript';
 import * as _ from 'lodash';
+import { createSelector } from 'reselect';
 import { connect } from 'react-redux';
 import {
   // showBrush,
   setPointsUnderBrush,
   toggleLoopMode
 } from '../actions/interaction';
+import {
+  getMuiTheme
+} from '../selectors/index';
 
 import ScatterPlotClickSurface from '../components/ScatterPlotClickSurface';
 
 const unset = {};
-const mapStateToProps = (state) => ({
-  loopMode: state.interaction.loopMode || unset
-});
+const getLoopMode = (state) => state.interaction.loopMode || unset;
+
+const mapStateToProps = createSelector(
+  [getLoopMode, getMuiTheme],
+  (loopMode, muiTheme) => ({loopMode, muiTheme}));
 
 const mapDispatchToProps = (dispatch) => {
   return {
@@ -39,6 +45,7 @@ class ScatterPlotsInteractive extends React.Component {
     numFeatures: React.PropTypes.number.isRequired,
     loopMode: React.PropTypes.object.isRequired,
     layout: React.PropTypes.object.isRequired,
+    muiTheme: React.PropTypes.object.isRequired,
     features: React.PropTypes.array.isRequired,
     setPointsUnderBrush: React.PropTypes.func.isRequired,
     toggleLoopMode: React.PropTypes.func.isRequired
@@ -84,6 +91,7 @@ class ScatterPlotsInteractive extends React.Component {
             sideLength: sideLength - this.props.layout.margin,
             setPointsUnderBrush: this.props.setPointsUnderBrush,
             toggleLoopMode: this.props.toggleLoopMode,
+            muiTheme: this.props.muiTheme,
             isLooping,
             isPending
           });

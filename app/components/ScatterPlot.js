@@ -2,7 +2,6 @@ import React from 'react';
 import h from 'react-hyperscript';
 
 import Point from './Point';
-import styles from './ScatterPlot.css';
 
 /**
  * Renders a single scatter plot on a parent svg g
@@ -15,7 +14,8 @@ export default class ScatterPlot extends React.Component {
     m: React.PropTypes.number.isRequired,
     n: React.PropTypes.number.isRequired,
     sideLength: React.PropTypes.number.isRequired,
-    points: React.PropTypes.array.isRequired
+    points: React.PropTypes.array.isRequired,
+    muiTheme: React.PropTypes.object.isRequired
   };
 
   render() {
@@ -23,7 +23,7 @@ export default class ScatterPlot extends React.Component {
     const axis = h('polyline', {
       points: `0,0 0,${this.props.sideLength} ${this.props.sideLength},${this.props.sideLength}`,
       strokeWidth: 1,
-      stroke: '#AAAAAA',  // need access to theme here
+      stroke: this.props.muiTheme.tableRow.borderColor,
       fill: 'none'
     });
 
@@ -34,8 +34,7 @@ export default class ScatterPlot extends React.Component {
         x: xy[0],
         y: flip - xy[1],
         radius,
-        id: String(i),
-        className: 'point'
+        id: String(i)
       });
     }));
 
@@ -44,8 +43,7 @@ export default class ScatterPlot extends React.Component {
     return h('g', {
       transform: `translate(${this.props.xOffset}, ${this.props.yOffset})`,
       width: this.props.sideLength,
-      height: this.props.sideLength,
-      className: styles.scatterplot
+      height: this.props.sideLength
     }, children);
   }
 }

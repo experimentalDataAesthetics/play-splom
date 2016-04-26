@@ -4,6 +4,8 @@ import { getDatasetMetadata, getFeatures } from './dataset';
 
 export const getWindowSize = (state) => state.ui.windowSize;
 
+export const getMuiTheme = (state) => state.ui.muiTheme;
+
 // deprec
 export const getNumFeatures = createSelector(
   [getDatasetMetadata],
@@ -22,14 +24,14 @@ export const getNumFeatures = createSelector(
  * Will also include theme when that is added.
  */
 export const getLayout = createSelector(
-  [getWindowSize, getNumFeatures],
-  (windowSize, numFeatures) => {
+  [getWindowSize, getNumFeatures, getMuiTheme],
+  (windowSize, numFeatures, muiTheme) => {
     const layout = {};
     const big = windowSize.width > 600;
     const sidebarWidth = big ? 300 : 0;
     layout.showSidebar = big;
     layout.svgWidth = windowSize.width - sidebarWidth;
-    layout.margin = 6;
+    layout.margin = muiTheme.spacing.desktopGutterMini;
 
     if (layout.showSidebar) {
       layout.sideBarStyle = {
@@ -42,7 +44,9 @@ export const getLayout = createSelector(
       };
     }
 
-    layout.svgStyle = centeredSquareWithMargin(layout.svgWidth, windowSize.height, 24);
+    // console.log(muiTheme);
+    layout.svgStyle = centeredSquareWithMargin(layout.svgWidth, windowSize.height,
+      muiTheme.spacing.desktopGutter);
     layout.plotsWidth = layout.svgStyle.right - layout.svgStyle.left;
 
     layout.sideLength = layout.plotsWidth / (numFeatures || 1);
