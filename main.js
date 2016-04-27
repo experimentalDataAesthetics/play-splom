@@ -1,10 +1,14 @@
 /* eslint strict: 0 */
 'use strict';
-
 /**
+ * The backend application that creates windows
+ * and launches the frontend application app/index.js
+ *
  * All modules should use require, not import
  * as this is not babel processed.
- * `let` and `const` is fine
+ *
+ * `let` and `const` and arrow functions are fine as
+ * well as all listed here: https://kangax.github.io/compat-table/es6/#node4
  */
 process.env.NODE_ENV = process.env.NODE_ENV || 'production';
 

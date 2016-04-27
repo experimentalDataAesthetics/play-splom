@@ -33,7 +33,6 @@ node_modules
 /dist
 release
 
-app/components/charts
 app/vendor/supercollider
 org
 .tags1
