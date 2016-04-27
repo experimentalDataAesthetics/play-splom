@@ -5,6 +5,11 @@ const Miso = require('miso.dataset');
 const jetpack = require('fs-jetpack');
 import { extname, basename, join } from 'path';
 
+function absolutePath(path) {
+  const app = require('remote').require('app');
+  return join(app.getAppPath(), path);
+}
+
 export function setDataset(path, data, metadata) {
   const name = basename(path, extname(path));
   return {
@@ -31,6 +36,9 @@ const parsers = {
   '.csv': Miso.Dataset.Parsers.Delimited
 };
 
+/**
+ * loading should be moved to main
+ */
 export function loadDataset(path) {
   return (dispatch) => {
     const ext = extname(path);
@@ -43,16 +51,20 @@ export function loadDataset(path) {
     }
 
     const readAs = ext === '.json' ? 'json' : 'utf8';
-    jetpack.readAsync(path, readAs).then((data) => {
+    jetpack.readAsync(absolutePath(path), readAs).then((data) => {
 
-      const ds = new Miso.Dataset({
-        data,
-        parser
-      });
+      if (data) {
+        const ds = new Miso.Dataset({
+          data,
+          parser
+        });
 
-      return ds.fetch().then((data2) => {
-        dispatch(setDataset(path, data2));
-      });
+        return ds.fetch().then((data2) => {
+          dispatch(setDataset(path, data2));
+        });
+      }
+
+      throw new Error(`No data loaded from ${path}`);
     }).catch((err) => console.error(err));
   };
 }
@@ -72,7 +84,7 @@ export function readDefaultDatasets(datasetsDir, thenLoadPath) {
           }, 500);
         }
       } else {
-        console.error('No such path:', path);
+        throw new Error(`No paths found at: ${datasetsDir}`);
       }
     });
   };
