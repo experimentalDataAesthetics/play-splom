@@ -10,29 +10,102 @@ const exec = require('child_process').exec;
 const argv = require('minimist')(process.argv.slice(2));
 const pkg = require('./package.json');
 const devDeps = Object.keys(pkg.devDependencies);
+const deps = Object.keys(pkg.dependencies);
+const _ = require('lodash');
+const jetpack = require('fs-jetpack');
 
 const appName = argv.name || argv.n || pkg.productName;
 const shouldUseAsar = argv.asar || argv.a || false;
 const shouldBuildAll = argv.all || false;
 
+
+// whitelist the ones you do need for main.js
+// supercolliderjs d3 lodash dryadic winston
+// fs-jetpack
+// electron
+// q
+// mkdirp
+// rimraf
+// minimatch
+// brace-expansion
+// etc
+// better to just bundle that too
+//
+function ignoreMe(name) {
+  return `^/node_modules/${name}($|/)`;
+}
+
+const nodeModules = jetpack.list('node_modules');
+
+// webpack compiles main.js and posts what paths it had to include.
+// This list is derived from that and has to be updated anytime
+// any package used by main.js changes.
+// Ideally the main process would run using the dist/main.js that is bundled
+// and minified.
+const includeModules = [
+  'baconjs',
+  'balanced-match',
+  'brace-expansion',
+  'colors',
+  'concat-map',
+  'cycle',
+  'electron-debug',
+  'electron-is-dev',
+  'electron-localshortcut',
+  'fs-jetpack',
+  'inflight',
+  'inherits',
+  'isstream',
+  'keymirror',
+  'lodash',
+  'minimatch',
+  'mkdirp',
+  'once',
+  'path-is-absolute',
+  'pkginfo',
+  'q',
+  'rimraf',
+  'stack-trace',
+  'winston',
+  'wrappy',
+  'dryadic',
+  'supercolliderjs',
+  'async',
+  'minimst',
+  'glob'
+];
+
+const ignoreModules = _.difference(nodeModules, includeModules);
+
+const ignore = [
+  // regex
+  /^\/\..*/,
+  '^/package.js$',
+  '^/server.js$',
+  '^/build-main.sh$',
+  '^/logs($|/)',
+  '^/org($|/)',
+  /^\/release\//,
+  '^/test($|/)',
+  '^/tools($|/)',
+  '^/webpack*'
+
+  // (f) => {
+  //   sclog.debug('ignore?', f);
+  //   return false;
+  // }
+  // '/package.js'
+  // why am I including node_modules ?
+  // it should be just the bundle.js
+  // resources/ not the current app you are building
+  // app/vendor/supercollider/not-current-os
+].concat(devDeps.map(ignoreMe)).concat(ignoreModules.map(ignoreMe));
+
 const DEFAULT_OPTS = {
   dir: './',
   name: appName,
   asar: shouldUseAsar,
-  ignore: [
-    '^/test($|/)',
-    '^/tools($|/)',
-    '^/release($|/)',
-    '^/org($|/)',
-    // '/\.\*',
-    '^/webpack*',
-    '^/build-main.sh$'
-    // '/package.js'
-    // why am I including node_modules ?
-    // it should be just the bundle.js
-    // resources/ not the current app you are building
-    // app/vendor/supercollider/not-current
-  ].concat(devDeps.map(name => `/node_modules/${name}($|/)`))
+  ignore
 };
 
 const icon = argv.icon || argv.i || 'app/app';
@@ -103,6 +176,7 @@ function pack(plat, arch, cb) {
     })()
   };
 
+  // strip out resources and vendor
   const opts = Object.assign({}, DEFAULT_OPTS, iconObj, {
     platform: plat,
     arch,
