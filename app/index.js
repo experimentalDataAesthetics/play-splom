@@ -1,3 +1,6 @@
+/**
+ * The frontend application.
+ */
 import React from 'react';
 import { render } from 'react-dom';
 import { Provider } from 'react-redux';
@@ -6,6 +9,10 @@ import { syncHistoryWithStore } from 'react-router-redux';
 import injectTapEventPlugin from 'react-tap-event-plugin';
 import routes from './routes';
 import configureStore from './store/configureStore';
+import { loadDataset } from './actions/datasets';
+import { selectSound } from './actions/sounds';
+import { mapXYtoParam } from './actions/mapping';
+
 import './app.global.css';
 import { join } from 'path';
 
@@ -43,3 +50,10 @@ render(
   </Provider>,
   document.getElementById('root')
 );
+
+/** load an initial dataset and sound **/
+const iris = join(__dirname, 'vendor/datasets', 'iris.csv');
+store.dispatch(loadDataset(iris));
+store.dispatch(selectSound('grainFM'));
+store.dispatch(mapXYtoParam('x', 'modfreq'));
+store.dispatch(mapXYtoParam('y', 'carfreq'));

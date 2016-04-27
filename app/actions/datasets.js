@@ -1,17 +1,16 @@
 import {SELECT_DATASET, SET_DATASETS, OPEN_DATASET_DIALOG} from '../actionTypes';
 import callActionOnMain from '../ipc/callActionOnMain';
 
-let Miso = require('miso.dataset');
-let jetpack = require('fs-jetpack');
-let extname = require('path').extname;
-let basename = require('path').basename;
+const Miso = require('miso.dataset');
+const jetpack = require('fs-jetpack');
+import { extname, basename, join } from 'path';
 
 export function setDataset(path, data, metadata) {
-  let name = basename(path, extname(path));
+  const name = basename(path, extname(path));
   return {
     type: SELECT_DATASET,
     payload: {
-      name: name,
+      name,
       path,
       data,
       metadata
@@ -20,22 +19,22 @@ export function setDataset(path, data, metadata) {
 }
 
 export function openDatasetDialog() {
-  return (dispatch) => {
+  return () => {
     callActionOnMain({
       type: OPEN_DATASET_DIALOG
     });
   };
 }
 
-let parsers = {
+const parsers = {
   '.json': Miso.Dataset.Parsers.Obj,  // already parsed to data
   '.csv': Miso.Dataset.Parsers.Delimited
 };
 
 export function loadDataset(path) {
   return (dispatch) => {
-    let ext = extname(path);
-    let parser = parsers[ext];
+    const ext = extname(path);
+    const parser = parsers[ext];
 
     if (!parser) {
       // dispatch error action
@@ -43,25 +42,39 @@ export function loadDataset(path) {
       return;
     }
 
-    let readAs = ext === '.json' ? 'json' : 'utf8';
+    const readAs = ext === '.json' ? 'json' : 'utf8';
     jetpack.readAsync(path, readAs).then((data) => {
 
-      let ds = new Miso.Dataset({
-        data: data,
-        parser: parser
+      const ds = new Miso.Dataset({
+        data,
+        parser
       });
 
-      ds.fetch().then((data) => {
-        dispatch(setDataset(path, data));
-      }, console.error);
-    }, console.error);
+      return ds.fetch().then((data2) => {
+        dispatch(setDataset(path, data2));
+      });
+    }).catch((err) => console.error(err));
   };
 }
 
-export function readDefaultDatasets(path) {
+/**
+ * You wouldn't want to load them all into memory and keep them there.
+ * Should only store paths and load/dump on demand
+ */
+export function readDefaultDatasets(datasetsDir, thenLoadPath) {
   return (dispatch) => {
-    // read directory
-    // dispatch(setDatasets(paths));
+    jetpack.listAsync(datasetsDir).then((paths) => {
+      if (paths) {
+        dispatch(setDatasets(paths.map((p) => join(datasetsDir, p))));
+        if (thenLoadPath) {
+          setTimeout(() => {
+            dispatch(loadDataset(join(datasetsDir, thenLoadPath)));
+          }, 500);
+        }
+      } else {
+        console.error('No such path:', path);
+      }
+    });
   };
 }
 
