@@ -18,7 +18,6 @@ const appName = argv.name || argv.n || pkg.productName;
 const shouldUseAsar = argv.asar || argv.a || false;
 const shouldBuildAll = argv.all || false;
 
-
 // whitelist the ones you do need for main.js
 // supercolliderjs d3 lodash dryadic winston
 // fs-jetpack
@@ -51,6 +50,7 @@ const includeModules = [
   'cycle',
   'electron-debug',
   'electron-is-dev',
+  'escape-string-regexp',
   'electron-localshortcut',
   'fs-jetpack',
   'inflight',
@@ -66,6 +66,7 @@ const includeModules = [
   'q',
   'rimraf',
   'stack-trace',
+  'strip-ansi',
   'winston',
   'wrappy',
   'dryadic',
@@ -75,7 +76,13 @@ const includeModules = [
   'glob'
 ];
 
-const ignoreModules = _.difference(nodeModules, includeModules);
+// or read each package.json in the above and add all modules in its package
+// npm3 means you need it deep and flat.
+
+const ignoreModules = [];
+// _.difference(nodeModules, includeModules);
+
+// console.log(ignoreModules);
 
 const ignore = [
   // regex

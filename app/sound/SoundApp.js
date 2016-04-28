@@ -65,7 +65,7 @@ class SoundApp {
           throw new Error(err);
         }
 
-        let hasSclang = Boolean(_config2.default.supercolliderjs.options.sclang) && process.env.NODE_ENV === 'development';
+        const hasSclang = Boolean(_config2.default.supercolliderjs.options.sclang) && process.env.NODE_ENV === 'development';
         // hasSclang = true;
 
         const synthDef = name => {

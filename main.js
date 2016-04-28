@@ -21,6 +21,7 @@ const path = require('path');
 const pkg = require('./package.json');
 
 let debugLevel = process.env.NODE_ENV === 'development' ? 'debug' : 'info';
+debugLevel = 'debug';
 
 const winston = require('winston');
 winston.level = debugLevel;
@@ -59,9 +60,8 @@ ipcMain.on('call-action-on-main', (event, payload) => {
   handleActionOnMain(event, payload, soundApp);
 });
 
-if (process.env.NODE_ENV === 'development') {
-  require('electron-debug')();
-}
+// require('electron-debug')({enabled: true});
+require('electron-debug')({enabled: process.env.NODE_ENV === 'development'});
 
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
