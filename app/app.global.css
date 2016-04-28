@@ -1,0 +1,26 @@
+
+@import url(https://fonts.googleapis.com/css?family=Open+Sans);
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  display: flex;
+  overflow: hidden;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+#root {
+  width: 100%;
+  height: 100%;
+}
+
+.MainLayout {
+  height: 100vh;
+}

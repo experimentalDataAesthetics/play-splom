@@ -1,0 +1,38 @@
+
+.sidebar {
+  width: 300px;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.sidebar > div {
+  padding: .5rem;
+}
+
+.sidebar h6 {
+  margin-bottom: 0;
+  font-weight: bold;
+  letter-spacing: .25em;
+}
+
+.sidebar .selectable-list {
+  overflow-y: scroll;
+  margin-bottom: 3px;
+}
+
+.datasets {
+  height: 150px;
+}
+.datasets .selectable-list {
+  height: 73px;
+}
+.sounds {
+  height: 300px;
+}
+.params {
+  flex: 1;
+}
+.help {
+  height: 150px;
+}

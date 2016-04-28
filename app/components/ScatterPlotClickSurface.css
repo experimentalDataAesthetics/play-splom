@@ -1,0 +1,16 @@
+
+.surface {
+  cursor: crosshair;
+}
+
+.surface:hover {
+  cursor: cell;
+}
+
+.bg {
+  fill: transparent;
+}
+
+.surface:hover .bg {
+  fill: rgb(217, 144, 3);
+}

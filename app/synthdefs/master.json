@@ -1,0 +1,53 @@
+{
+  "hasArrayArgs": false,
+  "inputs": [
+    {
+      "rate": "audio",
+      "startingChannel": "out",
+      "numberOfChannels": 2,
+      "type": "In"
+    }
+  ],
+  "hasGate": false,
+  "name": "master",
+  "hasVariants": false,
+  "output": [
+    {
+      "rate": "audio",
+      "startingChannel": "out",
+      "numberOfChannels": 2,
+      "type": "Out"
+    }
+  ],
+  "controls": [
+    {
+      "name": "out",
+      "defaultValue": 0,
+      "lag": 0,
+      "rate": "control",
+      "index": 0
+    },
+    {
+      "name": "amp",
+      "defaultValue": 0.89999997615814,
+      "lag": 0,
+      "rate": "control",
+      "spec": {
+        "default": 0,
+        "maxval": 1,
+        "class": "ControlSpec",
+        "minval": 0,
+        "warp": "amp",
+        "step": 0,
+        "units": ""
+      },
+      "index": 1
+    }
+  ],
+  "canFreeSynth": false,
+  "sourceCode": "SynthDef('master', { arg out=0, amp=0.9;  var in = In.ar(out, 2);  var output = Limiter.ar(in * amp, 0.99);  Out.ar(out, output);})",
+  "controlNames": [
+    "out",
+    "amp"
+  ]
+}

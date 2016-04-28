@@ -1,0 +1,97 @@
+{
+  "hasArrayArgs": false,
+  "inputs": [],
+  "hasGate": false,
+  "name": "grain3",
+  "hasVariants": false,
+  "output": [
+    {
+      "rate": "audio",
+      "startingChannel": "out",
+      "numberOfChannels": 2,
+      "type": "OffsetOut"
+    }
+  ],
+  "controls": [
+    {
+      "name": "out",
+      "defaultValue": 0,
+      "lag": 0,
+      "rate": "scalar",
+      "index": 0
+    },
+    {
+      "name": "amp",
+      "defaultValue": 0.10000000149012,
+      "lag": 0,
+      "rate": "scalar",
+      "spec": {
+        "default": 0,
+        "maxval": 1,
+        "class": "ControlSpec",
+        "minval": 0,
+        "warp": "amp",
+        "step": 0,
+        "units": ""
+      },
+      "index": 1
+    },
+    {
+      "name": "freq",
+      "defaultValue": 440,
+      "lag": 0,
+      "rate": "scalar",
+      "spec": {
+        "default": 440,
+        "maxval": 20000,
+        "class": "ControlSpec",
+        "minval": 20,
+        "warp": "exp",
+        "step": 0,
+        "units": " Hz"
+      },
+      "index": 2
+    },
+    {
+      "name": "sustain",
+      "defaultValue": 0.0099999997764826,
+      "lag": 0,
+      "rate": "scalar",
+      "spec": {
+        "default": 1,
+        "maxval": 4,
+        "class": "ControlSpec",
+        "minval": 0,
+        "warp": "linear",
+        "step": 0,
+        "units": ""
+      },
+      "index": 3
+    },
+    {
+      "name": "pan",
+      "defaultValue": 0,
+      "lag": 0,
+      "rate": "scalar",
+      "spec": {
+        "default": 0,
+        "maxval": 1,
+        "class": "ControlSpec",
+        "minval": -1,
+        "warp": "linear",
+        "step": 0,
+        "units": ""
+      },
+      "index": 4
+    }
+  ],
+  "canFreeSynth": true,
+  "sourceCode": "SynthDef('grain3', { |out, amp=0.1, freq=440, sustain=0.01, pan|var snd = LFSaw.ar(freq);var amp2 = amp * AmpComp.ir(freq.max(50)) * 0.5;var env = EnvGen.ar(Env.perc(1.0, 1.0), timeScale: sustain, levelScale: amp2, doneAction: 2);OffsetOut.ar(out, Pan2.ar(snd, pan, env));})",
+  "controlNames": [
+    "out",
+    "amp",
+    "freq",
+    "sustain",
+    "pan"
+  ]
+}
