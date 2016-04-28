@@ -2,7 +2,7 @@
   "name": "play-splom",
   "productName": "PlaySPLOM",
   "companyName": "experimentalDataAesthetics",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Scatter plot sonification for exploring datasets with sound",
   "license": "MIT",
   "repository": {
@@ -10,7 +10,7 @@
     "url": "https://github.com/experimentalDataAesthetics/play-splom.git"
   },
   "author": {
-    "name": "crucialfelix",
+    "name": "Chris Sattinger",
     "email": "crucialfelix@gmail.com",
     "url": "http://ixdm.ch/critical-media-lab"
   },
