@@ -108,12 +108,6 @@ const DEFAULT_OPTS = {
   ignore
 };
 
-const icon = argv.icon || argv.i || 'app/app';
-
-if (icon) {
-  DEFAULT_OPTS.icon = icon;
-}
-
 const version = argv.version || argv.v;
 
 if (version) {
@@ -163,18 +157,19 @@ function pack(plat, arch, cb) {
   // there is no darwin ia32 electron
   if (plat === 'darwin' && arch === 'ia32') return;
 
-  const iconObj = {
-    icon: DEFAULT_OPTS.icon + (() => {
-      let extension = '.png';
-      if (plat === 'darwin') {
-        extension = '.icns';
-      } else if (plat === 'win32') {
-        extension = '.ico';
-      }
+  const iconObj = {};
+  switch (plat) {
+    case 'darwin':
+      iconObj.icon = 'resources/osx/icon.icns';
+      break;
+    case 'win32':
+      iconObj.icon = 'resources/windows/icon.ico';
+      break;
+    default:
+      iconObj.icon = 'resources/icon.png';
+  }
 
-      return extension;
-    })()
-  };
+  console.log(iconObj);
 
   // strip out resources and vendor
   const opts = Object.assign({}, DEFAULT_OPTS, iconObj, {
