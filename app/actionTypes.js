@@ -28,6 +28,7 @@ module.exports = keyMirror({
 
   // interaction
   SHOW_BRUSH: null,
+  SET_HOVERING: null,
   SET_POINTS_UNDER_BRUSH: null,
   TOGGLE_LOOP_MODE: null,
   SET_LOOPING: null,
@@ -35,7 +36,6 @@ module.exports = keyMirror({
   // ui
   FOCUS_SCATTERPLOT: null,
   ZOOM_SCATTERPLOT: null,
-  SET_HOVERING: null,
   MOUSE_MOVE: null,
   SET_WINDOW_SIZE: null,
 

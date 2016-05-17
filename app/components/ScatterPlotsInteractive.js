@@ -9,6 +9,9 @@ import {
   toggleLoopMode
 } from '../actions/interaction';
 import {
+  setHovering
+} from '../actions/ui';
+import {
   getMuiTheme
 } from '../selectors/index';
 
@@ -31,6 +34,10 @@ const mapDispatchToProps = (dispatch) => {
       dispatch(setPointsUnderBrush(m, n, indices));
     },
 
+    setHovering: (m, n) => {
+      dispatch(setHovering(m, n));
+    },
+
     toggleLoopMode: (m, n) => {
       dispatch(toggleLoopMode(m, n));
     }
@@ -48,6 +55,7 @@ class ScatterPlotsInteractive extends React.Component {
     muiTheme: React.PropTypes.object.isRequired,
     features: React.PropTypes.array.isRequired,
     setPointsUnderBrush: React.PropTypes.func.isRequired,
+    setHovering: React.PropTypes.func.isRequired,
     toggleLoopMode: React.PropTypes.func.isRequired
   };
 
@@ -90,6 +98,7 @@ class ScatterPlotsInteractive extends React.Component {
             baseClientY: y,
             sideLength: sideLength - this.props.layout.margin,
             setPointsUnderBrush: this.props.setPointsUnderBrush,
+            setHovering: this.props.setHovering,
             toggleLoopMode: this.props.toggleLoopMode,
             muiTheme: this.props.muiTheme,
             isLooping,
