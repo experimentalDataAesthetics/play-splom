@@ -1,7 +1,8 @@
 import React from 'react';
 import { createDevTools } from 'redux-devtools';
-import LogMonitor from 'redux-devtools-log-monitor';
+// import LogMonitor from 'redux-devtools-log-monitor';
 import DockMonitor from 'redux-devtools-dock-monitor';
+import FilterableLogMonitor from 'redux-devtools-filterable-log-monitor';
 
 export default createDevTools(
   <DockMonitor
@@ -9,6 +10,6 @@ export default createDevTools(
     changePositionKey="ctrl-q"
     defaultIsVisible={false}
   >
-    <LogMonitor />
+    <FilterableLogMonitor />
   </DockMonitor>
 );

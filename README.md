@@ -28,13 +28,20 @@ Install this app:
 
     npm install
 
-
-SuperCollider is included by manually putting a prebuilt version into `app/vendor/supercollider`
+[SuperCollider](https://supercollider.github.io) is included by manually putting a prebuilt version into `app/vendor/supercollider`
 Later on this will be installable automatically by npm (node package manager), but for now use the google drive version.
-
 
 ## Run
 
     npm run dev
 
 This will compile and open an Electron app in development mode.
+
+
+`Alt-Command-i` will open Chrome Devtools
+
+`Ctrl-h` will open the [Redux-Devtools](https://github.com/gaearon/redux-devtools)
+
+## Build
+
+    npm run build
