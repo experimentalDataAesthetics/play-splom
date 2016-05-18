@@ -20,6 +20,7 @@ export default class ScatterPlotClickSurface extends React.Component {
     baseClientX: React.PropTypes.number.isRequired,
     baseClientY: React.PropTypes.number.isRequired,
     setPointsUnderBrush: React.PropTypes.func.isRequired,
+    setHovering: React.PropTypes.func.isRequired,
     muiTheme: React.PropTypes.object.isRequired,
     toggleLoopMode: React.PropTypes.func.isRequired,
     isLooping: React.PropTypes.bool.isRequired,
@@ -52,11 +53,13 @@ export default class ScatterPlotClickSurface extends React.Component {
         pointsIn.push(i);
       }
     });
+
     this._setPointsIn(pointsIn);
   }
 
   _hover() {
     this._setPointsIn([]);
+    this.props.setHovering(this.props.m, this.props.n);
   }
 
   _setPointsIn(pointsIn) {

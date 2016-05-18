@@ -1,6 +1,7 @@
 import { centeredSquareWithMargin } from '../utils/layout';
 import { createSelector } from 'reselect';
 import { getDatasetMetadata, getFeatures } from './dataset';
+import * as _ from 'lodash';
 
 export const getWindowSize = (state) => state.ui.windowSize;
 
@@ -47,7 +48,9 @@ export const getLayout = createSelector(
     // console.log(muiTheme);
     layout.svgStyle = centeredSquareWithMargin(layout.svgWidth, windowSize.height,
       muiTheme.spacing.desktopGutter);
-    layout.plotsWidth = layout.svgStyle.right - layout.svgStyle.left;
+    layout.scatterPlotsMargin = 60;
+    layout.plotsWidth = (layout.svgStyle.right - layout.svgStyle.left)
+      - (2 * layout.scatterPlotsMargin);
 
     layout.sideLength = layout.plotsWidth / (numFeatures || 1);
     return layout;
@@ -58,16 +61,39 @@ export const getLayout = createSelector(
  * Map each feature to sideLength
  * updating whenever the layout or dataset changes.
  */
-export const getPointsForPlot = createSelector(
+export const getFeatureSideLengthScale = createSelector(
   [getFeatures, getLayout],
   (features, layout) => {
+    const range = [0, layout.sideLength - layout.margin];
     return features.map((feature) => {
-      const scale = feature.scale.range([0, layout.sideLength - layout.margin]);
-
+      const invertedScale = feature.scale.copy().domain(_.reverse(feature.scale.domain()));
       return {
-        name: feature.name,
-        index: feature.index,
-        values: feature.values.map(scale)
+        feature,
+        invertedScale,
+        mappedScale: feature.scale.range(range),
+        invertedMappedScale: invertedScale.range(range)
+      };
+    });
+  }
+);
+
+/**
+ * Map each feature to sideLength
+ * updating whenever the layout or dataset changes.
+ *
+ * For plotting y you need to invert it:
+ * sideLength - y
+ */
+export const getPointsForPlot = createSelector(
+  [getFeatureSideLengthScale],
+  (features) => {
+    return features.map((fs) => {
+      return {
+        name: fs.feature.name,
+        index: fs.feature.index,
+        values: fs.feature.values.map(fs.mappedScale),
+        yValues: fs.feature.values.map(fs.invertedMappedScale)
+        // yValues:
       };
     });
   }

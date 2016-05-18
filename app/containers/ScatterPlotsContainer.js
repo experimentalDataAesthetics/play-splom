@@ -34,32 +34,27 @@ class ScatterPlotsContainer extends Component {
   };
 
   render() {
-    const plots = h(ScatterPlots,
-      _.pick(this.props, [
-        'height',
-        'width',
-        'dataset',
-        'features',
-        'layout',
-        'numFeatures'
-      ])
-    );
+    const padding = this.props.layout.scatterPlotsMargin;
+    const props = _.pick(this.props, [
+      'dataset',
+      'features',
+      'layout',
+      'numFeatures'
+    ]);
 
-    const surface = h(ScatterPlotsInteractive,
-      _.pick(this.props, [
-        'width',
-        'height',
-        'numFeatures',
-        'features',
-        'layout'
-      ])
-    );
+    props.height = this.props.height - (padding * 2);
+    props.width = this.props.width - (padding * 2);
+
+    const plots = h(ScatterPlots, props);
+
+    const surface = h(ScatterPlotsInteractive, props);
 
     return h(
       'g',
       {
-        height: this.props.height,
-        width: this.props.width
+        height: props.height,
+        width: props.width,
+        transform: `translate(${padding}, ${padding})`,
       },
       [
         plots,

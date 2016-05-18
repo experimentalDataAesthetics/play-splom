@@ -1,3 +1,4 @@
+import { isEqual } from 'lodash';
 import {
   MOUSE_MOVE,
   FOCUS_SCATTERPLOT,
@@ -17,11 +18,15 @@ export function focusScatterplot(id) {
   };
 }
 
-export function setHovering(id) {
-  return {
-    type: SET_HOVERING,
-    payload: {
-      id
+export function setHovering(m, n) {
+  const newState = {m, n};
+  return (dispatch, getState) => {
+    const same = isEqual(newState, getState().ui.hovering);
+    if (!same) {
+      dispatch({
+        type: SET_HOVERING,
+        payload: newState
+      });
     }
   };
 }

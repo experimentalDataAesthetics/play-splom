@@ -9,17 +9,30 @@ import {
   toggleLoopMode
 } from '../actions/interaction';
 import {
-  getMuiTheme
+  setHovering
+} from '../actions/ui';
+import {
+  getMuiTheme,
+  getFeatureSideLengthScale
 } from '../selectors/index';
 
 import ScatterPlotClickSurface from '../components/ScatterPlotClickSurface';
+import Axis from '../components/Axis';
 
 const unset = {};
 const getLoopMode = (state) => state.interaction.loopMode || unset;
+const getHovering = (state) => state.ui.hovering || unset;
 
 const mapStateToProps = createSelector(
-  [getLoopMode, getMuiTheme],
-  (loopMode, muiTheme) => ({loopMode, muiTheme}));
+  [getLoopMode, getMuiTheme, getFeatureSideLengthScale, getHovering],
+  (loopMode, muiTheme, featureSideLengthScale, hovering) => {
+    return {
+      loopMode,
+      muiTheme,
+      featureSideLengthScale,
+      hovering
+    };
+  });
 
 const mapDispatchToProps = (dispatch) => {
   return {
@@ -29,6 +42,10 @@ const mapDispatchToProps = (dispatch) => {
 
     setPointsUnderBrush: (m, n, indices) => {
       dispatch(setPointsUnderBrush(m, n, indices));
+    },
+
+    setHovering: (m, n) => {
+      dispatch(setHovering(m, n));
     },
 
     toggleLoopMode: (m, n) => {
@@ -45,17 +62,39 @@ class ScatterPlotsInteractive extends React.Component {
     numFeatures: React.PropTypes.number.isRequired,
     loopMode: React.PropTypes.object.isRequired,
     layout: React.PropTypes.object.isRequired,
+    hovering: React.PropTypes.object.isRequired,
     muiTheme: React.PropTypes.object.isRequired,
+    featureSideLengthScale: React.PropTypes.array.isRequired,
     features: React.PropTypes.array.isRequired,
     setPointsUnderBrush: React.PropTypes.func.isRequired,
+    setHovering: React.PropTypes.func.isRequired,
     toggleLoopMode: React.PropTypes.func.isRequired
   };
 
   render() {
-    // console.log('scatterplots interactive render');
+    const sideLength = this.props.layout.sideLength;
     const children = [];
 
-    const sideLength = this.props.layout.sideLength;
+    if (this.props.featureSideLengthScale.length > 0) {
+      const hovx = (this.props.hovering.m || 0);
+      const hovy = (this.props.hovering.n || 0);
+      const featx = this.props.featureSideLengthScale[hovx];
+      const featy = this.props.featureSideLengthScale[hovy];
+      const axisX = hovx * sideLength;
+      const axisY = hovy * sideLength;
+
+      children.push(h(Axis, {
+        xOffset: axisX,
+        yOffset: axisY,
+        sideLength: sideLength - this.props.layout.margin,
+        muiTheme: this.props.muiTheme,
+        // xScale: featx.feature.scale,
+        xScale: featx.invertedScale,  // wtf ?
+        yScale: featy.invertedScale,
+        xLabel: featx.feature.name,
+        yLabel: featy.feature.name
+      }));
+    }
 
     if (sideLength > 0) {
       for (let m = 0; m < this.props.numFeatures; m++) {
@@ -90,6 +129,7 @@ class ScatterPlotsInteractive extends React.Component {
             baseClientY: y,
             sideLength: sideLength - this.props.layout.margin,
             setPointsUnderBrush: this.props.setPointsUnderBrush,
+            setHovering: this.props.setHovering,
             toggleLoopMode: this.props.toggleLoopMode,
             muiTheme: this.props.muiTheme,
             isLooping,
