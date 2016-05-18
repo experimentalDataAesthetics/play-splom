@@ -51,9 +51,9 @@ class ScatterPlots extends React.Component {
             const xName = columnNames[m];
             const yName = columnNames[n];
 
-            const featx = this.props.features[m].values;
-            const featy = this.props.features[n].values;
-            const points = _.zip(featx, featy);
+            const points = _.zip(
+              this.props.features[m].values,
+              this.props.features[n].yValues);
 
             const sp = h(ScatterPlot, {
               points,

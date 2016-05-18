@@ -12,7 +12,8 @@ import {
   setHovering
 } from '../actions/ui';
 import {
-  getMuiTheme
+  getMuiTheme,
+  getFeatureSideLengthScale
 } from '../selectors/index';
 
 import ScatterPlotClickSurface from '../components/ScatterPlotClickSurface';
@@ -23,8 +24,15 @@ const getLoopMode = (state) => state.interaction.loopMode || unset;
 const getHovering = (state) => state.ui.hovering || unset;
 
 const mapStateToProps = createSelector(
-  [getLoopMode, getMuiTheme, getHovering],
-  (loopMode, muiTheme, hovering) => ({loopMode, muiTheme, hovering}));
+  [getLoopMode, getMuiTheme, getFeatureSideLengthScale, getHovering],
+  (loopMode, muiTheme, featureSideLengthScale, hovering) => {
+    return {
+      loopMode,
+      muiTheme,
+      featureSideLengthScale,
+      hovering
+    };
+  });
 
 const mapDispatchToProps = (dispatch) => {
   return {
@@ -56,6 +64,7 @@ class ScatterPlotsInteractive extends React.Component {
     layout: React.PropTypes.object.isRequired,
     hovering: React.PropTypes.object.isRequired,
     muiTheme: React.PropTypes.object.isRequired,
+    featureSideLengthScale: React.PropTypes.array.isRequired,
     features: React.PropTypes.array.isRequired,
     setPointsUnderBrush: React.PropTypes.func.isRequired,
     setHovering: React.PropTypes.func.isRequired,
@@ -66,15 +75,26 @@ class ScatterPlotsInteractive extends React.Component {
     const sideLength = this.props.layout.sideLength;
     const children = [];
 
-    const axisX = (this.props.hovering.m || 0) * sideLength;
-    const axisY = (this.props.hovering.n || 0) * sideLength;
-    children.push(h(Axis, {
-      xOffset: axisX,
-      yOffset: axisY,
-      sideLength: sideLength - this.props.layout.margin,
-      muiTheme: this.props.muiTheme
-    }));
+    if (this.props.featureSideLengthScale.length > 0) {
+      const hovx = (this.props.hovering.m || 0);
+      const hovy = (this.props.hovering.n || 0);
+      const featx = this.props.featureSideLengthScale[hovx];
+      const featy = this.props.featureSideLengthScale[hovy];
+      const axisX = hovx * sideLength;
+      const axisY = hovy * sideLength;
 
+      children.push(h(Axis, {
+        xOffset: axisX,
+        yOffset: axisY,
+        sideLength: sideLength - this.props.layout.margin,
+        muiTheme: this.props.muiTheme,
+        // xScale: featx.feature.scale,
+        xScale: featx.invertedScale,  // wtf ?
+        yScale: featy.invertedScale,
+        xLabel: featx.feature.name,
+        yLabel: featy.feature.name
+      }));
+    }
 
     if (sideLength > 0) {
       for (let m = 0; m < this.props.numFeatures; m++) {
