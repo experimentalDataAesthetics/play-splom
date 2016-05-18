@@ -48,7 +48,9 @@ export const getLayout = createSelector(
     // console.log(muiTheme);
     layout.svgStyle = centeredSquareWithMargin(layout.svgWidth, windowSize.height,
       muiTheme.spacing.desktopGutter);
-    layout.plotsWidth = layout.svgStyle.right - layout.svgStyle.left;
+    layout.scatterPlotsMargin = 60;
+    layout.plotsWidth = (layout.svgStyle.right - layout.svgStyle.left)
+      - (2 * layout.scatterPlotsMargin);
 
     layout.sideLength = layout.plotsWidth / (numFeatures || 1);
     return layout;
