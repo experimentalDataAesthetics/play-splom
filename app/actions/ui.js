@@ -5,7 +5,7 @@ import {
   SET_HOVERING,
   ZOOM_SCATTERPLOT,
   SET_WINDOW_SIZE,
-  REPORT_ERROR
+  SET_NOTIFICATION
 } from '../actionTypes';
 
 /**
@@ -56,9 +56,12 @@ export function setWindowSize(size) {
   };
 }
 
-export function reportError(error) {
+export function notify(type, message) {
   return {
-    type: REPORT_ERROR,
-    payload: error
+    type: SET_NOTIFICATION,
+    payload: {
+      type,
+      message
+    }
   };
 }

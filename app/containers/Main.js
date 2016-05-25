@@ -4,8 +4,6 @@ import { setWindowSize } from '../actions/ui';
 import MainLayout from '../containers/MainLayout';
 import { debounce } from 'lodash';
 
-const mapStateToProps = null;
-
 const mapDispatchToProps = (dispatch) => {
   return {
     setWindowSize: (size) => {
@@ -39,4 +37,4 @@ class Main extends Component {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Main);
+export default connect(null, mapDispatchToProps)(Main);

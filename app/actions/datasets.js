@@ -1,6 +1,12 @@
-import {SELECT_DATASET, SET_DATASETS, OPEN_DATASET_DIALOG} from '../actionTypes';
+import {
+  SELECT_DATASET,
+  SET_DATASETS,
+  OPEN_DATASET_DIALOG
+} from '../actionTypes';
 import callActionOnMain from '../ipc/callActionOnMain';
-import { reportError } from './ui';
+import {
+  notify
+} from './ui';
 
 const Miso = require('miso.dataset');
 const jetpack = require('fs-jetpack');
@@ -51,16 +57,17 @@ export function loadDataset(path) {
     const parser = parsers[ext];
 
     if (!parser) {
-      reportError(`Filetype not supported: ${ext}`);
+      return notify('error', `Filetype not supported: ${ext}`);
     }
 
+    dispatch(notify('inform', 'Loading...'));
     fs.readFile(path, {encoding: 'utf8'}, (err, data) => {
       if (err) {
-        return reportError(err);
+        return notify('error', err);
       }
 
       if (!data) {
-        return reportError(`No data loaded from ${path}`);
+        return notify('error', `No data loaded from ${path}`);
       }
 
       let data2;
@@ -68,7 +75,7 @@ export function loadDataset(path) {
         try {
           data2 = JSON.parse(data);
         } catch (e) {
-          return reportError(e);
+          return notify('error', e);
         }
       } else {
         data2 = String(data);
@@ -80,8 +87,9 @@ export function loadDataset(path) {
       });
 
       ds.fetch().then((data3) => {
+        dispatch(notify());
         dispatch(setDataset(path, data3));
-      }, reportError);
+      }, (error) => notify('error', error));
     });
   };
 }

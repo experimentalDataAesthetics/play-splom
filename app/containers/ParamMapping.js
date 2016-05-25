@@ -2,7 +2,7 @@ import React from 'react';
 import h from 'react-hyperscript';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { createSelector } from 'reselect';
+import { selectState } from '../utils/reduxers';
 import XYParamTable from '../components/XYParamTable';
 import { pick } from 'lodash';
 
@@ -16,9 +16,11 @@ import {
   setParamRangeUnipolar
 } from '../actions/mapping';
 
-const mapStateToProps = createSelector(
-  [getSound, (state) => state.mapping, getXYMappingControls],
-  (sound, mapping, xyMappingControls) => ({sound, mapping, xyMappingControls}));
+const mapStateToProps = selectState({
+  sound: getSound,
+  mapping: (state) => state.mapping,
+  xyMappingControls: getXYMappingControls
+});
 
 const mapDispatchToProps = (dispatch) => {
   return bindActionCreators({mapXYtoParam, setFixedParamUnipolar, setParamRangeUnipolar}, dispatch);

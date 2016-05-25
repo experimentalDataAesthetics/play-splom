@@ -38,7 +38,7 @@ module.exports = keyMirror({
   ZOOM_SCATTERPLOT: null,
   MOUSE_MOVE: null,
   SET_WINDOW_SIZE: null,
-  REPORT_ERROR: null,
+  SET_NOTIFICATION: null,
 
   // main
   OPEN_DATASET_DIALOG: null
