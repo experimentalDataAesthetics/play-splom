@@ -1,14 +1,11 @@
 import {SELECT_DATASET, SET_DATASETS, OPEN_DATASET_DIALOG} from '../actionTypes';
 import callActionOnMain from '../ipc/callActionOnMain';
+import { reportError } from './ui';
 
 const Miso = require('miso.dataset');
 const jetpack = require('fs-jetpack');
+const fs = require('fs');
 import { extname, basename, join } from 'path';
-
-function absolutePath(path) {
-  const app = require('remote').require('app');
-  return join(app.getAppPath(), path);
-}
 
 export function setDataset(path, data, metadata) {
   const name = basename(path, extname(path));
@@ -37,7 +34,16 @@ const parsers = {
 };
 
 /**
+ * Example datasets are in the ASAR file system
+ */
+export function loadInternalDataset(path) {
+  return loadDataset(path);
+}
+
+/**
  * loading should be moved to main
+ *
+ * path should be a resolved
  */
 export function loadDataset(path) {
   return (dispatch) => {
@@ -45,27 +51,38 @@ export function loadDataset(path) {
     const parser = parsers[ext];
 
     if (!parser) {
-      // dispatch error action
-      console.error('Filetype not supported:', ext);
-      return;
+      reportError(`Filetype not supported: ${ext}`);
     }
 
-    const readAs = ext === '.json' ? 'json' : 'utf8';
-    jetpack.readAsync(absolutePath(path), readAs).then((data) => {
-
-      if (data) {
-        const ds = new Miso.Dataset({
-          data,
-          parser
-        });
-
-        return ds.fetch().then((data2) => {
-          dispatch(setDataset(path, data2));
-        });
+    fs.readFile(path, {encoding: 'utf8'}, (err, data) => {
+      if (err) {
+        return reportError(err);
       }
 
-      throw new Error(`No data loaded from ${path}`);
-    }).catch((err) => console.error(err));
+      if (!data) {
+        return reportError(`No data loaded from ${path}`);
+      }
+
+      let data2;
+      if (ext === '.json') {
+        try {
+          data2 = JSON.parse(data);
+        } catch (e) {
+          return reportError(e);
+        }
+      } else {
+        data2 = String(data);
+      }
+
+      const ds = new Miso.Dataset({
+        data: data2,
+        parser
+      });
+
+      ds.fetch().then((data3) => {
+        dispatch(setDataset(path, data3));
+      }, reportError);
+    });
   };
 }
 
@@ -84,7 +101,7 @@ export function readDefaultDatasets(datasetsDir, thenLoadPath) {
           }, 500);
         }
       } else {
-        throw new Error(`No paths found at: ${datasetsDir}`);
+        reportError(`No paths found at: ${datasetsDir}`);
       }
     });
   };

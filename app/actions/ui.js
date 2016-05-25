@@ -4,7 +4,8 @@ import {
   FOCUS_SCATTERPLOT,
   SET_HOVERING,
   ZOOM_SCATTERPLOT,
-  SET_WINDOW_SIZE
+  SET_WINDOW_SIZE,
+  REPORT_ERROR
 } from '../actionTypes';
 
 /**
@@ -52,5 +53,12 @@ export function setWindowSize(size) {
   return {
     type: SET_WINDOW_SIZE,
     payload: size
+  };
+}
+
+export function reportError(error) {
+  return {
+    type: REPORT_ERROR,
+    payload: error
   };
 }
