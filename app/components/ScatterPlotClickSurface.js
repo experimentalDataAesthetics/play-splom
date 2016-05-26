@@ -59,6 +59,8 @@ export default class ScatterPlotClickSurface extends React.Component {
 
   _hover() {
     this._setPointsIn([]);
+    // really only on mouseMove
+    // then do onMouseLeave to say I'm out
     this.props.setHovering(this.props.m, this.props.n);
   }
 

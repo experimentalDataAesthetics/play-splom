@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import h from 'react-hyperscript';
-import { connect } from 'react-redux';
-import { selectState } from '../utils/reduxers';
+import connect from '../utils/reduxers';
 import ScatterPlots from '../components/ScatterPlots';
 import ScatterPlotsInteractive from '../components/ScatterPlotsInteractive';
 import * as _ from 'lodash';
@@ -13,12 +12,6 @@ import {
   getDatasetMetadata
 } from '../selectors/index';
 
-const mapStateToProps = selectState({
-  dataset: getDatasetMetadata,
-  features: getPointsForPlot,
-  layout: getLayout,
-  numFeatures: getNumFeatures
-});
 
 class ScatterPlotsContainer extends Component {
 
@@ -63,4 +56,9 @@ class ScatterPlotsContainer extends Component {
   }
 }
 
-export default connect(mapStateToProps)(ScatterPlotsContainer);
+export default connect({
+  dataset: getDatasetMetadata,
+  features: getPointsForPlot,
+  layout: getLayout,
+  numFeatures: getNumFeatures
+})(ScatterPlotsContainer);

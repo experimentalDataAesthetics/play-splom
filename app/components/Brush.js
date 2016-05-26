@@ -1,18 +1,6 @@
 import React from 'react';
 import h from 'react-hyperscript';
-import { connect } from 'react-redux';
-
-const mapStateToProps = (state) => {
-  if (state.ui.brush) {
-    return state.ui.brush;
-  }
-
-  return {};
-};
-
-const mapDispatchToProps = () => {
-  return {};
-};
+import connect from '../utils/reduxers';
 
 /**
  * Renders the brush with adjustable radius
@@ -26,7 +14,7 @@ const mapDispatchToProps = () => {
 class Brush extends React.Component {
 
   render() {
-    var props = this.props;
+    var props = this.props.brush || {};
     if (props.show) {
       return h('circle', {
         cx: props.x,
@@ -41,4 +29,4 @@ class Brush extends React.Component {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Brush);
+export default connect({brush: (state) => state.ui.brush})(Brush);

@@ -1,25 +1,10 @@
 import React from 'react';
 import h from 'react-hyperscript';
-import { connect } from 'react-redux';
+import connect from '../utils/reduxers';
 import { List, ListItem, MakeSelectable } from 'material-ui/List';
 import { selectSound } from '../actions/sounds';
 
 const SelectableList = MakeSelectable(List);
-
-const mapStateToProps = (state) => {
-  return {
-    sounds: state.sounds,
-    selectedSound: state.sound
-  };
-};
-
-const mapDispatchToProps = (dispatch) => {
-  return {
-    onSelect: (event, name) => {
-      dispatch(selectSound(name));
-    }
-  };
-};
 
 class SoundSelector extends React.Component {
   render() {
@@ -27,7 +12,7 @@ class SoundSelector extends React.Component {
       h('h6', 'Sounds'),
       h(SelectableList,
         {
-          value: this.props.selected,
+          value: this.props.selectedSound,
           onChange: this.props.onSelect,
           className: 'selectable-list'
         },
@@ -44,4 +29,9 @@ class SoundSelector extends React.Component {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(SoundSelector);
+export default connect({
+  sounds: 'sounds',
+  selectedSound: 'sound'
+}, {
+  onSelect: (event, name) => selectSound(name)
+})(SoundSelector);

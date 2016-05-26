@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import h from 'react-hyperscript';
-
-import { connect } from 'react-redux';
+import connect from '../utils/reduxers';
 import RaisedButton from 'material-ui/RaisedButton';
 import { List, ListItem, MakeSelectable } from 'material-ui/List';
 const SelectableList = MakeSelectable(List);
@@ -10,25 +9,6 @@ import {
   loadDataset,
   openDatasetDialog
 } from '../actions/datasets';
-
-const mapStateToProps = (state) => {
-  return {
-    datasets: state.datasets,
-    selected: Boolean(state.dataset && state.dataset.path)
-  };
-};
-
-const mapDispatchToProps = (dispatch) => {
-  return {
-    onSelect: (e, path) => {
-      dispatch(loadDataset(path));
-    },
-
-    openDialog: () => {
-      dispatch(openDatasetDialog());
-    }
-  };
-};
 
 class DatasetSelector extends Component {
 
@@ -65,4 +45,12 @@ class DatasetSelector extends Component {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(DatasetSelector);
+export default connect(
+  {
+    datasets: 'datasets',
+    selected: (state) => Boolean(state.dataset && state.dataset.path)
+  },
+  {
+    onSelect: (e, path) => loadDataset(path),
+    openDialog: openDatasetDialog
+  })(DatasetSelector);

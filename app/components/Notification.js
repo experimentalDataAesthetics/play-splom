@@ -1,22 +1,16 @@
 import React from 'react';
-import { connect } from 'react-redux';
-
-const mapStateToProps = (state) => {
-  return state.ui.notification || {};
-};
-
-// const mapStateToProps = (state) => state.ui.notification || {};
+import connect from '../utils/reduxers';
 
 /**
  */
 class Notification extends React.Component {
 
   render() {
-    console.log(this.props);
-    if (this.props) {
+    const n = this.props.notification;
+    if (n) {
       return (
-        <div className={this.props.type}>
-          {this.props.message}
+        <div className={n.type}>
+          {n.message}
         </div>
       );
     }
@@ -25,4 +19,6 @@ class Notification extends React.Component {
   }
 }
 
-export default connect(mapStateToProps)(Notification);
+export default connect({
+  notification: (state) => state.ui.notification
+})(Notification);

@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
+import connect from '../utils/reduxers';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
-import { selectState } from '../utils/reduxers';
 import * as _ from 'lodash';
 
 import Sidebar from './Sidebar';
@@ -14,12 +13,12 @@ import {
   getMuiTheme
 } from '../selectors/index';
 
-const stateToProps = selectState({
+const stateToProps = {
   windowSize: getWindowSize,
   layout: getLayout,
   muiTheme: getMuiTheme,
   notification: (state) => state.ui.notification
-});
+};
 
 class MainLayout extends Component {
 

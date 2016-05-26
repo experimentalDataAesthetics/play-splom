@@ -1,8 +1,8 @@
 import React from 'react';
 import h from 'react-hyperscript';
 import * as _ from 'lodash';
-import { createSelector } from 'reselect';
-import { connect } from 'react-redux';
+import connect from '../utils/reduxers';
+
 import {
   // showBrush,
   setPointsUnderBrush,
@@ -20,38 +20,18 @@ import ScatterPlotClickSurface from '../components/ScatterPlotClickSurface';
 import Axis from '../components/Axis';
 
 const unset = {};
-const getLoopMode = (state) => state.interaction.loopMode || unset;
-const getHovering = (state) => state.ui.hovering || unset;
 
-const mapStateToProps = createSelector(
-  [getLoopMode, getMuiTheme, getFeatureSideLengthScale, getHovering],
-  (loopMode, muiTheme, featureSideLengthScale, hovering) => {
-    return {
-      loopMode,
-      muiTheme,
-      featureSideLengthScale,
-      hovering
-    };
-  });
+const selectors = {
+  loopMode: (state) => state.interaction.loopMode || unset,
+  muiTheme: getMuiTheme,
+  featureSideLengthScale: getFeatureSideLengthScale,
+  hovering: (state) => state.ui.hovering || unset
+};
 
-const mapDispatchToProps = (dispatch) => {
-  return {
-    // showBrush: (show, clientX, clientY) => {
-    //   dispatch(showBrush(show, clientX, clientY));
-    // },
-
-    setPointsUnderBrush: (m, n, indices) => {
-      dispatch(setPointsUnderBrush(m, n, indices));
-    },
-
-    setHovering: (m, n) => {
-      dispatch(setHovering(m, n));
-    },
-
-    toggleLoopMode: (m, n) => {
-      dispatch(toggleLoopMode(m, n));
-    }
-  };
+const handlers = {
+  setPointsUnderBrush,
+  setHovering,
+  toggleLoopMode
 };
 
 class ScatterPlotsInteractive extends React.Component {
@@ -153,4 +133,4 @@ class ScatterPlotsInteractive extends React.Component {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(ScatterPlotsInteractive);
+export default connect(selectors, handlers)(ScatterPlotsInteractive);
