@@ -44,10 +44,8 @@ class DatasetSelector extends Component {
       h('h6', 'Datasets'),
       h(SelectableList,
         {
-          valueLink: {
-            value: this.props.selected,
-            requestChange: this.props.onSelect
-          },
+          value: this.props.selected,
+          onChange: this.props.onSelect,
           className: 'selectable-list'
         },
         this.props.datasets.map((dataset) => {

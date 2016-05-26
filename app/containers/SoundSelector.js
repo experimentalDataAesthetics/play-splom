@@ -27,10 +27,8 @@ class SoundSelector extends React.Component {
       h('h6', 'Sounds'),
       h(SelectableList,
         {
-          valueLink: {
-            value: this.props.selected,
-            requestChange: this.props.onSelect
-          },
+          value: this.props.selected,
+          onChange: this.props.onSelect,
           className: 'selectable-list'
         },
         this.props.sounds.map((sound) => {
