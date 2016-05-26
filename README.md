@@ -42,6 +42,13 @@ This will compile and open an Electron app in development mode.
 
 `Ctrl-h` will open the [Redux-Devtools](https://github.com/gaearon/redux-devtools)
 
+To install the extra devtools, open a console inside the Electron app and run:
+
+```
+require('electron-react-devtools').install();
+require('devtron').install();
+```
+
 ## Build
 
     npm run build
