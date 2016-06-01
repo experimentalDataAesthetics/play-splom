@@ -60,11 +60,14 @@ export const getLayout = createSelector(
       for (let m = 0; m < numFeatures; m++) {
         const x = m * layout.sideLength;
         for (let n = 0; n < numFeatures; n++) {
-          if (m === n) {
-            continue;
-          }
+          // identity
+          // if (m === n) {
+          //   continue;
+          // }
 
-          const y = n * layout.sideLength;
+          // const y = (n * layout.sideLength);
+          // flip
+          const y = (numFeatures - n - 1) * layout.sideLength;
 
           layout.boxes.push({
             m,
@@ -119,8 +122,7 @@ export const getPointsForPlot = createSelector(
         name: fs.feature.name,
         index: fs.feature.index,
         values: fs.feature.values.map(fs.mappedScale),
-        yValues: fs.feature.values.map(fs.invertedMappedScale)
-        // yValues:
+        yValues: fs.feature.values.map(fs.mappedScale)
       };
     });
   }

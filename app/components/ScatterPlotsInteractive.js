@@ -56,24 +56,27 @@ class ScatterPlotsInteractive extends React.Component {
     const children = [];
     const layout = this.props.layout;
 
-    if (this.props.featureSideLengthScale.length > 0) {
-      const hovx = (this.props.hovering.m || 0);
-      const hovy = (this.props.hovering.n || 0);
-      const featx = this.props.featureSideLengthScale[hovx];
-      const featy = this.props.featureSideLengthScale[hovy];
-      const axisX = hovx * sideLength;
-      const axisY = hovy * sideLength;
+    const getBox = (m, n) => this.props.layout.boxes[m * this.props.numFeatures + n];
 
-      children.push(h(Axis, {
-        xOffset: axisX,
-        yOffset: axisY,
-        sideLength: sideLength - layout.margin,
-        muiTheme: this.props.muiTheme,
-        xScale: featx.mappedScale,
-        yScale: featy.invertedMappedScale,
-        xLabel: featx.feature.name,
-        yLabel: featy.feature.name
-      }));
+    if (this.props.featureSideLengthScale.length > 0) {
+      if (_.isNumber(this.props.hovering.m)) {
+        const hovx = (this.props.hovering.m || 0);
+        const hovy = (this.props.hovering.n || 0);
+        const featx = this.props.featureSideLengthScale[hovx];
+        const featy = this.props.featureSideLengthScale[hovy];
+        const box = getBox(hovx, hovy);
+
+        children.push(h(Axis, {
+          xOffset: box.x,
+          yOffset: box.y,
+          sideLength: sideLength - layout.margin,
+          muiTheme: this.props.muiTheme,
+          xScale: featx.mappedScale,
+          yScale: featy.mappedScale,
+          xLabel: featx.feature.name,
+          yLabel: featy.feature.name
+        }));
+      }
     }
 
     layout.boxes.forEach((box) => {
