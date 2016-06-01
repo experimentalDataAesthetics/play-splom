@@ -68,9 +68,8 @@ class ScatterPlotsInteractive extends React.Component {
         yOffset: axisY,
         sideLength: sideLength - this.props.layout.margin,
         muiTheme: this.props.muiTheme,
-        // xScale: featx.feature.scale,
-        xScale: featx.invertedScale,  // wtf ?
-        yScale: featy.invertedScale,
+        xScale: featx.mappedScale,
+        yScale: featy.invertedMappedScale,
         xLabel: featx.feature.name,
         yLabel: featy.feature.name
       }));

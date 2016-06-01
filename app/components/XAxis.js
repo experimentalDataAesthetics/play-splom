@@ -60,10 +60,6 @@ export default React.createClass({
       tickArguments = [d3.time[props.xAxisTickInterval.unit], props.xAxisTickInterval.interval];
     }
 
-    // also backwards
-    // console.log(1, props.xScale(1));
-    // console.log(2, props.xScale(2));
-
     return React.createElement(
       'g',
       {

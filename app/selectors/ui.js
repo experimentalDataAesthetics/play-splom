@@ -65,13 +65,15 @@ export const getFeatureSideLengthScale = createSelector(
   [getFeatures, getLayout],
   (features, layout) => {
     const range = [0, layout.sideLength - layout.margin];
+    // invertedRange for the SVG y axis
+    const invertedRange = [layout.sideLength - layout.margin, 0];
     return features.map((feature) => {
-      const invertedScale = feature.scale.copy().domain(_.reverse(feature.scale.domain()));
+      const mappedScale = feature.scale.copy().range(range);
+      const invertedMappedScale = feature.scale.copy().range(invertedRange);
       return {
         feature,
-        invertedScale,
-        mappedScale: feature.scale.range(range),
-        invertedMappedScale: invertedScale.range(range)
+        mappedScale,
+        invertedMappedScale
       };
     });
   }
