@@ -172,7 +172,7 @@ export function xyPointsEnteringToSynthEvents(pointsEntering,
 
   return pointsEntering.map((index) => {
     const x = npoints[m].values[index];
-    const y = npoints[n].values[index];
+    const y = 1.0 - npoints[n].values[index];
     const args = {};
     if (mapperX) {
       args[paramX] = mapperX(x);
