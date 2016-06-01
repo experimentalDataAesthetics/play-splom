@@ -53,6 +53,31 @@ export const getLayout = createSelector(
       - (2 * layout.scatterPlotsMargin);
 
     layout.sideLength = layout.plotsWidth / (numFeatures || 1);
+
+    // each box
+    layout.boxes = [];
+    if (layout.sideLength > 0) {
+      for (let m = 0; m < numFeatures; m++) {
+        const x = m * layout.sideLength;
+        for (let n = 0; n < numFeatures; n++) {
+          if (m === n) {
+            continue;
+          }
+
+          const y = n * layout.sideLength;
+
+          layout.boxes.push({
+            m,
+            n,
+            x,
+            y,
+            baseClientX: x + layout.svgStyle.left + layout.scatterPlotsMargin,
+            baseClientY: y + layout.svgStyle.top + layout.scatterPlotsMargin
+          });
+        }
+      }
+    }
+
     return layout;
   }
 );

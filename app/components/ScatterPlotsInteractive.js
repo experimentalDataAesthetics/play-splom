@@ -76,51 +76,40 @@ class ScatterPlotsInteractive extends React.Component {
       }));
     }
 
-    if (sideLength > 0) {
-      for (let m = 0; m < this.props.numFeatures; m++) {
-        const x = m * sideLength;
-        for (let n = 0; n < this.props.numFeatures; n++) {
-          if (m === n) {
-            continue;
-          }
+    layout.boxes.forEach((box) => {
+      const loopMode = this.props.loopMode;
+      const featx = this.props.features[box.m].values;
+      const featy = this.props.features[box.n].values;
+      const points = _.zip(featx, featy);
 
-          const y = n * sideLength;
+      const isLooping =
+        (_.get(loopMode, 'nowPlaying.m') === box.m) &&
+        (_.get(loopMode, 'nowPlaying.n') === box.n);
 
-          const loopMode = this.props.loopMode;
-          const featx = this.props.features[m].values;
-          const featy = this.props.features[n].values;
-          const points = _.zip(featx, featy);
+      const isPending =
+        (_.get(loopMode, 'pending.m') === box.m) &&
+        (_.get(loopMode, 'pending.n') === box.n);
 
-          const isLooping =
-            (_.get(loopMode, 'nowPlaying.m') === m) &&
-            (_.get(loopMode, 'nowPlaying.n') === n);
+      const sp = h(ScatterPlotClickSurface, {
+        m: box.m,
+        n: box.n,
+        points,
+        xOffset: box.x,
+        yOffset: box.y,
+        // for calculating mouse down by clientX/Y
+        baseClientX: box.baseClientX,
+        baseClientY: box.baseClientY,
+        sideLength: sideLength - layout.margin,
+        setPointsUnderBrush: this.props.setPointsUnderBrush,
+        setHovering: this.props.setHovering,
+        toggleLoopMode: this.props.toggleLoopMode,
+        muiTheme: this.props.muiTheme,
+        isLooping,
+        isPending
+      });
 
-          const isPending =
-            (_.get(loopMode, 'pending.m') === m) &&
-            (_.get(loopMode, 'pending.n') === n);
-
-          const sp = h(ScatterPlotClickSurface, {
-            m,
-            n,
-            points,
-            xOffset: x,
-            yOffset: y,
-            // for calculating mouse down by clientX/Y
-            baseClientX: x + layout.svgStyle.left + layout.scatterPlotsMargin,
-            baseClientY: y + layout.svgStyle.top + layout.scatterPlotsMargin,
-            sideLength: sideLength - layout.margin,
-            setPointsUnderBrush: this.props.setPointsUnderBrush,
-            setHovering: this.props.setHovering,
-            toggleLoopMode: this.props.toggleLoopMode,
-            muiTheme: this.props.muiTheme,
-            isLooping,
-            isPending
-          });
-
-          children.push(sp);
-        }
-      }
-    }
+      children.push(sp);
+    });
 
     return h(
       'g',
