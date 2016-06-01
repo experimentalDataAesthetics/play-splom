@@ -37,15 +37,16 @@ export default class ScatterPlotClickSurface extends React.Component {
 
     const x = clientX - this.props.baseClientX;
     const y = clientY - this.props.baseClientY;
-    const flipy = this.props.sideLength - y;
+    // const flipy = this.props.sideLength - y;
 
     const minx = x - RADIUS;
     const maxx = x + RADIUS;
-    const miny = flipy - RADIUS;
-    const maxy = flipy + RADIUS;
+    const miny = y - RADIUS;
+    const maxy = y + RADIUS;
 
     const pointsIn = [];
     this.props.points.forEach((xy, i) => {
+      // console.log(xy[0], minx, maxx);
       if ((xy[0] >= minx)
           && (xy[0] <= maxx)
           && (xy[1] >= miny)
@@ -103,13 +104,11 @@ export default class ScatterPlotClickSurface extends React.Component {
       style: bgStyle,
 
       onMouseDown: (e) => {
-        if (e.buttons) {
-          if (e.metaKey) {
-            // toggle loop mode
-            this.props.toggleLoopMode(this.props.m, this.props.n);
-          } else {
-            this._brush(e.clientX, e.clientY);
-          }
+        if (e.buttons && e.metaKey) {
+          // toggle loop mode
+          this.props.toggleLoopMode(this.props.m, this.props.n);
+        } else {
+          this._brush(e.clientX, e.clientY);
         }
       },
 

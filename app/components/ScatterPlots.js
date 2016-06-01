@@ -76,8 +76,8 @@ class ScatterPlots extends React.Component {
     return h(
       'g',
       {
-        height: this.props.height,
         width: this.props.width,
+        height: this.props.height,
         className: 'scatterplots'
       },
       children

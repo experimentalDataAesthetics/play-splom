@@ -54,6 +54,7 @@ class ScatterPlotsInteractive extends React.Component {
   render() {
     const sideLength = this.props.layout.sideLength;
     const children = [];
+    const layout = this.props.layout;
 
     if (this.props.featureSideLengthScale.length > 0) {
       const hovx = (this.props.hovering.m || 0);
@@ -66,7 +67,7 @@ class ScatterPlotsInteractive extends React.Component {
       children.push(h(Axis, {
         xOffset: axisX,
         yOffset: axisY,
-        sideLength: sideLength - this.props.layout.margin,
+        sideLength: sideLength - layout.margin,
         muiTheme: this.props.muiTheme,
         xScale: featx.mappedScale,
         yScale: featy.invertedMappedScale,
@@ -104,9 +105,10 @@ class ScatterPlotsInteractive extends React.Component {
             points,
             xOffset: x,
             yOffset: y,
-            baseClientX: x + this.props.layout.svgStyle.left,
-            baseClientY: y,
-            sideLength: sideLength - this.props.layout.margin,
+            // for calculating mouse down by clientX/Y
+            baseClientX: x + layout.svgStyle.left + layout.scatterPlotsMargin,
+            baseClientY: y + layout.svgStyle.top + layout.scatterPlotsMargin,
+            sideLength: sideLength - layout.margin,
             setPointsUnderBrush: this.props.setPointsUnderBrush,
             setHovering: this.props.setHovering,
             toggleLoopMode: this.props.toggleLoopMode,
