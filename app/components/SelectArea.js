@@ -145,7 +145,9 @@ export default class SelectArea extends React.Component {
     domain: React.PropTypes.object.isRequired,
     base: React.PropTypes.array.isRequired,
     selected: React.PropTypes.object,
-    onChange: React.PropTypes.func
+    onChange: React.PropTypes.func,
+    onMouseEnter: React.PropTypes.func,
+    show: React.PropTypes.bool
   };
 
   constructor(props, context) {
@@ -408,6 +410,15 @@ export default class SelectArea extends React.Component {
     // if (empty(selection)) state.selection = null, redraw.call(that);
   }
 
+  _mouseEnter(e) {
+    if (this.props.onMouseEnter) {
+      this.props.onMouseEnter(e);
+    }
+    // reset drag mode in case you were still dragging from a previous
+    // interaction inside this box
+    this.mouseMode = null;
+  }
+
   _setSelected(selected) {
     this.setState({selected});
     if (this.props.onChange) {
@@ -491,12 +502,14 @@ export default class SelectArea extends React.Component {
         pointerEvents="all"
         style={{
           pointerEvents: 'all',
-          WebkitTapHighlightColor: 'rbga(0,0,0,0)'
+          WebkitTapHighlightColor: 'rbga(0,0,0,0)',
+          visibility: this.props.show ? 'visible' : 'hidden'
         }}
         onMouseMove={this._moved.bind(this)}
         onMouseUp={this._ended.bind(this)}
         onTouchMove={this._moved.bind(this)}
         onTouchEnd={this._ended.bind(this)}
+        onMouseEnter={this._mouseEnter.bind(this)}
         {...domain}
       >
         {overlay}{selection}{handles}
