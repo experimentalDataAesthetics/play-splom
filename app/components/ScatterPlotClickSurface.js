@@ -6,7 +6,8 @@ import styles from './ScatterPlotClickSurface.css';
 const RADIUS = 10;  // for now
 
 /**
- * Renders a single scatter plot on a parent svg g
+ * Renders a single rect to handle mouse clicks.
+ * Changes color when hovering.
  */
 export default class ScatterPlotClickSurface extends React.Component {
 

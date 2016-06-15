@@ -56,7 +56,8 @@ class ScatterPlots extends React.Component {
           xOffset: box.x,
           yOffset: box.y,
           sideLength: sideLength - margin,
-          muiTheme: this.props.muiTheme
+          muiTheme: this.props.muiTheme,
+          pointsUnderBrush: this.props.pointsUnderBrush
         });
 
         children.push(sp);

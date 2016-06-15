@@ -3,7 +3,7 @@ import * as _ from 'lodash';
 import { createSelector } from 'reselect';
 import { getNormalizedPoints } from './dataset';
 
-const getPointsUnderBrush =
+export const getPointsUnderBrush =
   (state) => _.get(state, 'interaction.pointsUnderBrush', []);
 const getPreviousPointsUnderBrush =
   (state) => _.get(state, 'interaction.previousPointsUnderBrush', []);
