@@ -1,7 +1,6 @@
 import React from 'react';
 import h from 'react-hyperscript';
-
-import Point from './Point';
+import style from './ScatterPlot.css';
 
 /**
  * Renders a single scatter plot on a parent svg g
@@ -30,11 +29,12 @@ export default class ScatterPlot extends React.Component {
     const radius = this.props.sideLength < 100 ? 1 : 3;
     const flip = this.props.sideLength;
     const points = h('g', this.props.points.map((xy, i) => {
-      return h(Point, {
-        x: xy[0],
-        y: flip - xy[1],
-        radius,
-        id: String(i)
+      return React.createElement('circle', {
+        cx: xy[0],
+        cy: flip - xy[1],
+        r: radius,
+        key: String(i),
+        className: style.point
       });
     }));
 
