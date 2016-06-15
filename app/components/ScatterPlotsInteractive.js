@@ -4,20 +4,22 @@ import * as _ from 'lodash';
 import connect from '../utils/reduxers';
 
 import {
-  // showBrush,
   setPointsUnderBrush,
   toggleLoopMode
 } from '../actions/interaction';
+
 import {
   setHovering
 } from '../actions/ui';
+
 import {
   getMuiTheme,
   getFeatureSideLengthScale
 } from '../selectors/index';
 
-import ScatterPlotClickSurface from '../components/ScatterPlotClickSurface';
-import Axis from '../components/Axis';
+// import ScatterPlotClickSurface from './ScatterPlotClickSurface';
+import Axis from './Axis';
+import SelectArea from './SelectArea';
 
 const unset = {};
 
@@ -51,15 +53,69 @@ class ScatterPlotsInteractive extends React.Component {
     toggleLoopMode: React.PropTypes.func.isRequired
   };
 
+  setPointsIn(area, box, points) {
+    // area is inverted y
+    // points are normal y
+    const sideLength = this.props.layout.sideLength;
+    const minx = area.x;
+    const maxx = minx + area.width;
+    const miny = sideLength - area.y - area.height;
+    const maxy = sideLength - area.y;
+    const pointsIn = [];
+    points.forEach((xy, i) => {
+      if ((xy[0] >= minx)
+          && (xy[0] <= maxx)
+          && (xy[1] >= miny)
+          && (xy[1] <= maxy)) {
+        pointsIn.push(i);
+      }
+    });
+
+    // keeping some micro-state values in this.
+    // its not ui state, does not require a re-render
+    // and it is not application state.
+    // its just cacheing for performance
+    const next = {
+      m: box.m,
+      n: box.n,
+      pointsIn
+    };
+
+    const last = this.last || {};
+    if (last.m !== next.m || last.n !== next.n) {
+      this.setState({
+        last: {
+          m: next.m,
+          n: next.n
+        }
+      });
+    }
+
+    if (!_.isEqual(this.last, next)) {
+      this.last = next;
+      this.props.setPointsUnderBrush(box.m, box.n, pointsIn);
+    }
+  }
+
+  setHoveringBox(box) {
+    // this causes a full update
+    // could wrap Axis in something that connects to hovering featureSideLengthScale
+    // muiTheme
+    this.props.setHovering(box.m, box.n);
+  }
+
   render() {
     const sideLength = this.props.layout.sideLength;
-    const children = [];
     const layout = this.props.layout;
+    const innerSideLength = sideLength - layout.margin;
+    const children = [];
 
     const getBox = (m, n) => this.props.layout.boxes[m * this.props.numFeatures + n];
 
     if (this.props.featureSideLengthScale.length > 0) {
       if (_.isNumber(this.props.hovering.m)) {
+        // does hovering really need to go through redux ?
+        // it is microstate
         const hovx = (this.props.hovering.m || 0);
         const hovy = (this.props.hovering.n || 0);
         const featx = this.props.featureSideLengthScale[hovx];
@@ -69,7 +125,7 @@ class ScatterPlotsInteractive extends React.Component {
         children.push(h(Axis, {
           xOffset: box.x,
           yOffset: box.y,
-          sideLength: sideLength - layout.margin,
+          sideLength: innerSideLength,
           muiTheme: this.props.muiTheme,
           xScale: featx.mappedScale,
           yScale: featy.mappedScale,
@@ -80,38 +136,63 @@ class ScatterPlotsInteractive extends React.Component {
     }
 
     layout.boxes.forEach((box) => {
-      const loopMode = this.props.loopMode;
+      // TODO: move to a selector
       const featx = this.props.features[box.m].values;
       const featy = this.props.features[box.n].values;
       const points = _.zip(featx, featy);
 
-      const isLooping =
-        (_.get(loopMode, 'nowPlaying.m') === box.m) &&
-        (_.get(loopMode, 'nowPlaying.n') === box.n);
+      // const loopMode = this.props.loopMode;
+      // const isLooping =
+      //   (_.get(loopMode, 'nowPlaying.m') === box.m) &&
+      //   (_.get(loopMode, 'nowPlaying.n') === box.n);
+      //
+      // const isPending =
+      //   (_.get(loopMode, 'pending.m') === box.m) &&
+      //   (_.get(loopMode, 'pending.n') === box.n);
 
-      const isPending =
-        (_.get(loopMode, 'pending.m') === box.m) &&
-        (_.get(loopMode, 'pending.n') === box.n);
+      const isLastFocused =
+        (_.get(this.state, 'last.m') === box.m) &&
+        (_.get(this.state, 'last.n') === box.n);
 
-      const sp = h(ScatterPlotClickSurface, {
-        m: box.m,
-        n: box.n,
-        points,
-        xOffset: box.x,
-        yOffset: box.y,
-        // for calculating mouse down by clientX/Y
-        baseClientX: box.baseClientX,
-        baseClientY: box.baseClientY,
-        sideLength: sideLength - layout.margin,
-        setPointsUnderBrush: this.props.setPointsUnderBrush,
-        setHovering: this.props.setHovering,
-        toggleLoopMode: this.props.toggleLoopMode,
-        muiTheme: this.props.muiTheme,
-        isLooping,
-        isPending
+      const selectedArea = h(SelectArea, {
+        selected: {
+          x: 0,
+          y: 0,
+          width: 0,
+          height: 0
+        },
+        domain: {
+          x: box.x,
+          y: box.y,
+          width: innerSideLength,
+          height: innerSideLength
+        },
+        base: [box.baseClientX, box.baseClientY],
+        onChange: (area) => this.setPointsIn(area, box, points),
+        onMouseEnter: () => this.setHoveringBox(box),
+        show: isLastFocused
       });
 
-      children.push(sp);
+      children.push(selectedArea);
+
+      // const sp = h(ScatterPlotClickSurface, {
+      //   m: box.m,
+      //   n: box.n,
+      //   points,
+      //   xOffset: box.x,
+      //   yOffset: box.y,
+      //   // for calculating mouse down by clientX/Y
+      //   baseClientX: box.baseClientX,
+      //   baseClientY: box.baseClientY,
+      //   sideLength: innerSideLength,
+      //   setPointsUnderBrush: this.props.setPointsUnderBrush,
+      //   setHovering: this.props.setHovering,
+      //   toggleLoopMode: this.props.toggleLoopMode,
+      //   muiTheme: this.props.muiTheme,
+      //   isLooping,
+      //   isPending
+      // });
+      // children.push(sp);
     });
 
     return h(
