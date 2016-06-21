@@ -109,7 +109,7 @@ export function readDefaultDatasets(datasetsDir, thenLoadPath) {
           }, 500);
         }
       } else {
-        reportError(`No paths found at: ${datasetsDir}`);
+        notify('error', `No paths found at: ${datasetsDir}`);
       }
     });
   };

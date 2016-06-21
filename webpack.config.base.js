@@ -8,7 +8,7 @@ module.exports = {
     __dirname: true,
     __filename: true
   },
-  target: 'electron',
+  target: 'electron-renderer',
   module: {
     loaders: [{
       test: /\.jsx?$/,
