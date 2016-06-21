@@ -8,16 +8,13 @@ import SVGFrame from './SVGFrame';
 import Notification from '../components/Notification';
 
 import {
-  getWindowSize,
   getLayout,
   getMuiTheme
 } from '../selectors/index';
 
 const stateToProps = {
-  windowSize: getWindowSize,
   layout: getLayout,
-  muiTheme: getMuiTheme,
-  notification: (state) => state.ui.notification
+  muiTheme: getMuiTheme
 };
 
 class MainLayout extends Component {

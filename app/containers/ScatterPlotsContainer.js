@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import h from 'react-hyperscript';
 import connect from '../utils/reduxers';
 import ScatterPlots from '../components/ScatterPlots';
+import ScatterPlotsActivePoints from '../components/ScatterPlotsActivePoints';
 import ScatterPlotsInteractive from '../components/ScatterPlotsInteractive';
 import * as _ from 'lodash';
 
@@ -38,6 +39,8 @@ class ScatterPlotsContainer extends Component {
 
     const plots = h(ScatterPlots, props);
 
+    const activePoints = h(ScatterPlotsActivePoints);
+
     const surface = h(ScatterPlotsInteractive, props);
 
     return h(
@@ -49,6 +52,7 @@ class ScatterPlotsContainer extends Component {
       },
       [
         plots,
+        activePoints,
         surface
       ]
     );

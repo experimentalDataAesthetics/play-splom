@@ -81,6 +81,10 @@ app.on('ready', () => {
     center: true
   });
 
+  mainWindow.webContents.on('crashed', winston.error);
+  mainWindow.on('unresponsive', winston.error);
+  process.on('uncaughtException', winston.error);
+
   mainWindow.loadURL(`file://${__dirname}/app/app.html`);
 
   mainWindow.webContents.on('did-finish-load', () => {

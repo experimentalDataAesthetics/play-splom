@@ -21,6 +21,7 @@
     "space-before-function-paren": 0,
     "no-var": 1,
     "one-var": 1,
+    "quotes": 1,
     "vars-on-top": 1,
     "one-var-declaration-per-line": 1,
     "padded-blocks": 0,

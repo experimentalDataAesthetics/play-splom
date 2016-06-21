@@ -2,7 +2,6 @@
 'use strict';
 
 const webpack = require('webpack');
-const webpackTargetElectronRenderer = require('webpack-target-electron-renderer');
 const baseConfig = require('./webpack.config.base');
 
 const config = Object.create(baseConfig);
@@ -44,7 +43,5 @@ config.plugins.push(
     }
   })
 );
-
-config.target = webpackTargetElectronRenderer(config);
 
 module.exports = config;

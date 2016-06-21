@@ -26,7 +26,6 @@ export default function interaction(state = {}, action) {
 }
 
 function setPointsUnderBrush(state, action) {
-  // TODO: or if m/n changed
   const differentBox = (state.m !== action.payload.m) ||
       (state.n !== action.payload.n);
 
@@ -52,7 +51,7 @@ function toggleLoopMode(state, action) {
   const differentBox = (get(state, 'loopMode.m') !== action.payload.m) ||
     (get(state, 'loopMode.n') !== action.payload.n);
 
-  const looping = differentBox ? true : !get(state, 'loopMode.looping', false);
+  const looping = differentBox || !get(state, 'loopMode.looping', false);
 
   return u({
     loopMode: {
