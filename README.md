@@ -35,8 +35,7 @@ Later on this will be installable automatically by npm (node package manager), b
 
     npm run dev
 
-This will compile and open an Electron app in development mode.
-
+This will compile and open an Electron app in development mode with hot loading of code and stylesheets.
 
 `Alt-Command-i` will open Chrome Devtools
 
@@ -48,6 +47,8 @@ To install the extra devtools, open a console inside the Electron app and run:
 require('electron-react-devtools').install();
 require('devtron').install();
 ```
+
+You only have to do this once; it should be there each time you open up this copy of Electron for development.
 
 ## Build
 
