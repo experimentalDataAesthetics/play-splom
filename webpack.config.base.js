@@ -17,6 +17,14 @@ module.exports = {
     }, {
       test: /\.json$/,
       loader: 'json-loader'
+    },
+    {
+      test: /\.(?:csv|scd|scsyndef)$/,
+      loader: 'file-loader'
+    },
+    {
+      test: /\.(?:png|jpg|svg)$/,
+      loader: 'url-loader'
     }]
   },
   output: {
@@ -33,9 +41,10 @@ module.exports = {
     root: path.resolve('./node_modules')
   },
   plugins: [
-
   ],
   externals: [
+    // './app/synthdefs',
+    // './app/vendor'
     // put your node 3rd party libraries which can't be built with webpack here
     // (mysql, mongodb, and so on..)
   ]

@@ -10,7 +10,7 @@
  * `let` and `const` and arrow functions are fine as
  * well as all listed here: https://kangax.github.io/compat-table/es6/#node4
  */
-process.env.NODE_ENV = process.env.NODE_ENV || 'production';
+// process.env.NODE_ENV = process.env.NODE_ENV || 'production';
 
 const electron = require('electron');
 const app = electron.app;
@@ -19,31 +19,53 @@ const Menu = electron.Menu;
 const shell = electron.shell;
 const path = require('path');
 const pkg = require('./package.json');
+// import fs from 'fs';
 
-let debugLevel = process.env.NODE_ENV === 'development' ? 'debug' : 'info';
-debugLevel = 'debug';
+const debug = process.env.NODE_ENV !== 'development';
+// uncomment this to force debug mode in a production build
+// const debug = true;
 
-const winston = require('winston');
-winston.level = debugLevel;
-winston.loggers.add('sc', {
-  console: {
-    colorize: true,
-    level: debugLevel
-  }
-});
-const sclog = winston.loggers.get('sc');
+// const debugLevel =  debug ? 'debug' : 'info';
 
-const SoundApp = require('./app/sound/SoundApp');
+// const winston = require('winston');
+// winston.level = debugLevel;
+// winston.loggers.add('sc', {
+//   console: {
+//     colorize: true,
+//     level: debugLevel
+//   }
+// });
+// if (debug) {
+//   winston.add(winston.transports.File, {
+//     filename: path.join(__dirname, 'logs/log.log')
+//   });
+// }
+//
+// const sclog = winston.loggers.get('sc');
+const sclog = console;
+const log = console;
+
+const SoundApp = require('./app/sound/SoundApp.es6.js');
 let menu;
 let template;
 let mainWindow = null;
 
-const synthDefsDir = path.join(app.getAppPath(), 'app', 'synthdefs');
+// is this in asar ? are the files in there now ?
+// const synthDefsDir = path.join(app.getAppPath(), 'app', 'synthdefs');
+//
+// main.js
+//  app/synthdefs
+const synthDefsDir = path.join(__dirname, 'app/synthdefs');
+// [1] synthDefsDir /Users/crucial/code/idmx/playsplom/node_modules/electron-prebuilt/dist/Electron.app/Contents/Resources/default_app.asar/app/synthdefs
+log.log('synthDefsDir', synthDefsDir);
+
+// // undefined. because nothing was built ?
+// // but you run server before the webpack is done building
+// fs.readdir(synthDefsDir, (err, files) => {
+//   log.log('files in synthDefsDir', err, files);
+// });
+
 const soundApp = new SoundApp(sclog);
-soundApp.start(synthDefsDir)
-  .catch((error) => {
-    throw error;
-  });
 
 function loadSounds(window) {
   soundApp.loadSounds(synthDefsDir, (action) => {
@@ -53,15 +75,16 @@ function loadSounds(window) {
 
 // connect two-way calling of actions
 // the other half is in app.js
-const ipcMain = require('electron').ipcMain;
+const ipcMain = require('electron').ipcMain;  // eslint-disable-line global-require import/no-unresolved
 const handleActionOnMain = require('./app/ipc/handleActionOnMain');
 ipcMain.on('call-action-on-main', (event, payload) => {
-  winston.debug('call-action-on-main', payload);
+  // winston.debug('call-action-on-main', payload);
   handleActionOnMain(event, payload, soundApp);
 });
 
-// require('electron-debug')({enabled: true});
-require('electron-debug')({enabled: process.env.NODE_ENV === 'development'});
+// if (debug) {
+//   require('electron-debug')({enabled: debug});  // eslint-disable-line global-require
+// }
 
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
@@ -81,15 +104,21 @@ app.on('ready', () => {
     center: true
   });
 
-  mainWindow.webContents.on('crashed', winston.error);
-  mainWindow.on('unresponsive', winston.error);
-  process.on('uncaughtException', winston.error);
+  mainWindow.webContents.on('crashed', log.error);
+  mainWindow.on('unresponsive', log.error);
+  process.on('uncaughtException', log.error);
 
   mainWindow.loadURL(`file://${__dirname}/app/app.html`);
 
   mainWindow.webContents.on('did-finish-load', () => {
     mainWindow.show();
     mainWindow.focus();
+
+    soundApp.start(synthDefsDir)
+      .catch((error) => {
+        throw error;
+      });
+
     loadSounds(mainWindow);
   });
 
@@ -161,7 +190,7 @@ app.on('ready', () => {
       }]
     }, {
       label: 'View',
-      submenu: (process.env.NODE_ENV === 'development') ? [{
+      submenu: debug ? [{
         label: 'Reload',
         accelerator: 'Command+R',
         click() {
@@ -229,7 +258,7 @@ app.on('ready', () => {
       }]
     }, {
       label: '&View',
-      submenu: (process.env.NODE_ENV === 'development') ? [{
+      submenu: debug ? [{
         label: '&Reload',
         accelerator: 'Ctrl+R',
         click() {
