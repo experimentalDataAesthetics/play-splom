@@ -23,11 +23,8 @@
     "lint": "eslint app test *.js",
     "hot-server": "node -r babel-register server.js",
     "build": "npm run build-main && npm run build-renderer",
-
-    "build-main": "cross-env NODE_ENV=production node -r babel-register ./node_modules/webpack/bin/webpack --config webpack.config.electron.js --progress --profile --colors",
-
-    "build-renderer": "cross-env NODE_ENV=production node -r babel-register ./node_modules/webpack/bin/webpack --config webpack.config.production.js --progress --profile --colors",
-
+    "build-main": "cross-env NODE_ENV=production node -r babel-register ./node_modules/webpack/bin/webpack --config webpack.config.electron.js --display-modules --progress --profile --colors",
+    "build-renderer": "cross-env NODE_ENV=production node -r babel-register ./node_modules/webpack/bin/webpack --config webpack.config.production.js --display-modules --progress --profile --colors",
     "start": "cross-env NODE_ENV=production electron ./",
     "start-hot": "cross-env HOT=1 NODE_ENV=development electron -r babel-register ./main.development",
     "package": "cross-env NODE_ENV=production node -r babel-register package.js",
@@ -68,10 +65,10 @@
     "redux": "^3.5.2",
     "redux-thunk": "^2.1.0",
     "reselect": "^2.5.1",
+    "source-map-support": "^0.4.0",
     "supercolliderjs": "^0.11.0",
     "updeep": "^0.16.0",
-    "winston": "^2.2.0",
-    "source-map-support": "^0.4.0"
+    "winston": "^2.2.0"
   },
   "devDependencies": {
     "asar": "^0.11.0",
@@ -99,10 +96,8 @@
     "css-modules-require-hook": "^4.0.1",
     "debug-menu": "^0.4.0",
     "del": "^2.2.1",
-    "devtron": "^1.2.1",
     "electron-packager": "^7.0.4",
     "electron-prebuilt": "^1.2.3",
-    "electron-react-devtools": "^0.3.1",
     "electron-rebuild": "^1.1.5",
     "eslint": "^2.13.1",
     "eslint-config-airbnb": "^9.0.1",
