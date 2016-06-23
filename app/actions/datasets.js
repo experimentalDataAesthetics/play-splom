@@ -40,7 +40,7 @@ const parsers = {
 };
 
 /**
- * Example datasets are in the ASAR file system
+ * Example datasets
  */
 export function loadInternalDataset(path) {
   return loadDataset(path);

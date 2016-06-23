@@ -16,11 +16,16 @@ import { mapXYtoParam } from './actions/mapping';
 import './app.global.css';
 import { join } from 'path';
 
+const production = process.env.NODE_ENV === 'production';
+// how ironic, the path to config is different
+// const config = require(production ? './config/index' : '../config/index');
+// console.log('dirname', __dirname);
+
 const store = configureStore();
 const history = syncHistoryWithStore(hashHistory, store);
 
 // connect two-way calling of actions
-// the other half is in background.js
+// the other half is in main.js
 const ipcRenderer = require('electron').ipcRenderer;
 import handleActionOnRenderer from './ipc/handleActionOnRenderer';
 ipcRenderer.on('dispatch-action', (sender, action) => {
@@ -40,7 +45,7 @@ connectSoundApp(store, callActionOnMain);
 injectTapEventPlugin();
 
 // add right click inspect element context menu
-if (process.env.NODE_ENV === 'development') {
+if (!production) {
   require('debug-menu').install();
 }
 
@@ -51,9 +56,11 @@ render(
   document.getElementById('root')
 );
 
-/** load an initial dataset and sound **/
-const iris = join(__dirname, 'vendor/datasets', 'iris.csv');
+// load an initial dataset and sound
+const appRoot = production ? __dirname : join(__dirname, '../app');
+const iris = join(appRoot, 'vendor/datasets', 'iris.csv');
 store.dispatch(loadInternalDataset(iris));
+
 store.dispatch(selectSound('grainFM'));
 store.dispatch(mapXYtoParam('x', 'modfreq'));
 store.dispatch(mapXYtoParam('y', 'carfreq'));

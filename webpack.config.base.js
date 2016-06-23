@@ -5,8 +5,8 @@ const path = require('path');
 
 module.exports = {
   node: {
-    __dirname: true,
-    __filename: true
+    __dirname: false,
+    __filename: false
   },
   target: 'electron-renderer',
   module: {
@@ -61,6 +61,9 @@ module.exports = {
     'miso.events',
     // doesnt get the submodules
     // better to import just the ones you need anyway
-    'lodash'
+    'lodash',
+    // not loading the dryad classes ?
+    // scsynthdef missing
+    'supercolliderjs'
   ]
 };

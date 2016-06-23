@@ -19,56 +19,46 @@ const Menu = electron.Menu;
 const shell = electron.shell;
 const path = require('path');
 const pkg = require('./package.json');
-// import fs from 'fs';
+import SoundApp from './app/sound/SoundApp.js';
 
 const debug = process.env.NODE_ENV !== 'development';
 // uncomment this to force debug mode in a production build
 // const debug = true;
 
-// const debugLevel =  debug ? 'debug' : 'info';
+const debugLevel = debug ? 'debug' : 'info';
+// const debugLevel = 'debug';
 
-// const winston = require('winston');
-// winston.level = debugLevel;
-// winston.loggers.add('sc', {
-//   console: {
-//     colorize: true,
-//     level: debugLevel
-//   }
-// });
-// if (debug) {
-//   winston.add(winston.transports.File, {
-//     filename: path.join(__dirname, 'logs/log.log')
-//   });
-// }
-//
-// const sclog = winston.loggers.get('sc');
-const sclog = console;
-const log = console;
+const winston = require('winston');
+winston.level = debugLevel;
+winston.loggers.add('sc', {
+  console: {
+    colorize: true,
+    level: debugLevel
+  }
+});
 
-const SoundApp = require('./app/sound/SoundApp.es6.js');
+if (debug) {
+  // os x only
+  winston.add(winston.transports.File, {
+    // filename: path.join(__dirname, 'logs/log.log')
+    filename: '/Users/crucial/Library/Logs/play-splom/log.log'
+  });
+}
+
+const log = winston;
+const sclog = winston;  // winston.loggers.get('sc');
+
 let menu;
 let template;
 let mainWindow = null;
 
-// is this in asar ? are the files in there now ?
-// const synthDefsDir = path.join(app.getAppPath(), 'app', 'synthdefs');
-//
-// main.js
-//  app/synthdefs
 const synthDefsDir = path.join(__dirname, 'app/synthdefs');
-// [1] synthDefsDir /Users/crucial/code/idmx/playsplom/node_modules/electron-prebuilt/dist/Electron.app/Contents/Resources/default_app.asar/app/synthdefs
-log.log('synthDefsDir', synthDefsDir);
-
-// // undefined. because nothing was built ?
-// // but you run server before the webpack is done building
-// fs.readdir(synthDefsDir, (err, files) => {
-//   log.log('files in synthDefsDir', err, files);
-// });
 
 const soundApp = new SoundApp(sclog);
 
 function loadSounds(window) {
   soundApp.loadSounds(synthDefsDir, (action) => {
+    log.debug('dispatch-action', action);
     window.webContents.send('dispatch-action', action);
   });
 }
@@ -78,7 +68,7 @@ function loadSounds(window) {
 const ipcMain = require('electron').ipcMain;  // eslint-disable-line global-require import/no-unresolved
 const handleActionOnMain = require('./app/ipc/handleActionOnMain');
 ipcMain.on('call-action-on-main', (event, payload) => {
-  // winston.debug('call-action-on-main', payload);
+  log.debug('call-action-on-main', payload);
   handleActionOnMain(event, payload, soundApp);
 });
 
@@ -107,6 +97,9 @@ app.on('ready', () => {
   mainWindow.webContents.on('crashed', log.error);
   mainWindow.on('unresponsive', log.error);
   process.on('uncaughtException', log.error);
+  process.on('unhandledRejection', (reason) => {
+    log.error('Unhandled Rejection:', reason, reason && reason.stack);
+  });
 
   mainWindow.loadURL(`file://${__dirname}/app/app.html`);
 
@@ -115,7 +108,11 @@ app.on('ready', () => {
     mainWindow.focus();
 
     soundApp.start(synthDefsDir)
+      // .then(() => {
+      //   log.debug('SoundApp started');
+      // })
       .catch((error) => {
+        log.error(error);
         throw error;
       });
 

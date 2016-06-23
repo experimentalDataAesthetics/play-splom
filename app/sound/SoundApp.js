@@ -6,8 +6,6 @@ const fs = require('fs');
 const Bacon = require('baconjs');
 const jetpack = require('fs-jetpack');
 
-import config from '../../config';
-
 /**
  * config is loaded from config/(development|production|test).json
  *
@@ -16,13 +14,15 @@ import config from '../../config';
  * to compile synthDefs. If not set (the default) then the app will
  * only load pre-compiled synthDefs from ./synthdefs
  */
+import config from '../../config';
+
 
 const options = _.assign({}, config.supercolliderjs.options || {}, {
-  // sclang: path.join(__dirname, 'vendor/supercollider/osx/sclang'),
+  // sclang: path.join(config.appRoot, 'vendor/supercollider/osx/sclang'),
   // This copy was still not portable due to Qt dylib errors:
   // so it requires that a path to an external SuperCollider.app is supplied
   // in config/development.json
-  scsynth: path.join(__dirname, '../', 'vendor/supercollider/osx/scsynth'),
+  scsynth: path.join(config.appRoot, 'vendor/supercollider/osx/scsynth'),
   echo: true,  // wonky. this means post osc
   debug: true,
   includePaths: [],
@@ -50,6 +50,8 @@ export default class SoundApp {
   }
 
   start(synthDefsDir) {
+    // should be the same:
+    // const sdd = path.join(config.appRoot, 'synthdefs');
     return new Promise((resolve, reject) => {
       fs.readdir(synthDefsDir, (err, files) => {
         if (err) {
