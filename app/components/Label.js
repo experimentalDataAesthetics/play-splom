@@ -59,7 +59,8 @@ module.exports = React.createClass({
 
     const style = {
       stroke: props.textColor,
-      fill: props.textColor
+      fill: props.textColor,
+      fontSize: 9
     };
 
     return (

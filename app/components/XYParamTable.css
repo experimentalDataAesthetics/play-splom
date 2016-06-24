@@ -28,27 +28,27 @@
 
 .range {
   width: 100px;
-  padding-right: 2rem;
+  padding: 0;
 }
 
 .connected td,
 .connected th {
-  height: 75px;
+  /*height: 75px;*/
   background: rgba(116, 218, 69, 0.03);
   transition: background-color 0.5s ease;
 }
 
-
-.fixed {
-  height: 75px;
-}
-
 .rangeSlider {
-  background: rgba(236, 207, 121, 0.16);
-  border: 1px solid white;
+  /*background: rgba(236, 207, 121, 0.16);*/
+  /*border: 1px solid white;*/
   display: block;
   height: 18px;
+  /* margin-right: 40px; */
   -webkit-user-select: none;
+}
+
+.rangeSlider .bar {
+  height: 18px;
 }
 
 .rangeHandleMin,
@@ -62,10 +62,12 @@
  * The text inside the .handle that is positioned.
  */
 .rangeHandleMin {
-  border-left: 1px solid black;
+  border-left: 2px solid #999;
+  padding-left: 2px;
   /*padding-left: .25em;*/
 }
 .rangeHandleMax {
-  border-right: 1px solid black;
+  border-right: 2px solid #999;
+  padding-right: 2px;
   /*padding-right: .25em;  */
 }

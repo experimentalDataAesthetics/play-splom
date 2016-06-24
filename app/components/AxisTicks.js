@@ -225,7 +225,7 @@ export default React.createClass({
               dy,
               x: x1 || 0,
               y: y1 || 0,
-              style: {stroke: props.tickTextStroke, fill: props.tickTextStroke},
+              style: {fontSize: 9, stroke: props.tickTextStroke, fill: props.tickTextStroke},
               textAnchor
             }, optionalTextProps),
             tickFormat(tick)
