@@ -56,36 +56,73 @@ export default function connectSoundApp(store, callActionOnMain) {
     }
   });
 
+  /**
+   * This is a temporary loop system.
+   * It just runs a timer and resends the loop events
+   * to the SoundApp which pushes it through to a Dryadic component
+   * which does the sending.
+   *
+   * A better system will be to have a have a dryadic client
+   * here in the frontend app and have it communicate the changes.
+   * A dryad that plays a loop of events and can be live updated.
+   */
   let timer;
 
   function triggerLoop() {
     const state = store.getState();
-    const payload = loopModePayload(state);
-    if (payload.events.length === 0) {
-      clearInterval(timer);
-      timer = null;
-      store.dispatch(setLooping({nowPlaying: {}, pending: {}}));
+    const loopMode = state.interaction.loopMode;
+    // console.log('triggerLoop gets loopMode:', loopMode);
+    let newLoopMode = {
+      looping: loopMode.looping
+    };
+
+    // stop
+    if (!loopMode.looping) {
+      newLoopMode.nowPlaying = null;
     } else {
-      // tell the UI that we are not playing this
-      // only if different than last
-      store.dispatch(setLooping({
-        nowPlaying: {
-          m: state.interaction.loopMode.m,
-          n: state.interaction.loopMode.n
-        },
-        pending: {}
-      }));
+      // if pending then copy it in
+      if (loopMode.pending) {
+        newLoopMode.nowPlaying = loopMode.pending;
+      } else {
+        // carry on playing
+        newLoopMode = loopMode;
+      }
     }
 
-    callActionOnMain({
-      type: SET_LOOP,
-      payload
-    });
+    // console.log('newLoopMode:', newLoopMode);
+
+    if (newLoopMode.nowPlaying) {
+      const payload = loopModePayload(newLoopMode.nowPlaying.m, newLoopMode.nowPlaying.n, state);
+      // console.log('payload', payload);
+      if (payload) {
+        callActionOnMain({
+          type: SET_LOOP,
+          payload
+        });
+      }
+    } else {
+      if (timer) {
+        // console.log('clear timer', timer);
+        clearInterval(timer);
+        timer = null;
+        // send kill loop
+      }
+    }
+
+    // update the ui
+    if (newLoopMode !== loopMode) {
+      // console.log('update state');
+      // TODO: does not unset pending
+      store.dispatch(setLooping(newLoopMode));
+    }
   }
 
-  observeStore(store, getLoopMode, () => {
+  observeStore(store, getLoopMode, (loopMode) => {
+    // console.log('loopMode changed', loopMode);
     if (!timer) {
+      // console.log('start interval');
       timer = setInterval(triggerLoop, 10000);
+      // console.log('first time trigger');
       triggerLoop();
     }
   });

@@ -205,28 +205,33 @@ export function makeMapper(spec) {
 /**
  * Builds the payload for SET_LOOP action
  */
-export function loopModePayload(state) {
-  const loopMode = state.interaction.loopMode;
+export function loopModePayload(m, n, state) {
   const sound = getSound(state);
+  if (!sound) {
+    return;
+  }
+
   const npoints = getNormalizedPoints(state);
   const mapping = getMapping(state);
   const mappingControls = getXYMappingControls(state);
+
+  // const events = loopModeSynthEventList(loopMode, sound, npoints, mapping, mappingControls);
+  const events = loopModeEvents(
+    m,
+    n,
+    npoints,
+    mapping,
+    mappingControls,
+    sound,
+    10.0
+  );
+
   return {
-    events: loopModeSynthEventList(loopMode, sound, npoints, mapping, mappingControls),
+    events,
     epoch: _.now() + 300
   };
 }
 
-export function loopModeSynthEventList(loopMode, sound, npoints, mapping, mappingControls) {
-  const loopTime = loopMode.loopTime || 10.0;
-  if (loopMode.looping && sound) {
-    // create list from m n npoints mapping
-    return loopModeEvents(loopMode.m, loopMode.n,
-      npoints, mapping, mappingControls, sound, loopTime);
-  } else {
-    return [];
-  }
-}
 
 export function loopModeEvents(m, n, npoints, mapping, mappingControls, sound, loopTime) {
   // now you have time and x doing the same movement

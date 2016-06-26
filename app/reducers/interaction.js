@@ -45,24 +45,33 @@ function setPointsUnderBrush(state, action) {
   return state;
 }
 
-function toggleLoopMode(state, action) {
-  // actionCreator can do this with a thunk
-  // and avoid calling any action
-  const differentBox = (get(state, 'loopMode.m') !== action.payload.m) ||
-    (get(state, 'loopMode.n') !== action.payload.n);
 
-  const looping = differentBox || !get(state, 'loopMode.looping', false);
+function _sameBox(state, payload, key) {
+  if (get(state, `loopMode.${key}`)) {
+    const m = get(state, `loopMode.${key}.m`);
+    const n = get(state, `loopMode.${key}.n`);
+    return m && n && (m === payload.m) && (n === payload.n);
+  }
+}
+
+function toggleLoopMode(state, action) {
+  // console.log('toggleLoopMode', state, action);
+  // click on the same box again: toggle to off
+  if (_sameBox(state, action.payload, 'nowPlaying')
+    || _sameBox(state, action.payload, 'pending')) {
+    // toggle it to off
+    return u({
+      loopMode: {
+        looping: false
+      }
+    }, state);
+    // TODO: but a second tap on pending should not change anything
+  }
 
   return u({
     loopMode: {
-      looping,
-      // these can be removed in favor of pending/nowPlaying
-      m: action.payload.m,
-      n: action.payload.n,
-      pending: {
-        m: looping && action.payload.m,
-        n: looping && action.payload.n
-      }
+      pending: action.payload,
+      looping: true
     }
   }, state);
 }
@@ -73,11 +82,12 @@ function toggleLoopMode(state, action) {
 function setLooping(state, action) {
   // action may contain nowPlaying and pending
   // updates loopMode, adding these
-  const updates = {
-    nowPlaying: action.payload.nowPlaying || {},
-    pending: action.payload.pending || {}
-  };
-  const loopMode = assign({}, state.loopMode, updates);
+  // const updates = {
+  //   looping: action.payload.looping,
+  //   nowPlaying: action.payload.nowPlaying || null,
+  //   pending: action.payload.pending || null
+  // };
+  const loopMode = assign({}, state.loopMode || {}, action.payload);
   const newState = assign({}, state, {loopMode});
   return newState;
 }

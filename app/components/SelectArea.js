@@ -147,6 +147,7 @@ export default class SelectArea extends React.Component {
     selected: React.PropTypes.object,
     onChange: React.PropTypes.func,
     onMouseEnter: React.PropTypes.func,
+    onMetaClick: React.PropTypes.func,
     show: React.PropTypes.bool
   };
 
@@ -207,6 +208,13 @@ export default class SelectArea extends React.Component {
   }
 
   _started(event, handle) {
+    if (event.buttons && event.metaKey) {
+      if (this.props.onMetaClick) {
+        this.props.onMetaClick(event);
+      }
+      return;
+    }
+
     if (!this._shouldHandleEvent(event)) {
       return;
     }

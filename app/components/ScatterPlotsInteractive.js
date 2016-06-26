@@ -135,25 +135,44 @@ class ScatterPlotsInteractive extends React.Component {
       }
     }
 
+    const getClassName = (box) => {
+      const loopMode = this.props.loopMode;
+      const isLooping =
+        (_.get(loopMode, 'nowPlaying.m') === box.m) &&
+        (_.get(loopMode, 'nowPlaying.n') === box.n);
+
+      const isPending =
+        (_.get(loopMode, 'pending.m') === box.m) &&
+        (_.get(loopMode, 'pending.n') === box.n);
+
+      const isLastFocused =
+        (_.get(this.state, 'last.m') === box.m) &&
+        (_.get(this.state, 'last.n') === box.n);
+
+      if (isPending) {
+        return 'pending';
+      }
+
+      if (isLooping) {
+        return 'looping';
+      }
+
+      if (isLastFocused) {
+        return 'focused';
+      }
+    };
+
     layout.boxes.forEach((box) => {
       // TODO: move to a selector
       const featx = this.props.features[box.m].values;
       const featy = this.props.features[box.n].values;
       const points = _.zip(featx, featy);
 
-      // const loopMode = this.props.loopMode;
-      // const isLooping =
-      //   (_.get(loopMode, 'nowPlaying.m') === box.m) &&
-      //   (_.get(loopMode, 'nowPlaying.n') === box.n);
-      //
-      // const isPending =
-      //   (_.get(loopMode, 'pending.m') === box.m) &&
-      //   (_.get(loopMode, 'pending.n') === box.n);
-
       const isLastFocused =
         (_.get(this.state, 'last.m') === box.m) &&
         (_.get(this.state, 'last.n') === box.n);
 
+      // Each of these handle all mouse events
       const selectedArea = h(SelectArea, {
         selected: {
           x: 0,
@@ -170,7 +189,13 @@ class ScatterPlotsInteractive extends React.Component {
         base: [box.baseClientX, box.baseClientY],
         onChange: (area) => this.setPointsIn(area, box, points),
         onMouseEnter: () => this.setHoveringBox(box),
-        show: isLastFocused
+        onMetaClick: () => {
+          if (this.props.toggleLoopMode) {
+            this.props.toggleLoopMode(box.m, box.n);
+          }
+        },
+        show: isLastFocused,
+        className: getClassName(box)
       });
 
       children.push(selectedArea);
