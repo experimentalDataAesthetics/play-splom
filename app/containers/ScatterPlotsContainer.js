@@ -14,6 +14,12 @@ import {
 } from '../selectors/index';
 
 
+/**
+ * Goes inside a svg, adds a g containing:
+ * - ScatterPlots
+ * - ScatterPlotsActivePoints
+ * - ScatterPlotsInteractive
+ */
 class ScatterPlotsContainer extends Component {
 
   static propTypes = {

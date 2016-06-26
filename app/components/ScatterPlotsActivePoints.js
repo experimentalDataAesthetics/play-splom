@@ -12,6 +12,10 @@ import {
   getMuiTheme
 } from '../selectors/index';
 
+/**
+ * Renders just the points that are selected/within the brush
+ * on top of the normal plot.
+ */
 class ScatterPlotsActivePoints extends React.Component {
 
   render() {

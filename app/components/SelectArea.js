@@ -1,6 +1,5 @@
 import React from 'react';
 
-// Adapted from https://github.com/d3/d3-brush
 const handleSize = 6;
 
 const MODE_DRAG = 'drag';
@@ -139,6 +138,11 @@ function clip(v, min, max) {
   return v;
 }
 
+/**
+ * D3 Brush - select a rectangular area
+ *
+ * Adapted from https://github.com/d3/d3-brush
+ */
 export default class SelectArea extends React.Component {
 
   static propTypes = {

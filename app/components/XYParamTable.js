@@ -3,6 +3,9 @@ import React from 'react';
 import h from 'react-hyperscript';
 import MapButton from './MapButton';
 import { Slider } from 'material-ui';
+// this is smaller but errors:
+// Unexpected token: name (menu) [./~/debug-menu/index.js:5,0]
+// import Slider from 'material-ui/Slider';
 import ReactSlider from 'react-slider';
 import style from './XYParamTable.css';
 import { round } from 'd3';
