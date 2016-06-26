@@ -6,7 +6,7 @@ import {
 import * as selectors from '../../app/selectors/sound';
 import * as _ from 'lodash';
 
-describe('selectors', () => {
+describe('selectors/sound', () => {
   const sound = {
     hasArrayArgs: false,
     inputs: [],
@@ -264,10 +264,17 @@ describe('selectors', () => {
   // });
 
   describe('loopModeEvents', function() {
+    const loopMode = {
+      m: 0,
+      n: 1,
+      looping: true,
+      loopTime: 10.0
+    };
+
+    // loopModeEvents(m, n, npoints, mapping, mappingControls, sound, loopTime)
     it('should return an array of objects', function() {
-      const loopTime = 10.0;
       const events = selectors.loopModeEvents(0, 1,
-        npoints, mapping, mappingControls, sound, loopTime);
+        npoints, mapping, mappingControls, sound, loopMode.loopTime);
 
       // expect(events).to.be.a('array');
       expect(events.length).to.equal(npoints[0].values.length);
@@ -276,19 +283,11 @@ describe('selectors', () => {
       expect(first.args).to.be.a('object');
       expect(first.time).to.be.a('number');
     });
-  });
-
-  describe('loopModeSynthEventList', function() {
-    const loopMode = {
-      m: 0,
-      n: 1,
-      looping: true,
-      loopTime: 10.0
-    };
 
     it('should return a list of events for SynthEventList updateStream', function() {
-      const sel = selectors.loopModeSynthEventList(
-        loopMode, sound, npoints, mapping, mappingControls);
+      const sel = selectors.loopModeEvents(loopMode.m, loopMode.n,
+        npoints, mapping, mappingControls, sound, loopMode.loopTime);
+
       expect(sel.length).to.equal(npoints[0].values.length);
       const first = sel[0];
       expect(first.defName).to.be.a('string');
@@ -296,17 +295,19 @@ describe('selectors', () => {
       expect(Object.keys(first.args).length).to.equal(5);
     });
 
-    it('should return null if no sound', function() {
-      const sel = selectors.loopModeSynthEventList(
-        loopMode, null, npoints, mapping, mappingControls);
-      expect(sel.length).to.equal(0);
-    });
+    // loopModePayload does that
+    // it('should return null if no sound', function() {
+    //   const sel = selectors.loopModeEvents(loopMode.m, loopMode.nn,
+    //     npoints, mapping, mappingControls, null, loopMode.loopTime);
+    //
+    //   expect(sel.length).to.equal(0);
+    // });
 
-    it('should return null if not looping', function() {
-      const sel = selectors.loopModeSynthEventList(
-        {looping: false}, sound, npoints, mapping, mappingControls);
-      expect(sel.length).to.equal(0);
-    });
+    // it('should return null if not looping', function() {
+    //   const sel = selectors.loopModeSynthEventList(
+    //     {looping: false}, sound, npoints, mapping, mappingControls);
+    //   expect(sel.length).to.equal(0);
+    // });
   });
 
   describe('makeXYMapper', function() {

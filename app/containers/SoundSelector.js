@@ -1,36 +1,22 @@
 import React from 'react';
 import h from 'react-hyperscript';
-import { connect } from 'react-redux';
+import connect from '../utils/reduxers';
 import { List, ListItem, MakeSelectable } from 'material-ui/List';
 import { selectSound } from '../actions/sounds';
 
 const SelectableList = MakeSelectable(List);
 
-const mapStateToProps = (state) => {
-  return {
-    sounds: state.sounds,
-    selectedSound: state.sound
-  };
-};
-
-const mapDispatchToProps = (dispatch) => {
-  return {
-    onSelect: (event, name) => {
-      dispatch(selectSound(name));
-    }
-  };
-};
-
+/**
+ * Sidebar area for selecting the current Sound
+ */
 class SoundSelector extends React.Component {
   render() {
     return h('div.sound-selector', [
       h('h6', 'Sounds'),
       h(SelectableList,
         {
-          valueLink: {
-            value: this.props.selected,
-            requestChange: this.props.onSelect
-          },
+          value: this.props.selectedSound,
+          onChange: this.props.onSelect,
           className: 'selectable-list'
         },
         this.props.sounds.map((sound) => {
@@ -46,4 +32,9 @@ class SoundSelector extends React.Component {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(SoundSelector);
+export default connect({
+  sounds: 'sounds',
+  selectedSound: 'sound'
+}, {
+  onSelect: (event, name) => selectSound(name)
+})(SoundSelector);

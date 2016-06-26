@@ -6,6 +6,9 @@ import ScatterPlot from '../components/ScatterPlot';
 import muiThemeable from 'material-ui/styles/muiThemeable';
 import style from './ScatterPlots.css';
 
+/**
+ * Adds a ScatterPlot for each feature pair.
+ */
 class ScatterPlots extends React.Component {
 
   static propTypes = {
@@ -36,48 +39,39 @@ class ScatterPlots extends React.Component {
       const margin = this.props.layout.margin;
       const columnNames = this.props.dataset.columnNames;
 
-      if (sideLength > 0) {
-        for (let m = 0; m < this.props.numFeatures; m++) {
-          const x = m * sideLength;
-          for (let n = 0; n < this.props.numFeatures; n++) {
-            if (m === n) {
-              continue;
-            }
+      this.props.layout.boxes.forEach((box) => {
+        // features go across the x
+        // and down the y
+        // SVG coords also go down the y
+        const xName = columnNames[box.m];
+        const yName = columnNames[box.n];
 
-            // features go across the x
-            // and down the y
-            // SVG coords also go down the y
-            const y = n * sideLength;
-            const xName = columnNames[m];
-            const yName = columnNames[n];
+        const points = _.zip(
+          this.props.features[box.m].values,
+          this.props.features[box.n].yValues);
 
-            const featx = this.props.features[m].values;
-            const featy = this.props.features[n].values;
-            const points = _.zip(featx, featy);
+        const sp = h(ScatterPlot, {
+          points,
+          m: box.m,
+          n: box.n,
+          xName,
+          yName,
+          xOffset: box.x,
+          yOffset: box.y,
+          sideLength: sideLength - margin,
+          muiTheme: this.props.muiTheme,
+          pointsUnderBrush: this.props.pointsUnderBrush
+        });
 
-            const sp = h(ScatterPlot, {
-              points,
-              m,
-              n,
-              xName,
-              yName,
-              xOffset: x,
-              yOffset: y,
-              sideLength: sideLength - margin,
-              muiTheme: this.props.muiTheme
-            });
-
-            children.push(sp);
-          }
-        }
-      }
+        children.push(sp);
+      });
     }
 
     return h(
       'g',
       {
-        height: this.props.height,
         width: this.props.width,
+        height: this.props.height,
         className: 'scatterplots'
       },
       children

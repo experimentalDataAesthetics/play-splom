@@ -1,22 +1,21 @@
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
+import connect from '../utils/reduxers';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
-import { createSelector } from 'reselect';
 import * as _ from 'lodash';
 
 import Sidebar from './Sidebar';
 import SVGFrame from './SVGFrame';
+import Notification from '../components/Notification';
+
 import {
-  getWindowSize,
   getLayout,
   getMuiTheme
 } from '../selectors/index';
 
-const mapStateToProps = createSelector(
-  [getWindowSize, getLayout, getMuiTheme],
-  (windowSize, layout, muiTheme) => ({windowSize, layout, muiTheme}));
-
-const mapDispatchToProps = null;
+const stateToProps = {
+  layout: getLayout,
+  muiTheme: getMuiTheme
+};
 
 class MainLayout extends Component {
 
@@ -48,17 +47,18 @@ class MainLayout extends Component {
       <div style={layout.sideBarStyle}>
         <Sidebar />
       </div>
-    ) : <div />;
+    ) : null;
 
     return (
       <MuiThemeProvider muiTheme={this.props.muiTheme}>
         <section className="MainLayout" style={globalStyle}>
           {svg}
           {sidebar}
+          <Notification />
         </section>
       </MuiThemeProvider>
     );
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(MainLayout);
+export default connect(stateToProps)(MainLayout);

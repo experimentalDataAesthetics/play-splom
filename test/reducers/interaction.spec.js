@@ -9,7 +9,7 @@ import {
   SET_LOOPING
 } from '../../app/actionTypes';
 
-describe('interaction', function() {
+describe('reducers/interaction', function() {
 
   describe('TOGGLE_LOOP_MODE', function() {
     const click1 = {
@@ -29,13 +29,13 @@ describe('interaction', function() {
 
     it('should toggle loop from null state', function() {
       const state = interaction({}, click1);
-      expect(state.loopMode.looping).to.equal(true);
+      expect(state.loopMode.pending).to.deep.equal(click1.payload);
     });
 
     it('should keep loop mode when clicking other', function() {
       const initial = interaction({}, click1);
       const state = interaction(initial, click2);
-      expect(state.loopMode.looping).to.equal(true);
+      expect(state.loopMode.pending).to.deep.equal(click2.payload);
     });
 
     it('should toogle loop back off when clicking same', function() {
@@ -68,7 +68,7 @@ describe('interaction', function() {
           m: 1,
           n: 1
         },
-        pending: {}
+        pending: null
       }
     };
 
@@ -83,17 +83,15 @@ describe('interaction', function() {
       let r = interaction(s, playing);
       expect(r.loopMode.nowPlaying.m).to.equal(1);
       expect(r.loopMode.nowPlaying.n).to.equal(1);
-      expect(r.loopMode.pending.m).to.be.undefined;
-      expect(r.loopMode.pending.n).to.be.undefined;
+      expect(r.loopMode.pending).to.be.null;
+      // expect(r.loopMode.pending.n).to.be.undefined;
     });
 
     it('should unset on blank', function() {
       let s = interaction({}, playing);
       let r = interaction(s, blank);
-      expect(r.loopMode.pending.m).to.be.undefined;
-      expect(r.loopMode.pending.n).to.be.undefined;
-      expect(r.loopMode.nowPlaying.m).to.be.undefined;
-      expect(r.loopMode.nowPlaying.n).to.be.undefined;
+      expect(r.loopMode.pending).to.be.null;
+      expect(r.loopMode.looping).to.be.undefined;
     });
   });
 

@@ -10,7 +10,7 @@
  * `let` and `const` and arrow functions are fine as
  * well as all listed here: https://kangax.github.io/compat-table/es6/#node4
  */
-process.env.NODE_ENV = process.env.NODE_ENV || 'production';
+// process.env.NODE_ENV = process.env.NODE_ENV || 'production';
 
 const electron = require('electron');
 const app = electron.app;
@@ -19,9 +19,14 @@ const Menu = electron.Menu;
 const shell = electron.shell;
 const path = require('path');
 const pkg = require('./package.json');
+import SoundApp from './app/sound/SoundApp.js';
 
-let debugLevel = process.env.NODE_ENV === 'development' ? 'debug' : 'info';
-debugLevel = 'debug';
+const debug = process.env.NODE_ENV !== 'development';
+// uncomment this to force debug mode in a production build
+// const debug = true;
+
+const debugLevel = debug ? 'debug' : 'info';
+// const debugLevel = 'debug';
 
 const winston = require('winston');
 winston.level = debugLevel;
@@ -31,37 +36,45 @@ winston.loggers.add('sc', {
     level: debugLevel
   }
 });
-const sclog = winston.loggers.get('sc');
 
-const SoundApp = require('./app/sound/SoundApp');
+if (debug) {
+  // os x only
+  winston.add(winston.transports.File, {
+    // filename: path.join(__dirname, 'logs/log.log')
+    filename: '/Users/crucial/Library/Logs/play-splom/log.log'
+  });
+}
+
+const log = winston;
+const sclog = winston;  // winston.loggers.get('sc');
+
 let menu;
 let template;
 let mainWindow = null;
 
-const synthDefsDir = path.join(app.getAppPath(), 'app', 'synthdefs');
+const synthDefsDir = path.join(__dirname, 'app/synthdefs');
+
 const soundApp = new SoundApp(sclog);
-soundApp.start(synthDefsDir)
-  .catch((error) => {
-    throw error;
-  });
 
 function loadSounds(window) {
   soundApp.loadSounds(synthDefsDir, (action) => {
+    log.debug('dispatch-action', action);
     window.webContents.send('dispatch-action', action);
   });
 }
 
 // connect two-way calling of actions
 // the other half is in app.js
-const ipcMain = require('electron').ipcMain;
+const ipcMain = require('electron').ipcMain;  // eslint-disable-line global-require import/no-unresolved
 const handleActionOnMain = require('./app/ipc/handleActionOnMain');
 ipcMain.on('call-action-on-main', (event, payload) => {
-  winston.debug('call-action-on-main', payload);
+  log.debug('call-action-on-main', payload);
   handleActionOnMain(event, payload, soundApp);
 });
 
-// require('electron-debug')({enabled: true});
-require('electron-debug')({enabled: process.env.NODE_ENV === 'development'});
+// if (debug) {
+//   require('electron-debug')({enabled: debug});  // eslint-disable-line global-require
+// }
 
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
@@ -81,11 +94,28 @@ app.on('ready', () => {
     center: true
   });
 
+  mainWindow.webContents.on('crashed', log.error);
+  mainWindow.on('unresponsive', log.error);
+  process.on('uncaughtException', log.error);
+  process.on('unhandledRejection', (reason) => {
+    log.error('Unhandled Rejection:', reason, reason && reason.stack);
+  });
+
   mainWindow.loadURL(`file://${__dirname}/app/app.html`);
 
   mainWindow.webContents.on('did-finish-load', () => {
     mainWindow.show();
     mainWindow.focus();
+
+    soundApp.start(synthDefsDir)
+      // .then(() => {
+      //   log.debug('SoundApp started');
+      // })
+      .catch((error) => {
+        log.error(error);
+        throw error;
+      });
+
     loadSounds(mainWindow);
   });
 
@@ -157,7 +187,7 @@ app.on('ready', () => {
       }]
     }, {
       label: 'View',
-      submenu: (process.env.NODE_ENV === 'development') ? [{
+      submenu: debug ? [{
         label: 'Reload',
         accelerator: 'Command+R',
         click() {
@@ -225,7 +255,7 @@ app.on('ready', () => {
       }]
     }, {
       label: '&View',
-      submenu: (process.env.NODE_ENV === 'development') ? [{
+      submenu: debug ? [{
         label: '&Reload',
         accelerator: 'Ctrl+R',
         click() {

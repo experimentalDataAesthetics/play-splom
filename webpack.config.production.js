@@ -3,7 +3,6 @@
 
 const webpack = require('webpack');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
-const webpackTargetElectronRenderer = require('webpack-target-electron-renderer');
 const baseConfig = require('./webpack.config.base');
 
 
@@ -45,7 +44,5 @@ config.plugins.push(
   }),
   new ExtractTextPlugin('style.css', { allChunks: true })
 );
-
-config.target = webpackTargetElectronRenderer(config);
 
 module.exports = config;

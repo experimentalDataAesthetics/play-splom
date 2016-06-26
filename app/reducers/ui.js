@@ -7,7 +7,8 @@ import {
   ZOOM_SCATTERPLOT,
   MOUSE_MOVE,
   SHOW_BRUSH,
-  SET_WINDOW_SIZE
+  SET_WINDOW_SIZE,
+  SET_NOTIFICATION
 } from '../actionTypes';
 import u from 'updeep';
 
@@ -17,6 +18,7 @@ const initial = {
   zoomed: null,
   mouse: null,
   brush: null,
+  notification: null,
   windowSize: {
     width: window.innerWidth,
     height: window.innerHeight
@@ -59,6 +61,11 @@ export default function ui(state = initial, action) {
     case SET_WINDOW_SIZE:
       return u({
         windowSize: action.payload
+      }, state);
+
+    case SET_NOTIFICATION:
+      return u({
+        notification: action.payload
       }, state);
 
     default:

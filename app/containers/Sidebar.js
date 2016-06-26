@@ -7,6 +7,9 @@ import ParamMapping from './ParamMapping';
 import Help from './Help';
 import styles from './Sidebar.css';
 
+/**
+ * The Sidebar container
+ */
 export default class Sidebar extends Component {
   render() {
     return h('aside',

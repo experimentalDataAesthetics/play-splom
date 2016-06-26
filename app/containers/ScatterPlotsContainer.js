@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import h from 'react-hyperscript';
-import { connect } from 'react-redux';
-import { createSelector } from 'reselect';
+import connect from '../utils/reduxers';
 import ScatterPlots from '../components/ScatterPlots';
+import ScatterPlotsActivePoints from '../components/ScatterPlotsActivePoints';
 import ScatterPlotsInteractive from '../components/ScatterPlotsInteractive';
 import * as _ from 'lodash';
 
@@ -13,15 +13,13 @@ import {
   getDatasetMetadata
 } from '../selectors/index';
 
-const mapStateToProps = createSelector(
-  [
-    getDatasetMetadata,
-    getPointsForPlot,
-    getLayout,
-    getNumFeatures
-  ],
-  (dataset, features, layout, numFeatures) => ({ dataset, features, layout, numFeatures }));
 
+/**
+ * Goes inside a svg, adds a g containing:
+ * - ScatterPlots
+ * - ScatterPlotsActivePoints
+ * - ScatterPlotsInteractive
+ */
 class ScatterPlotsContainer extends Component {
 
   static propTypes = {
@@ -34,35 +32,33 @@ class ScatterPlotsContainer extends Component {
   };
 
   render() {
-    const plots = h(ScatterPlots,
-      _.pick(this.props, [
-        'height',
-        'width',
-        'dataset',
-        'features',
-        'layout',
-        'numFeatures'
-      ])
-    );
+    const padding = this.props.layout.scatterPlotsMargin;
+    const props = _.pick(this.props, [
+      'dataset',
+      'features',
+      'layout',
+      'numFeatures'
+    ]);
 
-    const surface = h(ScatterPlotsInteractive,
-      _.pick(this.props, [
-        'width',
-        'height',
-        'numFeatures',
-        'features',
-        'layout'
-      ])
-    );
+    props.height = this.props.height - (padding * 2);
+    props.width = this.props.width - (padding * 2);
+
+    const plots = h(ScatterPlots, props);
+
+    const activePoints = h(ScatterPlotsActivePoints);
+
+    const surface = h(ScatterPlotsInteractive, props);
 
     return h(
       'g',
       {
-        height: this.props.height,
-        width: this.props.width
+        height: props.height,
+        width: props.width,
+        transform: `translate(${padding}, ${padding})`,
       },
       [
         plots,
+        activePoints,
         surface
       ]
     );
@@ -70,4 +66,9 @@ class ScatterPlotsContainer extends Component {
   }
 }
 
-export default connect(mapStateToProps)(ScatterPlotsContainer);
+export default connect({
+  dataset: getDatasetMetadata,
+  features: getPointsForPlot,
+  layout: getLayout,
+  numFeatures: getNumFeatures
+})(ScatterPlotsContainer);

@@ -6,7 +6,7 @@ import {
 import * as selectors from '../../app/selectors/dataset';
 import * as _ from 'lodash';
 
-describe('dataset', () => {
+describe('selectors/dataset', () => {
   describe('normalizePoints', () => {
     it('should gloss over nulls in values', function() {
       const feature = {

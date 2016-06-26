@@ -1,10 +1,15 @@
-import { Component } from 'react';
+import { Component, PropTypes } from 'react';
 import h from 'react-hyperscript';
 
 import ScatterPlotsContainer from './ScatterPlotsContainer';
 import SVGFilters from '../components/SVGFilters';
 
 export default class SVGFrame extends Component {
+
+  static propTypes = {
+    containerHeight: PropTypes.number.isRequired,
+    containerWidth: PropTypes.number.isRequired,
+  };
 
   render() {
     const children = [

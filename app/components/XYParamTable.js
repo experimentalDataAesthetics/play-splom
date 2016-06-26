@@ -3,7 +3,9 @@ import React from 'react';
 import h from 'react-hyperscript';
 import MapButton from './MapButton';
 import { Slider } from 'material-ui';
-// http://react-components.com/component/react-slider
+// this is smaller but errors:
+// Unexpected token: name (menu) [./~/debug-menu/index.js:5,0]
+// import Slider from 'material-ui/Slider';
 import ReactSlider from 'react-slider';
 import style from './XYParamTable.css';
 import { round } from 'd3';
@@ -51,7 +53,6 @@ export default class XYParamTable extends React.Component {
           ],
           pearling: true,
           withBars: true,
-          // TODO: get background from theme and fade it
           className: style.rangeSlider,
           onAfterChange: (v) => this.props.setParamRangeUnipolar(control.name, v[0], v[1])
         }, [
@@ -70,32 +71,33 @@ export default class XYParamTable extends React.Component {
           min: 0.0,
           max: 1.0,
           step: 0.001,
-          onChange: debounce(sliderAction, 300),
-          style: {
-            marginTop: 0,
-            marginBottom: 0
-          }
+          onChange: debounce(sliderAction, 300)
         });
-        // show a caption with the value
       }
 
       return h('tr',
         {className: control.connected ? style.connected : style.fixed},
         [
           h('th', control.name),
-          h('td', [
-            h(MapButton, {
-              isActive: control.xConnected,
-              action: () => this.props.mapXYtoParam('x', control.name)
-            })
-          ]),
-          h('td', [
-            h(MapButton, {
-              isActive: control.yConnected,
-              action: () => this.props.mapXYtoParam('y', control.name)
-            })
-          ]),
-          h('td', {className: style.range}, [range])
+          h('td',
+            {className: style.pa0},
+            [
+              h(MapButton, {
+                isActive: control.xConnected,
+                action: () => this.props.mapXYtoParam('x', control.name)
+              })
+            ]),
+          h('td',
+            {className: style.pa0},
+            [
+              h(MapButton, {
+                isActive: control.yConnected,
+                action: () => this.props.mapXYtoParam('y', control.name)
+              })
+            ]),
+          h('td',
+            {className: style.range},
+            [range])
         ]);
     });
 

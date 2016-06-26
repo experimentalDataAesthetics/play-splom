@@ -6,7 +6,8 @@ import styles from './ScatterPlotClickSurface.css';
 const RADIUS = 10;  // for now
 
 /**
- * Renders a single scatter plot on a parent svg g
+ * Renders a single rect to handle mouse clicks.
+ * Changes color when hovering.
  */
 export default class ScatterPlotClickSurface extends React.Component {
 
@@ -20,6 +21,7 @@ export default class ScatterPlotClickSurface extends React.Component {
     baseClientX: React.PropTypes.number.isRequired,
     baseClientY: React.PropTypes.number.isRequired,
     setPointsUnderBrush: React.PropTypes.func.isRequired,
+    setHovering: React.PropTypes.func.isRequired,
     muiTheme: React.PropTypes.object.isRequired,
     toggleLoopMode: React.PropTypes.func.isRequired,
     isLooping: React.PropTypes.bool.isRequired,
@@ -36,15 +38,16 @@ export default class ScatterPlotClickSurface extends React.Component {
 
     const x = clientX - this.props.baseClientX;
     const y = clientY - this.props.baseClientY;
-    const flipy = this.props.sideLength - y;
+    // const flipy = this.props.sideLength - y;
 
     const minx = x - RADIUS;
     const maxx = x + RADIUS;
-    const miny = flipy - RADIUS;
-    const maxy = flipy + RADIUS;
+    const miny = y - RADIUS;
+    const maxy = y + RADIUS;
 
     const pointsIn = [];
     this.props.points.forEach((xy, i) => {
+      // console.log(xy[0], minx, maxx);
       if ((xy[0] >= minx)
           && (xy[0] <= maxx)
           && (xy[1] >= miny)
@@ -52,11 +55,15 @@ export default class ScatterPlotClickSurface extends React.Component {
         pointsIn.push(i);
       }
     });
+
     this._setPointsIn(pointsIn);
   }
 
   _hover() {
     this._setPointsIn([]);
+    // really only on mouseMove
+    // then do onMouseLeave to say I'm out
+    this.props.setHovering(this.props.m, this.props.n);
   }
 
   _setPointsIn(pointsIn) {
@@ -98,13 +105,11 @@ export default class ScatterPlotClickSurface extends React.Component {
       style: bgStyle,
 
       onMouseDown: (e) => {
-        if (e.buttons) {
-          if (e.metaKey) {
-            // toggle loop mode
-            this.props.toggleLoopMode(this.props.m, this.props.n);
-          } else {
-            this._brush(e.clientX, e.clientY);
-          }
+        if (e.buttons && e.metaKey) {
+          // toggle loop mode
+          this.props.toggleLoopMode(this.props.m, this.props.n);
+        } else {
+          this._brush(e.clientX, e.clientY);
         }
       },
 

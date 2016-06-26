@@ -1,18 +1,8 @@
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
+import connect from '../utils/reduxers';
 import { setWindowSize } from '../actions/ui';
 import MainLayout from '../containers/MainLayout';
 import { debounce } from 'lodash';
-
-const mapStateToProps = null;
-
-const mapDispatchToProps = (dispatch) => {
-  return {
-    setWindowSize: (size) => {
-      dispatch(setWindowSize(size));
-    }
-  };
-};
 
 class Main extends Component {
 
@@ -39,4 +29,6 @@ class Main extends Component {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Main);
+export default connect(null, {
+  setWindowSize
+})(Main);
