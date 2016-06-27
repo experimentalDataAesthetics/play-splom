@@ -2,3 +2,15 @@
   font-size: 2em;
   opacity: 0.1;
 }
+
+.pending {
+  stroke: rgba(249, 199, 22, 0.8);
+}
+
+.looping {
+  stroke: rgba(192, 22, 249, 1);
+}
+
+.focused {
+  /*stroke: rgba(193, 196, 12, 0.6);*/
+}

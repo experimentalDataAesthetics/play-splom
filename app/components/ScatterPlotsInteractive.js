@@ -20,6 +20,7 @@ import {
 // import ScatterPlotClickSurface from './ScatterPlotClickSurface';
 import Axis from './Axis';
 import SelectArea from './SelectArea';
+import style from './ScatterPlots.css';
 
 const unset = {};
 
@@ -114,8 +115,6 @@ class ScatterPlotsInteractive extends React.Component {
 
     if (this.props.featureSideLengthScale.length > 0) {
       if (_.isNumber(this.props.hovering.m)) {
-        // does hovering really need to go through redux ?
-        // it is microstate
         const hovx = (this.props.hovering.m || 0);
         const hovy = (this.props.hovering.n || 0);
         const featx = this.props.featureSideLengthScale[hovx];
@@ -135,31 +134,39 @@ class ScatterPlotsInteractive extends React.Component {
       }
     }
 
+    const s = {
+      nowPlaying: {
+        m: _.get(this.props.loopMode, 'nowPlaying.m'),
+        n: _.get(this.props.loopMode, 'nowPlaying.n')
+      },
+      pending: {
+        m: _.get(this.props.loopMode, 'pending.m'),
+        n: _.get(this.props.loopMode, 'pending.n')
+      },
+      last: {
+        m: _.get(this.state, 'last.m'),
+        n: _.get(this.state, 'last.n')
+      }
+    };
+
+    // pending should be erased once it becomes active
+    console.log(s);
+
     const getClassName = (box) => {
-      const loopMode = this.props.loopMode;
-      const isLooping =
-        (_.get(loopMode, 'nowPlaying.m') === box.m) &&
-        (_.get(loopMode, 'nowPlaying.n') === box.n);
-
-      const isPending =
-        (_.get(loopMode, 'pending.m') === box.m) &&
-        (_.get(loopMode, 'pending.n') === box.n);
-
-      const isLastFocused =
-        (_.get(this.state, 'last.m') === box.m) &&
-        (_.get(this.state, 'last.n') === box.n);
-
-      if (isPending) {
-        return 'pending';
+      if ((s.nowPlaying.m === box.m) && (s.nowPlaying.n === box.n)) {
+        return style.looping;
+        // return this.state.loopMode.looping ? style.looping : null;
       }
 
-      if (isLooping) {
-        return 'looping';
+      if ((s.pending.m === box.m) && (s.pending.n === box.n)) {
+        return style.pending;
       }
 
-      if (isLastFocused) {
-        return 'focused';
+      if ((s.last.m === box.m) && (s.last.n === box.n)) {
+        return style.focused;
       }
+
+      return 'none';
     };
 
     layout.boxes.forEach((box) => {
@@ -195,7 +202,7 @@ class ScatterPlotsInteractive extends React.Component {
           }
         },
         show: isLastFocused,
-        className: getClassName(box)
+        overlayClassName: getClassName(box)
       });
 
       children.push(selectedArea);

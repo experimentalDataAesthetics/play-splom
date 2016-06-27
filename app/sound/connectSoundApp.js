@@ -79,10 +79,13 @@ export default function connectSoundApp(store, callActionOnMain) {
     // stop
     if (!loopMode.looping) {
       newLoopMode.nowPlaying = null;
+      newLoopMode.pending = null;
+      newLoopMode.looping = false;
     } else {
       // if pending then copy it in
       if (loopMode.pending) {
         newLoopMode.nowPlaying = loopMode.pending;
+        newLoopMode.pending = null;
       } else {
         // carry on playing
         newLoopMode = loopMode;

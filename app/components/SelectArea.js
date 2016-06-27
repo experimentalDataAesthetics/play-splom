@@ -1,4 +1,5 @@
 import React from 'react';
+import style from './SelectArea.css';
 
 const handleSize = 6;
 
@@ -464,7 +465,7 @@ export default class SelectArea extends React.Component {
     let overlayTapHandler = (event) => this._started(event, {type: 'overlay'});
     let overlay = (
       <rect
-        className="overlay"
+        className={this.props.overlayClassName || style.overlay}
         key="overlay"
         pointerEvents="all"
         cursor={cursors.overlay}
@@ -478,12 +479,9 @@ export default class SelectArea extends React.Component {
     let selectionTapHandler = (event) => this._started(event, {type: 'selection'});
     let selection = (
       <rect
-        className="selection"
+        className={this.props.selectionClassName || style.selection}
         key="selection"
         cursor={cursors.selection}
-        fill="#777"
-        fillOpacity="0.3"
-        stroke="#fff"
         shapeRendering="crispEdges"
         onMouseDown={selectionTapHandler}
         onTouchStart={selectionTapHandler}
