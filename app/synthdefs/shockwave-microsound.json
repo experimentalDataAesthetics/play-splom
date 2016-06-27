@@ -43,9 +43,9 @@
       "rate": "scalar",
       "spec": {
         "default": 440,
-        "maxval": 20000,
+        "maxval": 10000,
         "class": "ControlSpec",
-        "minval": 20,
+        "minval": 40,
         "warp": "exp",
         "step": 0,
         "units": " Hz"
