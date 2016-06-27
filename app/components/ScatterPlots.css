@@ -1,6 +1,9 @@
 .title {
-  font-size: 2em;
-  opacity: 0.1;
+  font-size: 5em;
+  opacity: 0.05;
+  text-transform: uppercase;
+  /*font-variant: small-caps;*/
+  letter-spacing: .16em;
 }
 
 .pending {

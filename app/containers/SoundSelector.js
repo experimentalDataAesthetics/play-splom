@@ -23,6 +23,9 @@ class SoundSelector extends React.Component {
           return h(ListItem, {
             primaryText: sound.name,
             selected: sound.name === this.props.selectedSound,
+            style: {
+              fontSize: '1em'
+            },
             // selected: true,
             value: sound.name
           });

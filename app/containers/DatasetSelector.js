@@ -32,7 +32,10 @@ class DatasetSelector extends Component {
           return h(ListItem, {
             primaryText: dataset.name,
             selected: true,
-            value: dataset.path
+            value: dataset.path,
+            style: {
+              fontSize: '1em'
+            }
           });
         })
       ),

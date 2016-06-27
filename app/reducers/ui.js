@@ -1,5 +1,6 @@
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import darkBaseTheme from 'material-ui/styles/baseThemes/darkBaseTheme';
+import lightBaseTheme from 'material-ui/styles/baseThemes/lightBaseTheme';
 
 import {
   FOCUS_SCATTERPLOT,
@@ -23,7 +24,7 @@ const initial = {
     width: window.innerWidth,
     height: window.innerHeight
   },
-  muiTheme: getMuiTheme(darkBaseTheme)
+  muiTheme: getMuiTheme(lightBaseTheme)
 };
 
 /**

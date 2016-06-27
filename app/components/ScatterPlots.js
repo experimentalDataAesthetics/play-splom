@@ -27,7 +27,7 @@ class ScatterPlots extends React.Component {
     if (this.props.dataset) {
       const title = h('text', {
         x: 50,
-        y: 50,
+        y: this.props.layout.svgStyle.height - 200,
         className: style.title,
         style: {
           fill: this.props.muiTheme.palette.textColor
