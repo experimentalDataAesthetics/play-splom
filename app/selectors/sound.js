@@ -179,7 +179,7 @@ export function xyPointsEnteringToSynthEvents(pointsEntering,
     }
 
     if (mapperY) {
-      args[paramY] = mapperY(y);
+      args[paramY] = mapperY(1.0 - y);
     }
 
     return {
