@@ -67,7 +67,7 @@
     "redux-thunk": "^2.1.0",
     "reselect": "^2.5.1",
     "source-map-support": "^0.4.0",
-    "supercolliderjs": "^0.11.0",
+    "supercolliderjs": "^0.11.1",
     "updeep": "^0.16.0",
     "winston": "^2.2.0"
   },
