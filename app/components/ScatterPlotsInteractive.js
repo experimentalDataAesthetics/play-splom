@@ -120,17 +120,18 @@ class ScatterPlotsInteractive extends React.Component {
         const featx = this.props.featureSideLengthScale[hovx];
         const featy = this.props.featureSideLengthScale[hovy];
         const box = getBox(hovx, hovy);
-
-        children.push(h(Axis, {
-          xOffset: box.x,
-          yOffset: box.y,
-          sideLength: innerSideLength,
-          muiTheme: this.props.muiTheme,
-          xScale: featx.mappedScale,
-          yScale: featy.mappedScale,
-          xLabel: featx.feature.name,
-          yLabel: featy.feature.name
-        }));
+        if (box) {
+          children.push(h(Axis, {
+            xOffset: box.x,
+            yOffset: box.y,
+            sideLength: innerSideLength,
+            muiTheme: this.props.muiTheme,
+            xScale: featx.mappedScale,
+            yScale: featy.mappedScale,
+            xLabel: featx.feature.name,
+            yLabel: featy.feature.name
+          }));
+        }
       }
     }
 
@@ -150,8 +151,6 @@ class ScatterPlotsInteractive extends React.Component {
     };
 
     // pending should be erased once it becomes active
-    console.log(s);
-
     const getClassName = (box) => {
       if ((s.nowPlaying.m === box.m) && (s.nowPlaying.n === box.n)) {
         return style.looping;

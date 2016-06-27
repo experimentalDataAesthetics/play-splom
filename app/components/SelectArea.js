@@ -424,12 +424,10 @@ export default class SelectArea extends React.Component {
   }
 
   _mouseEnter(e) {
-    if (this.props.onMouseEnter) {
+    // onHover enter
+    if (this.props.onMouseEnter && (!e.buttons)) {
       this.props.onMouseEnter(e);
     }
-    // reset drag mode in case you were still dragging from a previous
-    // interaction inside this box
-    this.mouseMode = null;
   }
 
   _setSelected(selected) {
