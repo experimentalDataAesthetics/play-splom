@@ -120,7 +120,8 @@ export default function connectSoundApp(store, callActionOnMain) {
     }
   }
 
-  observeStore(store, getLoopMode, (loopMode) => {
+  observeStore(store, getLoopMode, () => {
+    // /*loopMode*/
     // console.log('loopMode changed', loopMode);
     if (!timer) {
       // console.log('start interval');
