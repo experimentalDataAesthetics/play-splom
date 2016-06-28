@@ -19,23 +19,17 @@
   font-variant: small-caps;
 }
 
-.sidebar .selectable-list {
-  overflow-y: scroll;
+/*.sidebar .selectable-list {
+  overflow-y: auto;
   margin-bottom: 3px;
-}
+}*/
 
-.datasets {
-  height: 150px;
-}
-.datasets .selectable-list {
-  height: 73px;
-}
-.sounds {
-  height: 300px;
-}
+/*.sounds {
+  height: 100px;
+}*/
 .params {
   flex: 1;
 }
-.help {
+/*.help {
   height: 150px;
-}
+}*/

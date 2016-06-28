@@ -24,3 +24,21 @@ body {
 .MainLayout {
   height: 100vh;
 }
+
+/* sidebar heights that can't be done with css modules */
+.selectable-list {
+  overflow-y: auto;
+  margin-bottom: 3px;
+}
+
+.sound-selector .selectable-list {
+  height: 150px;
+}
+
+/*.dataset-selector {
+  height: 150px;
+}*/
+
+/*.dataset-selector .selectable-list {
+  height: 73px;
+}*/
