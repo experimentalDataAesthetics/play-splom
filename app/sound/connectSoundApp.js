@@ -13,7 +13,7 @@ import {
 
 import {
   spawnEventsFromBrush,
-  loopModePayload
+  getLoopModePayload
 } from '../selectors/index';
 
 
@@ -29,14 +29,14 @@ import {
  * @return {Function}           Unsubscribe function
  */
 function observeStore(store, select, onChange) {
-  let currentState;
+  let currentDerivedState;
 
   function handleChange() {
     const state = store.getState();
-    const nextState = select(state);
-    if (nextState !== currentState) {
-      currentState = nextState;
-      onChange(state);
+    const derivedState = select(state);
+    if (derivedState !== currentDerivedState) {
+      currentDerivedState = derivedState;
+      onChange(state, derivedState);
     }
   }
 
@@ -46,8 +46,6 @@ function observeStore(store, select, onChange) {
 }
 
 const getPointsEntering = (state) => state.interaction.pointsEntering;
-const getLoopMode = (state) => state.interaction.loopMode;
-
 
 /**
  * connectSoundApp - connect redux store to the SoundApp on main thread
@@ -64,11 +62,7 @@ const getLoopMode = (state) => state.interaction.loopMode;
  */
 export default function connectSoundApp(store, callActionOnMain) {
 
-  // call handler on change of pointsEntering
   observeStore(store, getPointsEntering, (state) => {
-    // pointsEntering changed: m n indices
-    // generate synths from that
-    // for now: send using callActionOnMain
     const synthEvents = spawnEventsFromBrush(state);
     if (synthEvents.length) {
       callActionOnMain({
@@ -78,11 +72,10 @@ export default function connectSoundApp(store, callActionOnMain) {
     }
   });
 
-  // on change of: loopMode, sound, mapping
-  observeStore(store, getLoopMode, (state) => {
+  observeStore(store, getLoopModePayload, (state, payload) => {
     callActionOnMain({
       type: SET_LOOP,
-      payload: loopModePayload(state)
+      payload
     });
   });
 }

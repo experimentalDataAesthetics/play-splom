@@ -204,39 +204,47 @@ export function makeMapper(spec) {
 }
 
 /**
- * loopModePayload - Builds the payload for SET_LOOP action that is sent to the main thread
+ * getLoopModePayload - Builds the payload for SET_LOOP action that is sent to the main thread
  * to be sent by the SoundApp and then sent using the updateStream to the
  * SynthEventList dryad.
+ *
+ * This is a Reselect selector.
+ *
+ * @return {Object} events, loopTime, epoch
  */
-export function loopModePayload(state) {
-  const sound = getSound(state);
-  const loopMode = getLoop(state);
-  if (!sound || (!loopMode.box)) {
+export const getLoopModePayload = createSelector(
+  [
+    getSound,
+    getLoop,
+    getNormalizedPoints,
+    getMapping,
+    getXYMappingControls
+  ],
+  (sound, loopMode, npoints, mapping, mappingControls) => {
+    if (!sound || (!loopMode.box)) {
+      return {
+        events: []
+      };
+    }
+
+    const events = loopModeEvents(
+      loopMode.box.m,
+      loopMode.box.n,
+      npoints,
+      mapping,
+      mappingControls,
+      sound,
+      loopMode.loopTime
+    );
+
     return {
-      events: []
+      events,
+      loopTime: loopMode.loopTime,
+      epoch: loopMode.epoch
     };
   }
+);
 
-  const npoints = getNormalizedPoints(state);
-  const mapping = getMapping(state);
-  const mappingControls = getXYMappingControls(state);
-
-  const events = loopModeEvents(
-    loopMode.box.m,
-    loopMode.box.n,
-    npoints,
-    mapping,
-    mappingControls,
-    sound,
-    loopMode.loopTime
-  );
-
-  return {
-    events,
-    loopTime: loopMode.loopTime,
-    epoch: loopMode.epoch
-  };
-}
 
 
 export function loopModeEvents(m, n, npoints, mapping, mappingControls, sound, loopTime) {
