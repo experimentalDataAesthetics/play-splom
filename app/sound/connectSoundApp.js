@@ -1,3 +1,11 @@
+/**
+ * Runs in the renderer process.
+ *
+ * Connects to the redux store and forwards actions
+ * to the background process, where they are forwarded
+ * to the SoundApp
+ */
+
 import {
   SPAWN_SYNTHS,
   SET_LOOP
@@ -7,18 +15,19 @@ import {
   spawnEventsFromBrush,
   loopModePayload
 } from '../selectors/index';
-import {
-  setLooping
-} from '../actions/interaction';
+
 
 /**
- * Runs in the renderer process.
+ * observeStore - Call onChange whenever the state changes
  *
- * Connects to the redux store and forwards actions
- * to the background process, where they are forwarded
- * to the SoundApp
+ * On each change in the Redux store, this derives an object
+ * using a Reselect selector function and compares that to the previously derived object.
+ *
+ * @param  {type} store         Redux store
+ * @param  {Function} select    Reselect selector function that derives an Object from state
+ * @param  {Function} onChange  Handler that you wish to be called
+ * @return {Function}           Unsubscribe function
  */
-
 function observeStore(store, select, onChange) {
   let currentState;
 
@@ -39,14 +48,27 @@ function observeStore(store, select, onChange) {
 const getPointsEntering = (state) => state.interaction.pointsEntering;
 const getLoopMode = (state) => state.interaction.loopMode;
 
+
+/**
+ * connectSoundApp - connect redux store to the SoundApp on main thread
+ *
+ * Observes the redux store:
+ *
+ *  for pointsEntering it spawns synth events via callActionOnMain SPAWN_SYNTHS
+ *
+ *  for loopMode it makes the loop payload and sends SET_LOOP to main
+ *
+ * @param  {Object} store            redux store
+ * @param  {Function} callActionOnMain
+ * @return {undefined}
+ */
 export default function connectSoundApp(store, callActionOnMain) {
+
   // call handler on change of pointsEntering
   observeStore(store, getPointsEntering, (state) => {
     // pointsEntering changed: m n indices
     // generate synths from that
     // for now: send using callActionOnMain
-    // later: set to state.synth.spawnEvents
-    // and let redux-electron-store copy it over
     const synthEvents = spawnEventsFromBrush(state);
     if (synthEvents.length) {
       callActionOnMain({
@@ -56,78 +78,11 @@ export default function connectSoundApp(store, callActionOnMain) {
     }
   });
 
-  /**
-   * This is a temporary loop system.
-   * It just runs a timer and resends the loop events
-   * to the SoundApp which pushes it through to a Dryadic component
-   * which does the sending.
-   *
-   * A better system will be to have a have a dryadic client
-   * here in the frontend app and have it communicate the changes.
-   * A dryad that plays a loop of events and can be live updated.
-   */
-  let timer;
-
-  function triggerLoop() {
-    const state = store.getState();
-    const loopMode = state.interaction.loopMode;
-    // console.log('triggerLoop gets loopMode:', loopMode);
-    let newLoopMode = {
-      looping: loopMode.looping
-    };
-
-    // stop
-    if (!loopMode.looping) {
-      newLoopMode.nowPlaying = null;
-      newLoopMode.pending = null;
-      newLoopMode.looping = false;
-    } else {
-      // if pending then copy it in
-      if (loopMode.pending) {
-        newLoopMode.nowPlaying = loopMode.pending;
-        newLoopMode.pending = null;
-      } else {
-        // carry on playing
-        newLoopMode = loopMode;
-      }
-    }
-
-    // console.log('newLoopMode:', newLoopMode);
-
-    if (newLoopMode.nowPlaying) {
-      const payload = loopModePayload(newLoopMode.nowPlaying.m, newLoopMode.nowPlaying.n, state);
-      // console.log('payload', payload);
-      if (payload) {
-        callActionOnMain({
-          type: SET_LOOP,
-          payload
-        });
-      }
-    } else {
-      if (timer) {
-        // console.log('clear timer', timer);
-        clearInterval(timer);
-        timer = null;
-        // send kill loop
-      }
-    }
-
-    // update the ui
-    if (newLoopMode !== loopMode) {
-      // console.log('update state');
-      // TODO: does not unset pending
-      store.dispatch(setLooping(newLoopMode));
-    }
-  }
-
-  observeStore(store, getLoopMode, () => {
-    // /*loopMode*/
-    // console.log('loopMode changed', loopMode);
-    if (!timer) {
-      // console.log('start interval');
-      timer = setInterval(triggerLoop, 10000);
-      // console.log('first time trigger');
-      triggerLoop();
-    }
+  // on change of: loopMode, sound, mapping
+  observeStore(store, getLoopMode, (state) => {
+    callActionOnMain({
+      type: SET_LOOP,
+      payload: loopModePayload(state)
+    });
   });
 }

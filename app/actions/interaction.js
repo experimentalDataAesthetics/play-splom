@@ -34,6 +34,14 @@ export function setPointsUnderBrush(m, n, indices) {
   };
 }
 
+
+/**
+ * toggleLoopMode - turns loop on, or changes it to a different box or turns it off
+ *
+ * @param  {number} m box coordinate
+ * @param  {number} n box coordinate
+ * @return {Object}   action
+ */
 export function toggleLoopMode(m, n) {
   return {
     type: TOGGLE_LOOP_MODE,
@@ -44,23 +52,3 @@ export function toggleLoopMode(m, n) {
   };
 }
 
-/**
- * @param {Object} loopingState
- *
- * May contain these:
- *
- *     nowPlaying: {m n}
- *     pending: {m n}
- */
-export function setLooping(loopingState) {
-  return (dispatch, getState) => {
-    const state = getState().interaction.loopMode;
-    const comp = {nowPlaying: state.nowPlaying, pending: state.pending};
-    if (!_.isEqual(comp, loopingState)) {
-      dispatch({
-        type: SET_LOOPING,
-        payload: loopingState
-      });
-    }
-  };
-}

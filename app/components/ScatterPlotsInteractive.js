@@ -136,13 +136,9 @@ class ScatterPlotsInteractive extends React.Component {
     }
 
     const s = {
-      nowPlaying: {
-        m: _.get(this.props.loopMode, 'nowPlaying.m'),
-        n: _.get(this.props.loopMode, 'nowPlaying.n')
-      },
-      pending: {
-        m: _.get(this.props.loopMode, 'pending.m'),
-        n: _.get(this.props.loopMode, 'pending.n')
+      box: {
+        m: _.get(this.props.loopMode, 'box.m'),
+        n: _.get(this.props.loopMode, 'box.n')
       },
       last: {
         m: _.get(this.state, 'last.m'),
@@ -152,13 +148,8 @@ class ScatterPlotsInteractive extends React.Component {
 
     // pending should be erased once it becomes active
     const getClassName = (box) => {
-      if ((s.nowPlaying.m === box.m) && (s.nowPlaying.n === box.n)) {
+      if ((s.box.m === box.m) && (s.box.n === box.n)) {
         return style.looping;
-        // return this.state.loopMode.looping ? style.looping : null;
-      }
-
-      if ((s.pending.m === box.m) && (s.pending.n === box.n)) {
-        return style.pending;
       }
 
       if ((s.last.m === box.m) && (s.last.n === box.n)) {
