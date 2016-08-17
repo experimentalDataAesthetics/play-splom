@@ -164,19 +164,19 @@ export default class SoundApp {
   }
 
   /**
-   * events: epoch:
+   * Push the object to the BaconJS loopModeEventStream which is connected to the SynthEventList.
+   *
+   * @param {Object} payload -
+   *        events:
+   *        epoch:
+   *        loopTime:
    */
   setLoop(payload) {
-    this.clearSched();
     this.loopModeEventStream.push(payload);
   }
 
   setMasterControls(event) {
     this.masterControlStream.push(event);
-  }
-
-  clearSched() {
-    // console.log(this.player);
   }
 
   /**

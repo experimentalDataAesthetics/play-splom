@@ -106,7 +106,6 @@ export default class ScatterPlotClickSurface extends React.Component {
 
       onMouseDown: (e) => {
         if (e.buttons && e.metaKey) {
-          // toggle loop mode
           this.props.toggleLoopMode(this.props.m, this.props.n);
         } else {
           this._brush(e.clientX, e.clientY);
