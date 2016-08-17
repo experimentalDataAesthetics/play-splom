@@ -13,6 +13,11 @@ import { debounce } from 'lodash';
 
 // const round = format('g');
 
+/**
+ * Editable params in the right sidebar of the app
+ * to assign data -> sound parameter mappings and to adjust
+ * the ranges of those mappings.
+ */
 export default class XYParamTable extends React.Component {
 
   render() {

@@ -4,6 +4,11 @@ import h from 'react-hyperscript';
 import XAxis from './XAxis';
 import YAxis from './YAxis';
 
+/**
+ * Standard pair of X and Y axis with ticks and labelling.
+ *
+ * This combines the X and Y into one component.
+ */
 export default class Axis extends React.Component {
 
   static propTypes = {

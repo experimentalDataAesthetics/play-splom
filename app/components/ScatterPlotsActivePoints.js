@@ -13,8 +13,16 @@ import {
 } from '../selectors/index';
 
 /**
- * Renders just the points that are selected/within the brush
- * on top of the normal plot.
+ * Renders just the points that are selected/within the brush.
+ *
+ * This adds a `ScatterPlot` for each box but gives each one
+ * a different style and adds only the points that are currently active.
+ *
+ * It is on top of the `ScatterPlot`s that display all of the points,
+ * and simply paints identical points (but just for the selected
+ * points) above them. This means only updating a smaller number of points
+ * (eg. 30) and not all points for the dataset (eg. 500) -- multiplied
+ * by the number of boxes (eg. 25)
  */
 class ScatterPlotsActivePoints extends React.Component {
 

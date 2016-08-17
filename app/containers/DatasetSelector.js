@@ -10,6 +10,11 @@ import {
   openDatasetDialog
 } from '../actions/datasets';
 
+
+/**
+ * Component in right sidebar to select from available
+ * datasets or to click to open a dataset from the filesystem.
+ */
 class DatasetSelector extends Component {
 
   static propTypes = {

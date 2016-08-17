@@ -17,6 +17,17 @@ export function showBrush(show, x, y) {
   };
 }
 
+
+/**
+ * setPointsUnderBrush - called when moving the brush over points.
+ *
+ * points under brush is further processed into The sound app responds to changes in poin
+ *
+ * @param  {number} m       box coordinate
+ * @param  {number} n       box coordinate
+ * @param  {Array} indices  list of point indices
+ * @return {Object}         action
+ */
 export function setPointsUnderBrush(m, n, indices) {
   return (dispatch, getState) => {
     const s = getState().interaction;

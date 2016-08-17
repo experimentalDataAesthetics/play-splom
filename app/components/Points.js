@@ -1,6 +1,10 @@
 import React from 'react';
 import h from 'react-hyperscript';
 
+
+/**
+ * Renders points as SVG circles in a g
+ */
 export default (props) => {
   // move to layout
   const radius = props.sideLength < 100 ? 1 : 3;

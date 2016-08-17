@@ -6,8 +6,12 @@ import styles from './ScatterPlotClickSurface.css';
 const RADIUS = 10;  // for now
 
 /**
- * Renders a single rect to handle mouse clicks.
- * Changes color when hovering.
+ * deprec. no longer used. ScatterPlotsInteractive does it
+ * now with a single component.
+ *
+ * Renders a single rect on top of each plot to handle mouse events.
+ *
+ * Usually invisible, but it changes color when hovering.
  */
 export default class ScatterPlotClickSurface extends React.Component {
 

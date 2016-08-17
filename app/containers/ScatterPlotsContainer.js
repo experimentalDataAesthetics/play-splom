@@ -16,11 +16,14 @@ import {
 
 
 /**
- * Goes inside a svg, adds a g which layers each of these on top of each other:
+ * This holds all of the plotting and interactive components for the Scatter Plots.
+ *
+ * Goes inside the SVG, adds a g which layers each of these on top of each other:
  * - ScatterPlots
  * - ScatterPlotsActivePoints
  * - LoopPlayHead
  * - ScatterPlotsInteractive
+ *
  */
 class ScatterPlotsContainer extends Component {
 

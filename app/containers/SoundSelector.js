@@ -7,7 +7,7 @@ import { selectSound } from '../actions/sounds';
 const SelectableList = MakeSelectable(List);
 
 /**
- * Sidebar area for selecting the current Sound
+ * Sidebar area for selecting the sound
  */
 class SoundSelector extends React.Component {
   render() {

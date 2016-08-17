@@ -17,7 +17,6 @@ import {
   getFeatureSideLengthScale
 } from '../selectors/index';
 
-// import ScatterPlotClickSurface from './ScatterPlotClickSurface';
 import Axis from './Axis';
 import SelectArea from './SelectArea';
 import style from './ScatterPlots.css';
@@ -37,6 +36,17 @@ const handlers = {
   toggleLoopMode
 };
 
+
+/**
+ * A single component that goes on top of the plots and handles
+ * mouse events and interactive UI.
+ *
+ * This holds all the things that change and respond, thus allowing
+ * the plots and background to remain fixed without having to re-render
+ * or recalculate due to UI events.
+ *
+ * This adds a SelectArea on top of each ScatterPlot
+ */
 class ScatterPlotsInteractive extends React.Component {
 
   static propTypes = {
@@ -196,25 +206,6 @@ class ScatterPlotsInteractive extends React.Component {
       });
 
       children.push(selectedArea);
-
-      // const sp = h(ScatterPlotClickSurface, {
-      //   m: box.m,
-      //   n: box.n,
-      //   points,
-      //   xOffset: box.x,
-      //   yOffset: box.y,
-      //   // for calculating mouse down by clientX/Y
-      //   baseClientX: box.baseClientX,
-      //   baseClientY: box.baseClientY,
-      //   sideLength: innerSideLength,
-      //   setPointsUnderBrush: this.props.setPointsUnderBrush,
-      //   setHovering: this.props.setHovering,
-      //   toggleLoopMode: this.props.toggleLoopMode,
-      //   muiTheme: this.props.muiTheme,
-      //   isLooping,
-      //   isPending
-      // });
-      // children.push(sp);
     });
 
     return h(

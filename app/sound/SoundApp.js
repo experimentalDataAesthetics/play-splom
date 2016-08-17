@@ -23,7 +23,7 @@ const options = _.assign({}, config.supercolliderjs.options || {}, {
   // so it requires that a path to an external SuperCollider.app is supplied
   // in config/development.json
   scsynth: path.join(config.appRoot, 'vendor/supercollider/osx/scsynth'),
-  echo: true,  // wonky. this means post osc
+  echo: true,  // wonky. this means post osc messages to console
   debug: true,
   includePaths: [],
   sclang_conf: null
@@ -62,6 +62,7 @@ export default class SoundApp {
         && process.env.NODE_ENV === 'development';
         // hasSclang = true;
 
+        // dryadic document
         const synthDef = (name) => {
           let opts;
           if (hasSclang) {

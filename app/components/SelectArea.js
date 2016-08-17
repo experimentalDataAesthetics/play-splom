@@ -1,3 +1,9 @@
+/**
+ * Copyright 2016 Chris Sattinger
+ * MIT License
+ *
+ * Adapted from https://github.com/d3/d3-brush
+ */
 import React from 'react';
 import style from './SelectArea.css';
 
@@ -143,6 +149,9 @@ function clip(v, min, max) {
  * D3 Brush - select a rectangular area
  *
  * Adapted from https://github.com/d3/d3-brush
+ *
+ * This is one of the nicer components from d3 itself,
+ * here ported to a simple reusable React component
  */
 export default class SelectArea extends React.Component {
 

@@ -4,11 +4,12 @@
  * The backend application that creates windows
  * and launches the frontend application app/index.js
  *
- * All modules should use require, not import
- * as this is not babel processed.
+ * main.development.js is transpiled to main.js
  *
- * `let` and `const` and arrow functions are fine as
- * well as all listed here: https://kangax.github.io/compat-table/es6/#node4
+ * All module imports should use require, not import.
+ * You can import from local files.
+ *
+ * The frontend and backend communicate using electron ipc
  */
 // process.env.NODE_ENV = process.env.NODE_ENV || 'production';
 

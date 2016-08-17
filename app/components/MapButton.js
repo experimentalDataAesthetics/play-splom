@@ -7,6 +7,11 @@ import FontIcon from 'material-ui/FontIcon';
 import IconButton from 'material-ui/IconButton';
 import muiThemeable from 'material-ui/styles/muiThemeable';
 
+
+/**
+ * A radio-button used in the XYParamTable to
+ * assign a mapping between the X or Y dimension and a sound parameter.
+ */
 class MapButton extends React.Component {
 
   static propTypes = {

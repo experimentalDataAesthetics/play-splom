@@ -1,7 +1,17 @@
 import React from 'react';
 import h from 'react-hyperscript';
 
-export default class SVG extends React.Component {
+/**
+ * A radial gradient SVG filter for adding to the SVG component.
+ *
+ * For SVG you can declare filters (effects) at the top of the document
+ * for use on individual nodes (Rect, Circle etc.)
+ *
+ * This was used for a circular Brush to show a ring with some transparency
+ * effects, but is now unused since the adjustable d3 style rect
+ * brush was added.
+ */
+export default class SVGFilter extends React.Component {
 
   render() {
     return h('defs', [

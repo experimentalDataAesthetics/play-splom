@@ -10,7 +10,7 @@ import {
 
 /**
  * This runs on the main process and should be included in background.js
- * It handles actions sent from callActionOnMain.
+ * It handles actions sent from the renderer process using `callActionOnMain`.
  */
 export default function handleActionOnMain(event, action, soundApp) {
   switch (action.type) {

@@ -2,6 +2,12 @@
 
 import React from 'react';
 
+/**
+ * A string label used by the XAxis and YAxis.
+ *
+ * source:
+ * https://github.com/esbullington/react-d3
+ */
 module.exports = React.createClass({
 
   displayName: 'Label',

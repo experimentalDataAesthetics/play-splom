@@ -1,11 +1,10 @@
+import React from 'react';
 
 /**
+ * Draws a line along an axis - used by XAxis and YAxis
+ *
  * https://github.com/esbullington/react-d3
  */
-
-import React from 'react';
-// var d3 = require('d3');
-
 export default React.createClass({
 
   displayName: 'AxisLine',
