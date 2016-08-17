@@ -1,6 +1,7 @@
 import { centeredSquareWithMargin } from '../utils/layout';
 import { createSelector } from 'reselect';
 import { getDatasetMetadata, getFeatures } from './dataset';
+import { getLoop } from './sound';
 import * as _ from 'lodash';
 
 export const getWindowSize = (state) => state.ui.windowSize;
@@ -125,5 +126,26 @@ export const getPointsForPlot = createSelector(
         yValues: fs.feature.values.map(fs.mappedScale)
       };
     });
+  }
+);
+
+
+/**
+ * Selector that returns the rect of the box that is currently set to play loop.
+ * Returns undefined if none is looping.
+ * {x y width height}
+ */
+export const getLoopBox = createSelector(
+  [getLayout, getNumFeatures, getLoop],
+  (layout, numFeatures, loopMode) => {
+    if (loopMode.box) {
+      const box = layout.boxes[loopMode.box.m * numFeatures + loopMode.box.n];
+      return {
+        x: box.x,
+        y: box.y,
+        width: layout.sideLength - layout.margin,
+        height: layout.sideLength - layout.margin
+      };
+    }
   }
 );

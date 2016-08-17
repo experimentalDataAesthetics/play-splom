@@ -11,7 +11,8 @@ const getInteraction = (state) => state.interaction || {};
 const getSoundName = (state) => state.sound;
 const getSounds = (state) => state.sounds;
 const getMapping = (state) => state.mapping || {};
-const getLoop = (state) => _.get(state, 'interaction.loopMode', {});
+
+export const getLoop = (state) => _.get(state, 'interaction.loopMode', {});
 
 export const getSound = createSelector(
   [getSoundName, getSounds],
