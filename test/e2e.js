@@ -1,3 +1,13 @@
+/**
+ * Not currently using this.
+ *
+ * chromedriver not in package file,
+ * was this:
+ *
+ * "chromedriver": "^2.21.2",
+ *
+ * but that package is failing to install.
+ */
 import path from 'path';
 import chromedriver from 'chromedriver';
 import webdriver from 'selenium-webdriver';
