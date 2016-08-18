@@ -3,8 +3,12 @@ const path = require('path');
 const jetpack = require('fs-jetpack');
 
 import {
-  SET_SOUNDS, SELECT_SOUND, SPAWN_SYNTH, SET_MASTER_CONTROLS
+  SET_SOUNDS,
+  SELECT_SOUND,
+  SPAWN_SYNTH,
+  SET_MASTER_CONTROLS
 } from '../actionTypes';
+
 import callActionOnMain from '../ipc/callActionOnMain';
 
 /**

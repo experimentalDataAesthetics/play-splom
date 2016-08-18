@@ -219,6 +219,7 @@ export function makeMapper(spec) {
   }
 }
 
+
 /**
  * getLoopModePayload - Builds the payload for SET_LOOP action that is sent to the main thread
  * to be sent by the SoundApp and then sent using the updateStream to the
@@ -260,7 +261,6 @@ export const getLoopModePayload = createSelector(
     };
   }
 );
-
 
 
 export function loopModeEvents(m, n, npoints, mapping, mappingControls, sound, loopTime) {

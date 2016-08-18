@@ -2,16 +2,13 @@
 import React from 'react';
 import h from 'react-hyperscript';
 import MapButton from './MapButton';
+// single value slider:
 import { Slider } from 'material-ui';
-// this is smaller but errors:
-// Unexpected token: name (menu) [./~/debug-menu/index.js:5,0]
-// import Slider from 'material-ui/Slider';
+// dual value range slider:
 import ReactSlider from 'react-slider';
 import style from './XYParamTable.css';
 import { round } from 'd3';
 import { debounce } from 'lodash';
-
-// const round = format('g');
 
 /**
  * Editable params in the right sidebar of the app

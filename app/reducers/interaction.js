@@ -1,6 +1,7 @@
 import {
   SET_POINTS_UNDER_BRUSH,
-  TOGGLE_LOOP_MODE
+  TOGGLE_LOOP_MODE,
+  SET_LOOP_TIME
 } from '../actionTypes';
 import {
   calcPointsEntering
@@ -24,6 +25,8 @@ export default function interaction(state = {}, action) {
       return setPointsUnderBrush(state, action);
     case TOGGLE_LOOP_MODE:
       return toggleLoopMode(state, action);
+    case SET_LOOP_TIME:
+      return setLoopTime(state, action);
     default:
       return state;
   }
@@ -99,4 +102,13 @@ function toggleLoopMode(state, action) {
   }
 
   return u({ loopMode }, state);
+}
+
+
+function setLoopTime(state, action) {
+  const loopMode = {
+    loopTime: action.payload.loopTime || DEFAULT_LOOP_TIME
+  };
+
+  return u({loopMode}, state);
 }

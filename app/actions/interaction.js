@@ -3,7 +3,7 @@ import {
   SHOW_BRUSH,
   SET_POINTS_UNDER_BRUSH,
   TOGGLE_LOOP_MODE,
-  SET_LOOPING
+  SET_LOOP_TIME
 } from '../actionTypes';
 
 export function showBrush(show, x, y) {
@@ -63,3 +63,19 @@ export function toggleLoopMode(m, n) {
   };
 }
 
+
+
+/**
+ * setLoopTime
+ *
+ * @param  {number} loopTime
+ * @return {Object} action
+ */
+export function setLoopTime(loopTime) {
+  return {
+    type: SET_LOOP_TIME,
+    payload: {
+      loopTime
+    }
+  };
+}
