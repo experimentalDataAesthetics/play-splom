@@ -10,8 +10,8 @@ import style from './XYParamTable.css';
 
 const MIN = 0.1;
 const MAX = 60.0;
-const mapv = d3.scale.linear().domain([0, 1]).range([MIN, MAX]);
-const unmapv = d3.scale.linear().domain([MIN, MAX]).range([0, 1]);
+const mapv = d3.scale.pow().exponent(2).range([MIN, MAX]);
+const unmapv = mapv.invert;
 
 
 /**
