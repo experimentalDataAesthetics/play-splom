@@ -1,4 +1,4 @@
-Spec.specs.put(\sustain, ControlSpec.new(0, 4, 'lin', 0, 1));
+Spec.specs.put(\sustain, ControlSpec.new(0.05, 4, 'exp', 0, 1));
 Spec.specs.put(\freq, ControlSpec(40, 10000, 'exp', 0, 440, " Hz"));
 Spec.specs.put(\freq2, ControlSpec(40, 10000, 'exp', 0, 440, " Hz"));
 
