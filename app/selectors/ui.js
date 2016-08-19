@@ -19,6 +19,9 @@ export const getNumFeatures = createSelector(
   }
 );
 
+const OUTSIDE_MARGIN = 48;
+const MARGIN_BETWEEN_PLOTS = 24;
+
 /**
  * Layout sizes and style depending on windowSize
  * and the dataset numFeatures
@@ -32,7 +35,7 @@ export const getLayout = createSelector(
     const sidebarWidth = big ? 300 : 0;
     layout.showSidebar = big;
     layout.svgWidth = windowSize.width - sidebarWidth;
-    layout.margin = muiTheme.spacing.desktopGutterMini;
+    layout.margin = MARGIN_BETWEEN_PLOTS;
 
     if (layout.showSidebar) {
       layout.sideBarStyle = {
@@ -48,7 +51,7 @@ export const getLayout = createSelector(
     // console.log(muiTheme);
     layout.svgStyle = centeredSquareWithMargin(layout.svgWidth, windowSize.height,
       muiTheme.spacing.desktopGutter);
-    layout.scatterPlotsMargin = 60;
+    layout.scatterPlotsMargin = OUTSIDE_MARGIN;
     layout.plotsWidth = (layout.svgStyle.right - layout.svgStyle.left)
       - (2 * layout.scatterPlotsMargin);
 
