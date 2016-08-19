@@ -4,22 +4,22 @@ import {
 } from 'chai';
 import interaction from '../../app/reducers/interaction';
 import {
-  TOGGLE_LOOP_MODE,
+  SET_LOOP_BOX,
   SET_POINTS_UNDER_BRUSH
 } from '../../app/actionTypes';
 
 describe('reducers/interaction', function() {
 
-  describe('TOGGLE_LOOP_MODE', function() {
+  describe('SET_LOOP_BOX', function() {
     const click1 = {
-      type: TOGGLE_LOOP_MODE,
+      type: SET_LOOP_BOX,
       payload: {
         m: 1,
         n: 1
       }
     };
     const click2 = {
-      type: TOGGLE_LOOP_MODE,
+      type: SET_LOOP_BOX,
       payload: {
         m: 2,
         n: 2
