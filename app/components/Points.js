@@ -2,12 +2,23 @@ import React from 'react';
 import h from 'react-hyperscript';
 
 
+function pointSize(sideLength) {
+  if (sideLength < 100) {
+    return 1;
+  }
+
+  if (sideLength < 150) {
+    return 2;
+  }
+
+  return 3;
+}
+
 /**
  * Renders points as SVG circles in a g
  */
 export default (props) => {
-  // move to layout
-  const radius = props.sideLength < 150 ? 2 : 3;
+  const radius = pointSize(props.sideLength);
   // should not have to flip here
   const flip = props.sideLength;
   return h('g', props.points.map((xy, i) => {

@@ -1,6 +1,6 @@
 .title {
   font-size: 7em;
-  opacity: 0.2;
+  opacity: 0.7;
   text-transform: uppercase;
   /*font-variant: small-caps;*/
   letter-spacing: .16em;
@@ -14,7 +14,7 @@
 }
 
 .looping {
-  stroke: rgba(22, 249, 45, 1);
+  stroke: #5EB1BF;
 }
 
 .focused {
