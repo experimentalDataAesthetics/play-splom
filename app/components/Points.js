@@ -12,8 +12,8 @@ export default (props) => {
   const flip = props.sideLength;
   return h('g', props.points.map((xy, i) => {
     return React.createElement('circle', {
-      cx: xy[0],
-      cy: flip - xy[1],
+      cx: xy[0] || 0,
+      cy: (flip - xy[1]) || 0,
       r: radius,
       key: String(i),
       className: props.className
