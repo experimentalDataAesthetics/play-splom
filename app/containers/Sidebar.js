@@ -5,6 +5,7 @@ import DatasetSelector from './DatasetSelector';
 import SoundSelector from './SoundSelector';
 import ParamMapping from './ParamMapping';
 import Help from './Help';
+import LoopControl from '../components/LoopControl';
 import styles from './Sidebar.css';
 
 /**
@@ -15,10 +16,11 @@ export default class Sidebar extends Component {
     return h('aside',
       { className: styles.sidebar },
       [
-        h(DatasetSelector, { className: styles.datasets }),
-        h(SoundSelector, { className: styles.sounds }),
-        h(ParamMapping, { className: styles.params }),
-        h(Help, { className: styles.help })
+        h(DatasetSelector),
+        h(LoopControl),
+        h(SoundSelector),
+        h(ParamMapping),
+        h(Help)
       ]);
   }
 }

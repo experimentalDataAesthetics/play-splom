@@ -4,6 +4,11 @@ import { setWindowSize } from '../actions/ui';
 import MainLayout from '../containers/MainLayout';
 import { debounce } from 'lodash';
 
+/**
+ * This would is a top level container.
+ *
+ * It handles window resizing and presents the MainLayout.
+ */
 class Main extends Component {
 
   componentDidMount() {

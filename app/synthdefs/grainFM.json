@@ -68,8 +68,8 @@
         "default": 1,
         "maxval": 4,
         "class": "ControlSpec",
-        "minval": 0,
-        "warp": "linear",
+        "minval": 0.05,
+        "warp": "exp",
         "step": 0,
         "units": ""
       },

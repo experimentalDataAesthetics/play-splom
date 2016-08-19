@@ -1,4 +1,11 @@
+/**
+ * Copyright 2016 Chris Sattinger
+ * MIT License
+ *
+ * Adapted from https://github.com/d3/d3-brush
+ */
 import React from 'react';
+import style from './SelectArea.css';
 
 const handleSize = 6;
 
@@ -142,6 +149,9 @@ function clip(v, min, max) {
  * D3 Brush - select a rectangular area
  *
  * Adapted from https://github.com/d3/d3-brush
+ *
+ * This is one of the nicer components from d3 itself,
+ * here ported to a simple reusable React component
  */
 export default class SelectArea extends React.Component {
 
@@ -423,12 +433,10 @@ export default class SelectArea extends React.Component {
   }
 
   _mouseEnter(e) {
-    if (this.props.onMouseEnter) {
+    // onHover enter
+    if (this.props.onMouseEnter && (!e.buttons)) {
       this.props.onMouseEnter(e);
     }
-    // reset drag mode in case you were still dragging from a previous
-    // interaction inside this box
-    this.mouseMode = null;
   }
 
   _setSelected(selected) {
@@ -464,7 +472,7 @@ export default class SelectArea extends React.Component {
     let overlayTapHandler = (event) => this._started(event, {type: 'overlay'});
     let overlay = (
       <rect
-        className="overlay"
+        className={this.props.overlayClassName || style.overlay}
         key="overlay"
         pointerEvents="all"
         cursor={cursors.overlay}
@@ -478,12 +486,9 @@ export default class SelectArea extends React.Component {
     let selectionTapHandler = (event) => this._started(event, {type: 'selection'});
     let selection = (
       <rect
-        className="selection"
+        className={this.props.selectionClassName || style.selection}
         key="selection"
         cursor={cursors.selection}
-        fill="#777"
-        fillOpacity="0.3"
-        stroke="#fff"
         shapeRendering="crispEdges"
         onMouseDown={selectionTapHandler}
         onTouchStart={selectionTapHandler}

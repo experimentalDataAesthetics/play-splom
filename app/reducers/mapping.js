@@ -11,11 +11,19 @@ export default function(state = {}, action) {
   switch (action.type) {
 
     case MAP_XY_TO_PARAM:
-      // if not already mapped to this
+      // if already mapped to this then disconnect it
       if (_.get(state, `xy.${action.payload.xy}.param`) === action.payload.param) {
-        return state;
+        return u({
+          mode: 'xy',
+          xy: {
+            [action.payload.xy]: {
+              param: null
+            }
+          }
+        }, state);
       }
 
+      // connect it
       return u({
         mode: 'xy',
         xy: {

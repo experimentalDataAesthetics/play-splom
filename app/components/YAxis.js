@@ -1,14 +1,16 @@
 
-/**
- * https://github.com/esbullington/react-d3
- */
-
 import React from 'react';
 var d3 = require('d3');
 import AxisTicks from './AxisTicks';
 import AxisLine from './AxisLine';
 import Label from './Label';
 
+/**
+ * YAxis with lines, ticks and string label
+ *
+ * source:
+ * https://github.com/esbullington/react-d3
+ */
 export default React.createClass({
 
   displayName: 'YAxis',

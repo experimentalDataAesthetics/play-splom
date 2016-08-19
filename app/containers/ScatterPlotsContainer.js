@@ -4,6 +4,7 @@ import connect from '../utils/reduxers';
 import ScatterPlots from '../components/ScatterPlots';
 import ScatterPlotsActivePoints from '../components/ScatterPlotsActivePoints';
 import ScatterPlotsInteractive from '../components/ScatterPlotsInteractive';
+import LoopPlayHead from '../components/LoopPlayHead';
 import * as _ from 'lodash';
 
 import {
@@ -15,10 +16,14 @@ import {
 
 
 /**
- * Goes inside a svg, adds a g containing:
+ * This holds all of the plotting and interactive components for the Scatter Plots.
+ *
+ * Goes inside the SVG, adds a g which layers each of these on top of each other:
  * - ScatterPlots
  * - ScatterPlotsActivePoints
+ * - LoopPlayHead
  * - ScatterPlotsInteractive
+ *
  */
 class ScatterPlotsContainer extends Component {
 
@@ -44,9 +49,8 @@ class ScatterPlotsContainer extends Component {
     props.width = this.props.width - (padding * 2);
 
     const plots = h(ScatterPlots, props);
-
     const activePoints = h(ScatterPlotsActivePoints);
-
+    const loopPlayHead = h(LoopPlayHead);
     const surface = h(ScatterPlotsInteractive, props);
 
     return h(
@@ -59,6 +63,7 @@ class ScatterPlotsContainer extends Component {
       [
         plots,
         activePoints,
+        loopPlayHead,
         surface
       ]
     );

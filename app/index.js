@@ -1,3 +1,6 @@
+/* eslint global-require: 0 */
+/* eslint import/no-unresolved: 0 */
+
 /**
  * The frontend application.
  */
@@ -15,11 +18,6 @@ import { mapXYtoParam } from './actions/mapping';
 
 import './app.global.css';
 import { join } from 'path';
-
-const production = process.env.NODE_ENV === 'production';
-// how ironic, the path to config is different
-// const config = require(production ? './config/index' : '../config/index');
-// console.log('dirname', __dirname);
 
 const store = configureStore();
 const history = syncHistoryWithStore(hashHistory, store);
@@ -45,7 +43,7 @@ connectSoundApp(store, callActionOnMain);
 injectTapEventPlugin();
 
 // add right click inspect element context menu
-if (!production) {
+if (process.env.NODE_ENV !== 'production') {
   require('debug-menu').install();
 }
 
@@ -57,7 +55,7 @@ render(
 );
 
 // load an initial dataset and sound
-const appRoot = production ? __dirname : join(__dirname, '../app');
+const appRoot = process.env.NODE_ENV === 'production' ? __dirname : join(__dirname, '../app');
 const iris = join(appRoot, 'vendor/datasets', 'iris.csv');
 store.dispatch(loadInternalDataset(iris));
 

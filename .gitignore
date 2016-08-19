@@ -16,5 +16,5 @@
 /app/vendor/supercollider
 .tags
 .tags1
-main.js
-main.js.map
+/main.js
+/main.js.map

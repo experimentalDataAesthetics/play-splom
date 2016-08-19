@@ -7,7 +7,9 @@ import muiThemeable from 'material-ui/styles/muiThemeable';
 import style from './ScatterPlots.css';
 
 /**
- * Adds a ScatterPlot for each feature pair.
+ * A single component that adds a ScatterPlot for each feature pair plot.
+ *
+ * Also paints the title in the background.
  */
 class ScatterPlots extends React.Component {
 
@@ -27,11 +29,8 @@ class ScatterPlots extends React.Component {
     if (this.props.dataset) {
       const title = h('text', {
         x: 50,
-        y: 50,
-        className: style.title,
-        style: {
-          fill: this.props.muiTheme.palette.textColor
-        }
+        y: this.props.layout.svgStyle.height - 150,
+        className: style.title
       }, [this.props.dataset.name]);
       children.push(title);
 

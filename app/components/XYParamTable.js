@@ -1,18 +1,20 @@
 
 import React from 'react';
 import h from 'react-hyperscript';
-import MapButton from './MapButton';
+import ToggleButton from './ToggleButton';
+// single value slider:
 import { Slider } from 'material-ui';
-// this is smaller but errors:
-// Unexpected token: name (menu) [./~/debug-menu/index.js:5,0]
-// import Slider from 'material-ui/Slider';
+// dual value range slider:
 import ReactSlider from 'react-slider';
 import style from './XYParamTable.css';
 import { round } from 'd3';
 import { debounce } from 'lodash';
 
-// const round = format('g');
-
+/**
+ * Editable params in the right sidebar of the app
+ * to assign data -> sound parameter mappings and to adjust
+ * the ranges of those mappings.
+ */
 export default class XYParamTable extends React.Component {
 
   render() {
@@ -36,6 +38,12 @@ export default class XYParamTable extends React.Component {
           min
           max
     */
+
+    const sliderStyle = {
+      marginTop: 4,
+      marginBottom: 4
+    };
+
     const rows = this.props.xyMappingControls.map((control) => {
       let range;
       if (control.connected) {
@@ -71,7 +79,8 @@ export default class XYParamTable extends React.Component {
           min: 0.0,
           max: 1.0,
           step: 0.001,
-          onChange: debounce(sliderAction, 300)
+          onChange: debounce(sliderAction, 300),
+          sliderStyle
         });
       }
 
@@ -82,17 +91,22 @@ export default class XYParamTable extends React.Component {
           h('td',
             {className: style.pa0},
             [
-              h(MapButton, {
+              h(ToggleButton, {
                 isActive: control.xConnected,
-                action: () => this.props.mapXYtoParam('x', control.name)
+                // TODO: or unmap if it is already the one that is set
+                action: () => this.props.mapXYtoParam('x', control.name),
+                iconActive: 'radio_button_checked',
+                iconInactive: 'radio_button_unchecked'
               })
             ]),
           h('td',
             {className: style.pa0},
             [
-              h(MapButton, {
+              h(ToggleButton, {
                 isActive: control.yConnected,
-                action: () => this.props.mapXYtoParam('y', control.name)
+                action: () => this.props.mapXYtoParam('y', control.name),
+                iconActive: 'radio_button_checked',
+                iconInactive: 'radio_button_unchecked'
               })
             ]),
           h('td',

@@ -1,5 +1,8 @@
 import React from 'react';
 
+/**
+ * Renders an SVG line
+ */
 export default class Line extends React.Component {
 
   render() {

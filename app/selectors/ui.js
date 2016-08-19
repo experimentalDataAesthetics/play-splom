@@ -1,7 +1,7 @@
 import { centeredSquareWithMargin } from '../utils/layout';
 import { createSelector } from 'reselect';
 import { getDatasetMetadata, getFeatures } from './dataset';
-import * as _ from 'lodash';
+import { getLoop } from './sound';
 
 export const getWindowSize = (state) => state.ui.windowSize;
 
@@ -19,6 +19,9 @@ export const getNumFeatures = createSelector(
   }
 );
 
+const OUTSIDE_MARGIN = 48;
+const MARGIN_BETWEEN_PLOTS = 24;
+
 /**
  * Layout sizes and style depending on windowSize
  * and the dataset numFeatures
@@ -32,7 +35,7 @@ export const getLayout = createSelector(
     const sidebarWidth = big ? 300 : 0;
     layout.showSidebar = big;
     layout.svgWidth = windowSize.width - sidebarWidth;
-    layout.margin = muiTheme.spacing.desktopGutterMini;
+    layout.margin = MARGIN_BETWEEN_PLOTS;
 
     if (layout.showSidebar) {
       layout.sideBarStyle = {
@@ -48,7 +51,7 @@ export const getLayout = createSelector(
     // console.log(muiTheme);
     layout.svgStyle = centeredSquareWithMargin(layout.svgWidth, windowSize.height,
       muiTheme.spacing.desktopGutter);
-    layout.scatterPlotsMargin = 60;
+    layout.scatterPlotsMargin = OUTSIDE_MARGIN;
     layout.plotsWidth = (layout.svgStyle.right - layout.svgStyle.left)
       - (2 * layout.scatterPlotsMargin);
 
@@ -125,5 +128,26 @@ export const getPointsForPlot = createSelector(
         yValues: fs.feature.values.map(fs.mappedScale)
       };
     });
+  }
+);
+
+
+/**
+ * Selector that returns the rect of the box that is currently set to play loop.
+ * Returns undefined if none is looping.
+ * {x y width height}
+ */
+export const getLoopBox = createSelector(
+  [getLayout, getNumFeatures, getLoop],
+  (layout, numFeatures, loopMode) => {
+    if (loopMode.box) {
+      const box = layout.boxes[loopMode.box.m * numFeatures + loopMode.box.n];
+      return {
+        x: box.x,
+        y: box.y,
+        width: layout.sideLength - layout.margin,
+        height: layout.sideLength - layout.margin
+      };
+    }
   }
 );

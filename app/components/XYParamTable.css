@@ -29,6 +29,7 @@
 .range {
   width: 100px;
   padding: 0;
+  padding-right: 20px;
 }
 
 .connected td,

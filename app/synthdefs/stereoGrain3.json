@@ -2,7 +2,7 @@
   "hasArrayArgs": false,
   "inputs": [],
   "hasGate": false,
-  "name": "noiseburst",
+  "name": "stereoGrain3",
   "hasVariants": false,
   "output": [
     {
@@ -37,6 +37,38 @@
       "index": 1
     },
     {
+      "name": "freq",
+      "defaultValue": 440,
+      "lag": 0,
+      "rate": "scalar",
+      "spec": {
+        "default": 440,
+        "maxval": 10000,
+        "class": "ControlSpec",
+        "minval": 40,
+        "warp": "exp",
+        "step": 0,
+        "units": " Hz"
+      },
+      "index": 2
+    },
+    {
+      "name": "freq2",
+      "defaultValue": 440,
+      "lag": 0,
+      "rate": "scalar",
+      "spec": {
+        "default": 440,
+        "maxval": 10000,
+        "class": "ControlSpec",
+        "minval": 40,
+        "warp": "exp",
+        "step": 0,
+        "units": " Hz"
+      },
+      "index": 3
+    },
+    {
       "name": "sustain",
       "defaultValue": 0.0099999997764826,
       "lag": 0,
@@ -50,31 +82,16 @@
         "step": 0,
         "units": ""
       },
-      "index": 2
-    },
-    {
-      "name": "pan",
-      "defaultValue": 0,
-      "lag": 0,
-      "rate": "scalar",
-      "spec": {
-        "default": 0,
-        "maxval": 1,
-        "class": "ControlSpec",
-        "minval": -1,
-        "warp": "linear",
-        "step": 0,
-        "units": ""
-      },
-      "index": 3
+      "index": 4
     }
   ],
   "canFreeSynth": true,
-  "sourceCode": "SynthDef('noiseburst', { |out, amp=0.1, sustain=0.01, pan|var snd = PinkNoise.ar(1.0);var amp2 = amp * AmpComp.ir(1.max(50)) * 0.5;var env = EnvGen.ar(Env.sine(sustain, 1.0), levelScale: amp2, doneAction: 2);OffsetOut.ar(out, Pan2.ar(snd * env, pan));})",
+  "sourceCode": "SynthDef('stereoGrain3', { |out, amp=0.1, freq=440, freq2=440, sustain=0.01|var snd = [LFSaw.ar(freq), LFSaw.ar(freq2)];var amp2 = amp * AmpComp.ir(freq.max(50)) * 0.5;var env = EnvGen.ar(Env.perc(1.0, 1.0), timeScale: sustain, levelScale: amp2, doneAction: 2);OffsetOut.ar(out, snd * env);})",
   "controlNames": [
     "out",
     "amp",
-    "sustain",
-    "pan"
+    "freq",
+    "freq2",
+    "sustain"
   ]
 }

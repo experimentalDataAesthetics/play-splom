@@ -9,6 +9,12 @@ import AxisTicks from './AxisTicks';
 import AxisLine from './AxisLine';
 import Label from './Label';
 
+/**
+ * XAxis with lines, ticks and string label
+ *
+ * source:
+ * https://github.com/esbullington/react-d3
+ */
 export default React.createClass({
 
   displayName: 'XAxis',

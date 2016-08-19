@@ -1,4 +1,16 @@
 
+/**
+ * http://redux.js.org/docs/basics/Reducers.html
+ *
+ * A reducer take state and action and returns a new transformed state.
+
+ * Actions describe the fact that something happened, but don’t specify
+ * how the application’s state changes in response.
+ *
+ * This is the job of a reducer. The reducers handle the actions and return
+ * a new state.
+ */
+
 import { combineReducers } from 'redux';
 import { routerReducer as routing } from 'react-router-redux';
 
@@ -11,6 +23,9 @@ import ui from './ui';
 import interaction from './interaction';
 import transport from './transport';
 
+// combine all into a single reduction function
+// that can be passed to createStore
+// http://redux.js.org/docs/api/combineReducers.html
 export default combineReducers({
   datasets,
   dataset,

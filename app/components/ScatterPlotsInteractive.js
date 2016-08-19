@@ -5,7 +5,7 @@ import connect from '../utils/reduxers';
 
 import {
   setPointsUnderBrush,
-  toggleLoopMode
+  setLoopBox
 } from '../actions/interaction';
 
 import {
@@ -17,9 +17,9 @@ import {
   getFeatureSideLengthScale
 } from '../selectors/index';
 
-// import ScatterPlotClickSurface from './ScatterPlotClickSurface';
 import Axis from './Axis';
 import SelectArea from './SelectArea';
+import style from './ScatterPlots.css';
 
 const unset = {};
 
@@ -33,9 +33,20 @@ const selectors = {
 const handlers = {
   setPointsUnderBrush,
   setHovering,
-  toggleLoopMode
+  setLoopBox
 };
 
+
+/**
+ * A single component that goes on top of the plots and handles
+ * mouse events and interactive UI.
+ *
+ * This holds all the things that change and respond, thus allowing
+ * the plots and background to remain fixed without having to re-render
+ * or recalculate due to UI events.
+ *
+ * This adds a SelectArea on top of each ScatterPlot
+ */
 class ScatterPlotsInteractive extends React.Component {
 
   static propTypes = {
@@ -50,7 +61,7 @@ class ScatterPlotsInteractive extends React.Component {
     features: React.PropTypes.array.isRequired,
     setPointsUnderBrush: React.PropTypes.func.isRequired,
     setHovering: React.PropTypes.func.isRequired,
-    toggleLoopMode: React.PropTypes.func.isRequired
+    setLoopBox: React.PropTypes.func.isRequired
   };
 
   setPointsIn(area, box, points) {
@@ -114,52 +125,48 @@ class ScatterPlotsInteractive extends React.Component {
 
     if (this.props.featureSideLengthScale.length > 0) {
       if (_.isNumber(this.props.hovering.m)) {
-        // does hovering really need to go through redux ?
-        // it is microstate
         const hovx = (this.props.hovering.m || 0);
         const hovy = (this.props.hovering.n || 0);
         const featx = this.props.featureSideLengthScale[hovx];
         const featy = this.props.featureSideLengthScale[hovy];
         const box = getBox(hovx, hovy);
-
-        children.push(h(Axis, {
-          xOffset: box.x,
-          yOffset: box.y,
-          sideLength: innerSideLength,
-          muiTheme: this.props.muiTheme,
-          xScale: featx.mappedScale,
-          yScale: featy.mappedScale,
-          xLabel: featx.feature.name,
-          yLabel: featy.feature.name
-        }));
+        if (box) {
+          children.push(h(Axis, {
+            xOffset: box.x,
+            yOffset: box.y,
+            sideLength: innerSideLength,
+            muiTheme: this.props.muiTheme,
+            xScale: featx.mappedScale,
+            yScale: featy.mappedScale,
+            xLabel: featx.feature.name,
+            yLabel: featy.feature.name
+          }));
+        }
       }
     }
 
+    const s = {
+      box: {
+        m: _.get(this.props.loopMode, 'box.m'),
+        n: _.get(this.props.loopMode, 'box.n')
+      },
+      last: {
+        m: _.get(this.state, 'last.m'),
+        n: _.get(this.state, 'last.n')
+      }
+    };
+
+    // pending should be erased once it becomes active
     const getClassName = (box) => {
-      const loopMode = this.props.loopMode;
-      const isLooping =
-        (_.get(loopMode, 'nowPlaying.m') === box.m) &&
-        (_.get(loopMode, 'nowPlaying.n') === box.n);
-
-      const isPending =
-        (_.get(loopMode, 'pending.m') === box.m) &&
-        (_.get(loopMode, 'pending.n') === box.n);
-
-      const isLastFocused =
-        (_.get(this.state, 'last.m') === box.m) &&
-        (_.get(this.state, 'last.n') === box.n);
-
-      if (isPending) {
-        return 'pending';
+      if ((s.box.m === box.m) && (s.box.n === box.n)) {
+        return style.looping;
       }
 
-      if (isLooping) {
-        return 'looping';
+      if ((s.last.m === box.m) && (s.last.n === box.n)) {
+        return style.focused;
       }
 
-      if (isLastFocused) {
-        return 'focused';
-      }
+      return 'none';
     };
 
     layout.boxes.forEach((box) => {
@@ -190,34 +197,15 @@ class ScatterPlotsInteractive extends React.Component {
         onChange: (area) => this.setPointsIn(area, box, points),
         onMouseEnter: () => this.setHoveringBox(box),
         onMetaClick: () => {
-          if (this.props.toggleLoopMode) {
-            this.props.toggleLoopMode(box.m, box.n);
+          if (this.props.setLoopBox) {
+            this.props.setLoopBox(box.m, box.n);
           }
         },
         show: isLastFocused,
-        className: getClassName(box)
+        overlayClassName: getClassName(box)
       });
 
       children.push(selectedArea);
-
-      // const sp = h(ScatterPlotClickSurface, {
-      //   m: box.m,
-      //   n: box.n,
-      //   points,
-      //   xOffset: box.x,
-      //   yOffset: box.y,
-      //   // for calculating mouse down by clientX/Y
-      //   baseClientX: box.baseClientX,
-      //   baseClientY: box.baseClientY,
-      //   sideLength: innerSideLength,
-      //   setPointsUnderBrush: this.props.setPointsUnderBrush,
-      //   setHovering: this.props.setHovering,
-      //   toggleLoopMode: this.props.toggleLoopMode,
-      //   muiTheme: this.props.muiTheme,
-      //   isLooping,
-      //   isPending
-      // });
-      // children.push(sp);
     });
 
     return h(

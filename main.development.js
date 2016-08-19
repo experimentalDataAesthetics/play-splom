@@ -1,14 +1,15 @@
-/* eslint strict: 0 */
-'use strict';
+/* eslint global-require: 0 */
+/* eslint import/no-unresolved: 0 */
 /**
  * The backend application that creates windows
  * and launches the frontend application app/index.js
  *
- * All modules should use require, not import
- * as this is not babel processed.
+ * main.development.js is transpiled to main.js
  *
- * `let` and `const` and arrow functions are fine as
- * well as all listed here: https://kangax.github.io/compat-table/es6/#node4
+ * All module imports should use require, not import.
+ * You can import from local files.
+ *
+ * The frontend and backend communicate using electron ipc
  */
 // process.env.NODE_ENV = process.env.NODE_ENV || 'production';
 
@@ -65,16 +66,16 @@ function loadSounds(window) {
 
 // connect two-way calling of actions
 // the other half is in app.js
-const ipcMain = require('electron').ipcMain;  // eslint-disable-line global-require import/no-unresolved
+const ipcMain = require('electron').ipcMain;
 const handleActionOnMain = require('./app/ipc/handleActionOnMain');
 ipcMain.on('call-action-on-main', (event, payload) => {
   log.debug('call-action-on-main', payload);
   handleActionOnMain(event, payload, soundApp);
 });
 
-// if (debug) {
-//   require('electron-debug')({enabled: debug});  // eslint-disable-line global-require
-// }
+if (debug) {
+  require('electron-debug')({showDevTools: true});
+}
 
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {

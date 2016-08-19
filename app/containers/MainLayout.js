@@ -17,6 +17,17 @@ const stateToProps = {
   muiTheme: getMuiTheme
 };
 
+/**
+ * This is the layout of the application itself.
+ * An SVG plot area on the left and a Sidebar on the right.
+ *
+ * It wraps everything in a MuiThemeProvider which allows selectable
+ * styling themes that child components can access via the context.
+ *
+ * The layout sizes are all calculated in getLayout which recalculates
+ * when the window size changes, also on change of number of dataset features,
+ * number of boxes etc.
+ */
 class MainLayout extends Component {
 
   static propTypes = {

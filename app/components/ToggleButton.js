@@ -2,17 +2,27 @@
 import React from 'react';
 import h from 'react-hyperscript';
 
-// requires the material-ui fonts in vendor
 import FontIcon from 'material-ui/FontIcon';
 import IconButton from 'material-ui/IconButton';
 import muiThemeable from 'material-ui/styles/muiThemeable';
 
-class MapButton extends React.Component {
+
+/**
+ * A toggle button using two icons
+ *
+ * requires the material-ui fonts in vendor
+ * http://www.material-ui.com/#/components/font-icon
+ * Choose your icons here
+ * https://design.google.com/icons/
+ */
+class ToggleButton extends React.Component {
 
   static propTypes = {
     action: React.PropTypes.func.isRequired,
     isActive: React.PropTypes.bool.isRequired,
-    muiTheme: React.PropTypes.object.isRequired
+    muiTheme: React.PropTypes.object.isRequired,
+    iconActive: React.PropTypes.string.isRequired,
+    iconInactive: React.PropTypes.string.isRequired
   };
 
   render() {
@@ -21,9 +31,9 @@ class MapButton extends React.Component {
       h(FontIcon, {
         className: 'material-icons',
         color: this.props.isActive ? palette.primary1Color : palette.disabledColor
-      }, this.props.isActive ? 'radio_button_checked' : 'radio_button_unchecked')
+      }, this.props.isActive ? this.props.iconActive : this.props.iconInactive)
     ]);
   }
 }
 
-export default muiThemeable()(MapButton);
+export default muiThemeable()(ToggleButton);

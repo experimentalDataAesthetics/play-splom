@@ -3,7 +3,8 @@ import {
   SHOW_BRUSH,
   SET_POINTS_UNDER_BRUSH,
   TOGGLE_LOOP_MODE,
-  SET_LOOPING
+  SET_LOOP_BOX,
+  SET_LOOP_TIME
 } from '../actionTypes';
 
 export function showBrush(show, x, y) {
@@ -17,6 +18,18 @@ export function showBrush(show, x, y) {
   };
 }
 
+
+/**
+ * setPointsUnderBrush - Called when moving the brush over points.
+ *
+ * Points under brush is further processed by the reducers into points entering.
+ * The sound app responds to changes in point.
+ *
+ * @param  {number} m       box coordinate
+ * @param  {number} n       box coordinate
+ * @param  {Array} indices  list of point indices
+ * @return {Object}         action
+ */
 export function setPointsUnderBrush(m, n, indices) {
   return (dispatch, getState) => {
     const s = getState().interaction;
@@ -34,9 +47,17 @@ export function setPointsUnderBrush(m, n, indices) {
   };
 }
 
-export function toggleLoopMode(m, n) {
+
+/**
+ * setLoopBox - Start loop at box, or change loop to box, toggle loop off if already playing.
+ *
+ * @param  {number} m box coordinate
+ * @param  {number} n box coordinate
+ * @return {Object}   action
+ */
+export function setLoopBox(m, n) {
   return {
-    type: TOGGLE_LOOP_MODE,
+    type: SET_LOOP_BOX,
     payload: {
       m,
       n
@@ -44,23 +65,28 @@ export function toggleLoopMode(m, n) {
   };
 }
 
+
 /**
- * @param {Object} loopingState
- *
- * May contain these:
- *
- *     nowPlaying: {m n}
- *     pending: {m n}
+ * toggleLoopMode - Turn looping on or off
  */
-export function setLooping(loopingState) {
-  return (dispatch, getState) => {
-    const state = getState().interaction.loopMode;
-    const comp = {nowPlaying: state.nowPlaying, pending: state.pending};
-    if (!_.isEqual(comp, loopingState)) {
-      dispatch({
-        type: SET_LOOPING,
-        payload: loopingState
-      });
+export function toggleLoopMode() {
+  return {
+    type: TOGGLE_LOOP_MODE
+  };
+}
+
+
+/**
+ * setLoopTime - Set time of loop in seconds.
+ *
+ * @param  {number} loopTime
+ * @return {Object} action
+ */
+export function setLoopTime(loopTime) {
+  return {
+    type: SET_LOOP_TIME,
+    payload: {
+      loopTime
     }
   };
 }

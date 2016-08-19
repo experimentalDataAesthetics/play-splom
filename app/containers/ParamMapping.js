@@ -26,6 +26,19 @@ const handlers = {
   setParamRangeUnipolar
 };
 
+
+/**
+ * Sidebar component for mapping dataset features to sound parameters.
+ *
+ * The redux connection is established here and the current state
+ * and handler functions are passed into the XYParamTable that does
+ * the ui rendering.
+ *
+ * This is a standard React/Redux structure with dumb and smart components.
+ * It does tend to increase the number of classes and code and increases
+ * the amount of thought you have to do to find out what is doing what.
+ * But it is a recommended coding style.
+ */
 class ParamMapping extends React.Component {
   render() {
     return h('div',

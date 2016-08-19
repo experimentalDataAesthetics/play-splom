@@ -99,19 +99,20 @@ function startPack() {
 
 function pack(plat, arch, cb) {
   // there is no darwin ia32 electron
-  if (plat === 'darwin' && arch === 'ia32') return;
+  if (plat === 'darwin' && arch === 'ia32') {
+    return;
+  }
 
-  const iconObj = {
-    icon: DEFAULT_OPTS.icon + (() => {
-      let extension = '.png';
-      if (plat === 'darwin') {
-        extension = '.icns';
-      } else if (plat === 'win32') {
-        extension = '.ico';
-      }
-      return extension;
-    })()
-  };
+  const iconObj = {};
+  switch (plat) {
+    case 'darwin':
+      iconObj.icon = 'resources/osx/icon.icns';
+      break;
+    case 'win32':
+      iconObj.icon = 'resources/windows/icon.ico';
+      break;
+    default:
+  }
 
   const opts = Object.assign({}, DEFAULT_OPTS, iconObj, {
     platform: plat,

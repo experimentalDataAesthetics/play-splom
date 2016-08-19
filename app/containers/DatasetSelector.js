@@ -4,12 +4,18 @@ import connect from '../utils/reduxers';
 import RaisedButton from 'material-ui/RaisedButton';
 import { List, ListItem, MakeSelectable } from 'material-ui/List';
 const SelectableList = MakeSelectable(List);
+import styles from './Sidebar.css';
 
 import {
   loadDataset,
   openDatasetDialog
 } from '../actions/datasets';
 
+
+/**
+ * Component in right sidebar to select from available
+ * datasets or to click to open a dataset from the filesystem.
+ */
 class DatasetSelector extends Component {
 
   static propTypes = {
@@ -20,7 +26,7 @@ class DatasetSelector extends Component {
   };
 
   render() {
-    return h('div.dataset-selector', [
+    return h(`div.dataset-selector.${styles.datasets}`, [
       h('h6', 'Datasets'),
       h(SelectableList,
         {
@@ -32,7 +38,10 @@ class DatasetSelector extends Component {
           return h(ListItem, {
             primaryText: dataset.name,
             selected: true,
-            value: dataset.path
+            value: dataset.path,
+            style: {
+              fontSize: '1em'
+            }
           });
         })
       ),

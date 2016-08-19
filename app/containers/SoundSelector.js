@@ -7,7 +7,7 @@ import { selectSound } from '../actions/sounds';
 const SelectableList = MakeSelectable(List);
 
 /**
- * Sidebar area for selecting the current Sound
+ * Sidebar area for selecting the sound
  */
 class SoundSelector extends React.Component {
   render() {
@@ -17,12 +17,19 @@ class SoundSelector extends React.Component {
         {
           value: this.props.selectedSound,
           onChange: this.props.onSelect,
-          className: 'selectable-list'
+          className: 'selectable-list',
+          style: {
+            borderBottom: '1px solid #eee',
+            borderTop: '1px solid #eee'
+          }
         },
         this.props.sounds.map((sound) => {
           return h(ListItem, {
             primaryText: sound.name,
             selected: sound.name === this.props.selectedSound,
+            style: {
+              fontSize: '1em'
+            },
             // selected: true,
             value: sound.name
           });

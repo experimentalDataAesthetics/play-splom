@@ -1,4 +1,4 @@
-Spec.specs.put(\sustain, ControlSpec.new(0, 4, 'lin', 0, 1));
+Spec.specs.put(\sustain, ControlSpec.new(0.05, 4, 'exp', 0, 1));
 
 SynthDef("grain2", { |out, amp=0.1, freq=440, sustain=0.01, pan|
 	var snd = FSinOsc.ar(freq);

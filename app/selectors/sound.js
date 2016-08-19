@@ -12,6 +12,8 @@ const getSoundName = (state) => state.sound;
 const getSounds = (state) => state.sounds;
 const getMapping = (state) => state.mapping || {};
 
+export const getLoop = (state) => _.get(state, 'interaction.loopMode', {});
+
 export const getSound = createSelector(
   [getSoundName, getSounds],
   (soundName, sounds) => {
@@ -26,21 +28,26 @@ export const getSound = createSelector(
 );
 
 /**
- * used by XYParamTable
- * Generates an object for each modulateable control of the current sound.
+ * getXYMappingControls - Generates an object for each modulateable control of the current sound.
  *
- * name
- * xConnected
- * yConnected
- * connected
- * unipolar
- *   value
- *   minval
- *   maxval
- * natural
- *   value
- *   minval
- *   maxval
+ * used by XYParamTable
+ *
+ * Each object contains:
+ *
+ *   name
+ *   xConnected
+ *   yConnected
+ *   connected
+ *   unipolar
+ *     value
+ *     minval
+ *     maxval
+ *   natural
+ *     value
+ *     minval
+ *     maxval
+ *
+ * @return {Function} A reselect selector
  */
 export const getXYMappingControls = createSelector(
   [getMapping, getSound],
@@ -109,6 +116,9 @@ export function xyMappingControls(mapping, sound) {
 }
 
 /**
+ * calcPointsEntering - given pointsUnderBrush and the previousPointsUnderBrush,
+ * return a list of those points that are currently just entering the brush area.
+ *
  * Normal function; not a selector.
  */
 export const calcPointsEntering = (pointsUnderBrush, previousPointsUnderBrush) =>
@@ -179,7 +189,7 @@ export function xyPointsEnteringToSynthEvents(pointsEntering,
     }
 
     if (mapperY) {
-      args[paramY] = mapperY(y);
+      args[paramY] = mapperY(1.0 - y);
     }
 
     return {
@@ -189,6 +199,13 @@ export function xyPointsEnteringToSynthEvents(pointsEntering,
   });
 }
 
+
+/**
+ * makeMapper - return one of the mapping functions from supercollider.js
+ *
+ * @param  {Object} spec Similar to supercollider's ControlSpec
+ * @return {Function}    Function that maps a unipolar value to the Spec's range and warp curve.
+ */
 export function makeMapper(spec) {
   switch (spec.warp) {
     case 'exp':
@@ -202,35 +219,48 @@ export function makeMapper(spec) {
   }
 }
 
+
 /**
- * Builds the payload for SET_LOOP action
+ * getLoopModePayload - Builds the payload for SET_LOOP action that is sent to the main thread
+ * to be sent by the SoundApp and then sent using the updateStream to the
+ * SynthEventList dryad.
+ *
+ * This is a Reselect selector.
+ *
+ * @return {Object} events, loopTime, epoch
  */
-export function loopModePayload(m, n, state) {
-  const sound = getSound(state);
-  if (!sound) {
-    return;
+export const getLoopModePayload = createSelector(
+  [
+    getSound,
+    getLoop,
+    getNormalizedPoints,
+    getMapping,
+    getXYMappingControls
+  ],
+  (sound, loopMode, npoints, mapping, mappingControls) => {
+    if (!sound || (!loopMode.box)) {
+      return {
+        events: []
+      };
+    }
+
+    const events = loopModeEvents(
+      loopMode.box.m,
+      loopMode.box.n,
+      npoints,
+      mapping,
+      mappingControls,
+      sound,
+      loopMode.loopTime
+    );
+
+    return {
+      events,
+      loopTime: loopMode.loopTime,
+      epoch: loopMode.epoch
+    };
   }
-
-  const npoints = getNormalizedPoints(state);
-  const mapping = getMapping(state);
-  const mappingControls = getXYMappingControls(state);
-
-  // const events = loopModeSynthEventList(loopMode, sound, npoints, mapping, mappingControls);
-  const events = loopModeEvents(
-    m,
-    n,
-    npoints,
-    mapping,
-    mappingControls,
-    sound,
-    10.0
-  );
-
-  return {
-    events,
-    epoch: _.now() + 300
-  };
-}
+);
 
 
 export function loopModeEvents(m, n, npoints, mapping, mappingControls, sound, loopTime) {
@@ -272,38 +302,3 @@ export function loopModeEvents(m, n, npoints, mapping, mappingControls, sound, l
     };
   });
 }
-
-/**
- * Returns a dryadic json document
- *
- * ['syntheventlist', {
-   defaultParams: {
-     defName: 'blip',
-     args: {}
-   },
-   events: [
-     {
-       time:
-       args: {}
-     }
-   ]
-  }]
- */
-// export function loopModeSynthEventList(loopMode, sound, npoints, mapping) {
-//   const loopTime = loopMode.loopTime || 10.0;
-//   if (loopMode.looping && sound) {
-//     // create list from m n npoints mapping
-//     return [
-//       'syntheventlist',
-//       {
-//         defaultParams: {
-//           defName: sound.name,
-//           args: {}  // fixed args
-//         },
-//         events: loopModeEvents(loopMode.m, loopMode.n, npoints, mapping, sound, loopTime)
-//       }
-//     ];
-//   } else {
-//     return null;  // delete current playing loop, replace with nothing
-//   }
-// }

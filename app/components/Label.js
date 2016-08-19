@@ -2,6 +2,12 @@
 
 import React from 'react';
 
+/**
+ * A string label used by the XAxis and YAxis.
+ *
+ * source:
+ * https://github.com/esbullington/react-d3
+ */
 module.exports = React.createClass({
 
   displayName: 'Label',
@@ -60,7 +66,7 @@ module.exports = React.createClass({
     const style = {
       stroke: props.textColor,
       fill: props.textColor,
-      fontSize: 9
+      fontSize: 10
     };
 
     return (
