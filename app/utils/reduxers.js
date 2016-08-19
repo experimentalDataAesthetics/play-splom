@@ -18,6 +18,9 @@ export function selectState(selectors) {
     if (_.isString(getter)) {
       return (state) => state[getter];
     }
+    if (!_.isFunction(getter)) {
+      throw new Error(`${k} is not a selector Function: ${getter}`);
+    }
 
     return getter;
   });

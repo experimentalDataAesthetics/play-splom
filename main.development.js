@@ -1,5 +1,5 @@
-/* eslint strict: 0 */
-'use strict';
+/* eslint global-require: 0 */
+/* eslint import/no-unresolved: 0 */
 /**
  * The backend application that creates windows
  * and launches the frontend application app/index.js
@@ -66,16 +66,16 @@ function loadSounds(window) {
 
 // connect two-way calling of actions
 // the other half is in app.js
-const ipcMain = require('electron').ipcMain;  // eslint-disable-line global-require import/no-unresolved
+const ipcMain = require('electron').ipcMain;
 const handleActionOnMain = require('./app/ipc/handleActionOnMain');
 ipcMain.on('call-action-on-main', (event, payload) => {
   log.debug('call-action-on-main', payload);
   handleActionOnMain(event, payload, soundApp);
 });
 
-// if (debug) {
-//   require('electron-debug')({enabled: debug});  // eslint-disable-line global-require
-// }
+if (debug) {
+  require('electron-debug')({showDevTools: true});
+}
 
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {

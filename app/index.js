@@ -1,4 +1,6 @@
 /* eslint global-require: 0 */
+/* eslint import/no-unresolved: 0 */
+
 /**
  * The frontend application.
  */
@@ -16,10 +18,6 @@ import { mapXYtoParam } from './actions/mapping';
 
 import './app.global.css';
 import { join } from 'path';
-
-// how ironic, the path to config is different
-// const config = require(production ? './config/index' : '../config/index');
-// console.log('dirname', __dirname);
 
 const store = configureStore();
 const history = syncHistoryWithStore(hashHistory, store);
