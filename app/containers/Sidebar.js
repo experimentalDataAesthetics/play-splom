@@ -16,11 +16,11 @@ export default class Sidebar extends Component {
     return h('aside',
       { className: styles.sidebar },
       [
-        h(DatasetSelector, { className: styles.datasets }),
-        h(SoundSelector, { className: styles.sounds }),
-        h(LoopControl, { className: styles.loopControl }),
-        h(ParamMapping, { className: styles.params }),
-        h(Help, { className: styles.help })
+        h(DatasetSelector),
+        h(LoopControl),
+        h(SoundSelector),
+        h(ParamMapping),
+        h(Help)
       ]);
   }
 }

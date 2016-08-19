@@ -17,7 +17,11 @@ class SoundSelector extends React.Component {
         {
           value: this.props.selectedSound,
           onChange: this.props.onSelect,
-          className: 'selectable-list'
+          className: 'selectable-list',
+          style: {
+            borderBottom: '1px solid #eee',
+            borderTop: '1px solid #eee'
+          }
         },
         this.props.sounds.map((sound) => {
           return h(ListItem, {

@@ -4,6 +4,7 @@ import connect from '../utils/reduxers';
 import RaisedButton from 'material-ui/RaisedButton';
 import { List, ListItem, MakeSelectable } from 'material-ui/List';
 const SelectableList = MakeSelectable(List);
+import styles from './Sidebar.css';
 
 import {
   loadDataset,
@@ -25,7 +26,7 @@ class DatasetSelector extends Component {
   };
 
   render() {
-    return h('div.dataset-selector', [
+    return h(`div.dataset-selector.${styles.datasets}`, [
       h('h6', 'Datasets'),
       h(SelectableList,
         {

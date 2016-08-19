@@ -19,17 +19,13 @@
   font-variant: small-caps;
 }
 
-/*.sidebar .selectable-list {
-  overflow-y: auto;
-  margin-bottom: 3px;
-}*/
 
-/*.sounds {
-  height: 100px;
-}*/
+@media (min-height: 1000px) {
+  .datasets {
+    margin-top: 7rem;
+  }
+}
+
 .params {
   flex: 1;
 }
-/*.help {
-  height: 150px;
-}*/
