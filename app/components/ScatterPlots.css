@@ -1,9 +1,12 @@
 .title {
-  font-size: 5em;
-  opacity: 0.05;
+  font-size: 7em;
+  opacity: 0.2;
   text-transform: uppercase;
   /*font-variant: small-caps;*/
   letter-spacing: .16em;
+  fill: #dddddd;
+  stroke: #bbbbbb;
+  stroke-width: 1px;
 }
 
 .pending {
