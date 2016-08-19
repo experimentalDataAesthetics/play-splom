@@ -8,7 +8,7 @@ import { debounce } from 'lodash';
 import d3 from 'd3';
 import style from './XYParamTable.css';
 
-const MIN = 0.1;
+const MIN = 0.05;
 const MAX = 60.0;
 const mapv = d3.scale.pow().exponent(2).range([MIN, MAX]);
 const unmapv = mapv.invert;

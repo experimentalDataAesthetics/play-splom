@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import connect from '../utils/reduxers';
 import { getLoop, getLoopBox } from '../selectors';
 import { now } from 'lodash';
@@ -41,20 +41,22 @@ class LoopPlayHead extends React.Component {
 
   render() {
     if (this.props.loopBox) {
-      const x = (this.state && this.state.pos || 0) * this.props.loopBox.width + this.props.loopBox.x;
+      const x = (this.state && this.state.pos || 0) * this.props.loopBox.width
+        + this.props.loopBox.x;
       const y = this.props.loopBox.y;
       return (
         <g
           transform={`translate(${x}, ${y})`}
           width={this.props.loopBox.width}
-          height={this.props.loopBox.height}>
-            <rect
-              x={0}
-              y={0}
-              width={4}
-              height={this.props.loopBox.height}
-              className={styles.playHead}
-            />
+          height={this.props.loopBox.height}
+        >
+          <rect
+            x={0}
+            y={0}
+            width={4}
+            height={this.props.loopBox.height}
+            className={styles.playHead}
+          />
         </g>
       );
     }
