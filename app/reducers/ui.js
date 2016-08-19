@@ -1,6 +1,3 @@
-import getMuiTheme from 'material-ui/styles/getMuiTheme';
-import darkBaseTheme from 'material-ui/styles/baseThemes/darkBaseTheme';
-import lightBaseTheme from 'material-ui/styles/baseThemes/lightBaseTheme';
 
 import {
   FOCUS_SCATTERPLOT,
@@ -12,6 +9,8 @@ import {
   SET_NOTIFICATION
 } from '../actionTypes';
 import u from 'updeep';
+import defaultTheme from '../theme';
+
 
 const initial = {
   focused: null,
@@ -24,7 +23,7 @@ const initial = {
     width: window.innerWidth,
     height: window.innerHeight
   },
-  muiTheme: getMuiTheme(lightBaseTheme)
+  muiTheme: defaultTheme()
 };
 
 /**

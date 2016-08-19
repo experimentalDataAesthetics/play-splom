@@ -21,7 +21,7 @@ const stateToProps = {
  * This is the layout of the application itself.
  * An SVG plot area on the left and a Sidebar on the right.
  *
- * It wraps everything ina MuiThemeProvider which allows selectable
+ * It wraps everything in a MuiThemeProvider which allows selectable
  * styling themes that child components can access via the context.
  *
  * The layout sizes are all calculated in getLayout which recalculates

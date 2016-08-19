@@ -2,7 +2,6 @@ import { centeredSquareWithMargin } from '../utils/layout';
 import { createSelector } from 'reselect';
 import { getDatasetMetadata, getFeatures } from './dataset';
 import { getLoop } from './sound';
-import * as _ from 'lodash';
 
 export const getWindowSize = (state) => state.ui.windowSize;
 
