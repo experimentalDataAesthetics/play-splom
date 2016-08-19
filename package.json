@@ -2,7 +2,7 @@
   "name": "play-splom",
   "productName": "PlaySPLOM",
   "companyName": "Critical Media Lab (IXDM)",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Scatter plot sonification for exploring datasets with sound",
   "license": "MIT",
   "repository": {

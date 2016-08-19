@@ -24,6 +24,12 @@ Some background to the project is described here:
 
 https://medium.com/@crucialfelix/experimental-data-aesthetics-4563d01a5ebb#.3oirsvtq1
 
+### Try it out
+
+Easiest is to download the [latest release from github](https://github.com/experimentalDataAesthetics/play-splom/releases)
+
+- Click and drag on any plot to create a brush and move it around.
+- command-click on a plot to start or change looping.
 
 ## Architecture
 
