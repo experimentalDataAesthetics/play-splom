@@ -6,6 +6,7 @@ import { Slider } from 'material-ui';
 import ToggleButton from './ToggleButton';
 import { debounce } from 'lodash';
 import d3 from 'd3';
+import style from './XYParamTable.css';
 
 const MIN = 0.1;
 const MAX = 60.0;
@@ -60,10 +61,16 @@ class LoopControl extends React.Component {
     );
 
     return (
-      <div>
-        <label>Loop Speed</label>
-        {slider}
-        {button}
+      <div className="loop-control">
+        <table className={style.table}>
+          <tbody>
+            <tr>
+              <th>Loop</th>
+              <td>{button}</td>
+              <td className={style.range}>{slider}</td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     );
   }
