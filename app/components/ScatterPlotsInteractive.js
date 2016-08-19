@@ -5,7 +5,7 @@ import connect from '../utils/reduxers';
 
 import {
   setPointsUnderBrush,
-  toggleLoopMode
+  setLoopBox
 } from '../actions/interaction';
 
 import {
@@ -33,7 +33,7 @@ const selectors = {
 const handlers = {
   setPointsUnderBrush,
   setHovering,
-  toggleLoopMode
+  setLoopBox
 };
 
 
@@ -61,7 +61,7 @@ class ScatterPlotsInteractive extends React.Component {
     features: React.PropTypes.array.isRequired,
     setPointsUnderBrush: React.PropTypes.func.isRequired,
     setHovering: React.PropTypes.func.isRequired,
-    toggleLoopMode: React.PropTypes.func.isRequired
+    setLoopBox: React.PropTypes.func.isRequired
   };
 
   setPointsIn(area, box, points) {
@@ -197,8 +197,8 @@ class ScatterPlotsInteractive extends React.Component {
         onChange: (area) => this.setPointsIn(area, box, points),
         onMouseEnter: () => this.setHoveringBox(box),
         onMetaClick: () => {
-          if (this.props.toggleLoopMode) {
-            this.props.toggleLoopMode(box.m, box.n);
+          if (this.props.setLoopBox) {
+            this.props.setLoopBox(box.m, box.n);
           }
         },
         show: isLastFocused,

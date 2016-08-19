@@ -9,7 +9,7 @@ const customize = {
     textColor: '#777777',
     // buttons
     primary1Color: '#ff0082',
-    disabledColor: 'rgba(#8700ff, 0.25)'
+    disabledColor: '#eeeeee'
   },
   spacing: {
     desktopDrawerMenuItemHeight: 12

@@ -27,7 +27,7 @@ export default class ScatterPlotClickSurface extends React.Component {
     setPointsUnderBrush: React.PropTypes.func.isRequired,
     setHovering: React.PropTypes.func.isRequired,
     muiTheme: React.PropTypes.object.isRequired,
-    toggleLoopMode: React.PropTypes.func.isRequired,
+    setLoopBox: React.PropTypes.func.isRequired,
     isLooping: React.PropTypes.bool.isRequired,
     isPending: React.PropTypes.bool.isRequired
   };
@@ -110,7 +110,7 @@ export default class ScatterPlotClickSurface extends React.Component {
 
       onMouseDown: (e) => {
         if (e.buttons && e.metaKey) {
-          this.props.toggleLoopMode(this.props.m, this.props.n);
+          this.props.setLoopBox(this.props.m, this.props.n);
         } else {
           this._brush(e.clientX, e.clientY);
         }

@@ -1,5 +1,5 @@
 
-var keyMirror = require('keyMirror');
+import keyMirror from 'keymirror';
 
 module.exports = keyMirror({
   SELECT_DATASET: null,
@@ -32,6 +32,7 @@ module.exports = keyMirror({
   SET_POINTS_UNDER_BRUSH: null,
   TOGGLE_LOOP_MODE: null,
   SET_LOOP_TIME: null,
+  SET_LOOP_BOX: null,
 
   // ui
   FOCUS_SCATTERPLOT: null,
