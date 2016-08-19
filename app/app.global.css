@@ -45,3 +45,28 @@ body {
 /*.dataset-selector .selectable-list {
   height: 73px;
 }*/
+
+/* notifications */
+.notification--outer {
+  width: 100%;
+  height: auto;
+  bottom: 0px;
+  top: 0px;
+  left: 0;
+  position: absolute;
+  background-color: rgba(0, 0, 0, 0.4);
+  z-index: 1000;
+}
+
+.notification--inner {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.inform {
+  color: #bbb;
+  font-size: 3em;
+  text-align: center;
+}

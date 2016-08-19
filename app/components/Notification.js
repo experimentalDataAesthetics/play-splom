@@ -10,11 +10,15 @@ import connect from '../utils/reduxers';
 class Notification extends React.Component {
 
   render() {
-    const n = this.props.notification;
-    if (n) {
+    let n = this.props.notification;
+    if (n && n.type) {
       return (
-        <div className={n.type}>
-          {n.message}
+        <div className="notification--outer">
+          <div className="notification--inner">
+            <div className={n.type}>
+              {n.message}
+            </div>
+          </div>
         </div>
       );
     }
