@@ -7,7 +7,7 @@ import h from 'react-hyperscript';
  */
 export default (props) => {
   // move to layout
-  const radius = props.sideLength < 100 ? 1 : 3;
+  const radius = props.sideLength < 150 ? 2 : 3;
   // should not have to flip here
   const flip = props.sideLength;
   return h('g', props.points.map((xy, i) => {
