@@ -134,14 +134,16 @@ function setLoopBox(state, action) {
 function toggleLoopMode(state) {
    /* , action */
   const loopMode = {};
+  const box = get(state, 'loopMode.box');
 
-  if (get(state, 'loopMode.box')) {
+  if (box) {
+    loopMode.lastBox = box;
     loopMode.box = null;
     loopMode.epoch = null;
   } else {
     // or last hovered
-    const box = get(state, 'loopMode.lastBox') || {m: 0, n: 0};
-    return setLoopBox(state, {payload: box})
+    const lastBox = get(state, 'loopMode.lastBox') || {m: 0, n: 0};
+    return setLoopBox(state, {payload: lastBox});
   }
 
   return u({ loopMode }, state);
