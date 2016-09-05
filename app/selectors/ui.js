@@ -35,7 +35,6 @@ export const getLayout = createSelector(
     const sidebarWidth = big ? 300 : 0;
     layout.showSidebar = big;
     layout.svgWidth = windowSize.width - sidebarWidth;
-    layout.margin = MARGIN_BETWEEN_PLOTS;
 
     if (layout.showSidebar) {
       layout.sideBarStyle = {
@@ -56,6 +55,7 @@ export const getLayout = createSelector(
       - (2 * layout.scatterPlotsMargin);
 
     layout.sideLength = layout.plotsWidth / (numFeatures || 1);
+    layout.margin = layout.sideLength > 150 ? MARGIN_BETWEEN_PLOTS : 8;
 
     // each box
     layout.boxes = [];

@@ -25,6 +25,7 @@ export default class Axis extends React.Component {
   render() {
     const sideLength = this.props.sideLength;
     const textColor = this.props.muiTheme.palette.textColor;
+    const numTicks = Math.floor(Math.max(sideLength / 75));
 
     const children = [
       h(XAxis, {
@@ -35,7 +36,7 @@ export default class Axis extends React.Component {
         stroke: textColor,
         tickStroke: textColor,
         tickTextStroke: textColor,
-        xAxisTickCount: 4,
+        xAxisTickCount: numTicks,
         xAxisLabelOffset: 40
       }),
       h(YAxis, {
@@ -46,7 +47,7 @@ export default class Axis extends React.Component {
         stroke: textColor,
         tickStroke: textColor,
         tickTextStroke: textColor,
-        yAxisTickCount: 4,
+        yAxisTickCount: numTicks,
         yAxisLabelOffset: 40
       })
     ];
