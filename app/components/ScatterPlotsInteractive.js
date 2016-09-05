@@ -121,7 +121,7 @@ class ScatterPlotsInteractive extends React.Component {
     const innerSideLength = sideLength - layout.margin;
     const children = [];
 
-    const getBox = (m, n) => this.props.layout.boxes[m * this.props.numFeatures + n];
+    const getBox = (m, n) => this.props.layout.boxes[(m * this.props.numFeatures) + n];
 
     if (this.props.featureSideLengthScale.length > 0) {
       if (_.isNumber(this.props.hovering.m)) {
@@ -216,7 +216,10 @@ class ScatterPlotsInteractive extends React.Component {
       {
         width: this.props.width,
         height: this.props.height,
-        className: 'ScatterPlotsInteractive'
+        className: 'ScatterPlotsInteractive',
+        onMouseLeave: () => {
+          this.setHoveringBox({})
+        }
       },
       children
     );

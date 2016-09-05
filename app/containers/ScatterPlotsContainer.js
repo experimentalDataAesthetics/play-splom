@@ -58,7 +58,7 @@ class ScatterPlotsContainer extends Component {
       {
         height: props.height,
         width: props.width,
-        transform: `translate(${padding}, ${padding})`,
+        transform: `translate(${padding}, ${padding})`
       },
       [
         plots,
