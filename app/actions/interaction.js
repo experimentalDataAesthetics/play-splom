@@ -65,6 +65,34 @@ export function setLoopBox(m, n) {
   };
 }
 
+/**
+ * If is playing loop and loop box is set
+ * then clip that to the current dataset dimensions.
+ */
+export function clipLoopBox() {
+  return (dispatch, getState) => {
+    const s = getState();
+    const loopBox = _.get(s, 'interaction.loopMode.box');
+    if (!loopBox) {
+      return;
+    }
+
+    console.log(s);
+    const dataset = _.get(s, '.dataset.data');
+    if (!dataset) {
+      return;
+    }
+
+    const maxDim = dataset.data.columnNames().length - 1;
+    dispatch({
+      type: SET_LOOP_BOX,
+      payload: {
+        m: Math.min(loopBox.m, maxDim),
+        n: Math.min(loopBox.n, maxDim)
+      }
+    });
+  };
+}
 
 /**
  * toggleLoopMode - Turn looping on or off

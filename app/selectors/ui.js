@@ -141,13 +141,15 @@ export const getLoopBox = createSelector(
   [getLayout, getNumFeatures, getLoop],
   (layout, numFeatures, loopMode) => {
     if (loopMode.box) {
-      const box = layout.boxes[loopMode.box.m * numFeatures + loopMode.box.n];
-      return {
-        x: box.x,
-        y: box.y,
-        width: layout.sideLength - layout.margin,
-        height: layout.sideLength - layout.margin
-      };
+      const box = layout.boxes[(loopMode.box.m * numFeatures) + loopMode.box.n];
+      if (box) {
+        return {
+          x: box.x,
+          y: box.y,
+          width: layout.sideLength - layout.margin,
+          height: layout.sideLength - layout.margin
+        };
+      }
     }
   }
 );

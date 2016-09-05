@@ -1,3 +1,8 @@
+import fs from 'fs';
+import { extname, basename, join } from 'path';
+import Miso from 'miso.dataset';
+import jetpack from 'fs-jetpack';
+
 import {
   SELECT_DATASET,
   SET_DATASETS,
@@ -7,12 +12,17 @@ import callActionOnMain from '../ipc/callActionOnMain';
 import {
   notify
 } from './ui';
+import {
+  clipLoopBox
+} from './interaction';
 
-const Miso = require('miso.dataset');
-const jetpack = require('fs-jetpack');
-const fs = require('fs');
-import { extname, basename, join } from 'path';
-
+/**
+ * setDataset - having loaded and parsed a dataset, put that into the redux state
+ *
+ * @param {String} path         Path the dataset was loaded from
+ * @param {Miso.Dataset} data   The data itself
+ * @param {Object} metadata     Database metadata information (from Miso. often blank)
+ */
 export function setDataset(path, data, metadata) {
   const name = basename(path, extname(path));
   return {
@@ -26,6 +36,9 @@ export function setDataset(path, data, metadata) {
   };
 }
 
+/**
+ * Call the main process to open a select file dialog
+ */
 export function openDatasetDialog() {
   return () => {
     callActionOnMain({
@@ -89,6 +102,7 @@ export function loadDataset(path) {
       ds.fetch().then((data3) => {
         dispatch(notify());
         dispatch(setDataset(path, data3));
+        dispatch(clipLoopBox());
       }, (error) => notify('error', error));
     });
   };

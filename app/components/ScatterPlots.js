@@ -2,8 +2,8 @@ import React from 'react';
 import h from 'react-hyperscript';
 import * as _ from 'lodash';
 
-import ScatterPlot from '../components/ScatterPlot';
 import muiThemeable from 'material-ui/styles/muiThemeable';
+import ScatterPlot from '../components/ScatterPlot';
 import style from './ScatterPlots.css';
 
 /**

@@ -284,6 +284,13 @@ export function loopModeEvents(m, n, npoints, mapping, mappingControls, sound, l
     }
   });
 
+  // if loopMode is for any reason not up to date then
+  // just return an empty list
+  const np = npoints[m];
+  if (!np) {
+    return [];
+  }
+
   return npoints[m].values.map((x, i) => {
     const y = npoints[n].values[i];
     const args = {};

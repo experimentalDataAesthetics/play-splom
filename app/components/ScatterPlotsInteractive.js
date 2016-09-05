@@ -129,18 +129,21 @@ class ScatterPlotsInteractive extends React.Component {
         const hovy = (this.props.hovering.n || 0);
         const featx = this.props.featureSideLengthScale[hovx];
         const featy = this.props.featureSideLengthScale[hovy];
-        const box = getBox(hovx, hovy);
-        if (box) {
-          children.push(h(Axis, {
-            xOffset: box.x,
-            yOffset: box.y,
-            sideLength: innerSideLength,
-            muiTheme: this.props.muiTheme,
-            xScale: featx.mappedScale,
-            yScale: featy.mappedScale,
-            xLabel: featx.feature.name,
-            yLabel: featy.feature.name
-          }));
+        // if loading a new dataset it is possible for the current hover to be invalidated.
+        if (featx && featy) {
+          const box = getBox(hovx, hovy);
+          if (box) {
+            children.push(h(Axis, {
+              xOffset: box.x,
+              yOffset: box.y,
+              sideLength: innerSideLength,
+              muiTheme: this.props.muiTheme,
+              xScale: featx.mappedScale,
+              yScale: featy.mappedScale,
+              xLabel: featx.feature.name,
+              yLabel: featy.feature.name
+            }));
+          }
         }
       }
     }
