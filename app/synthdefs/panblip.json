@@ -2,7 +2,7 @@
   "hasArrayArgs": false,
   "inputs": [],
   "hasGate": false,
-  "name": "shockwave-microsound-2",
+  "name": "panblip",
   "hasVariants": false,
   "output": [
     {
@@ -21,54 +21,6 @@
       "index": 0
     },
     {
-      "name": "amp",
-      "defaultValue": 0.10000000149012,
-      "lag": 0,
-      "rate": "scalar",
-      "spec": {
-        "default": 0,
-        "maxval": 1,
-        "class": "ControlSpec",
-        "minval": 0,
-        "warp": "amp",
-        "step": 0,
-        "units": ""
-      },
-      "index": 1
-    },
-    {
-      "name": "freq",
-      "defaultValue": 440,
-      "lag": 0,
-      "rate": "scalar",
-      "spec": {
-        "default": 440,
-        "maxval": 10000,
-        "class": "ControlSpec",
-        "minval": 40,
-        "warp": "exp",
-        "step": 0,
-        "units": " Hz"
-      },
-      "index": 2
-    },
-    {
-      "name": "sustain",
-      "defaultValue": 0.0099999997764826,
-      "lag": 0,
-      "rate": "scalar",
-      "spec": {
-        "default": 1,
-        "maxval": 4,
-        "class": "ControlSpec",
-        "minval": 0.05,
-        "warp": "exp",
-        "step": 0,
-        "units": ""
-      },
-      "index": 3
-    },
-    {
       "name": "pan",
       "defaultValue": 0,
       "lag": 0,
@@ -82,16 +34,72 @@
         "step": 0,
         "units": ""
       },
+      "index": 1
+    },
+    {
+      "name": "verb",
+      "defaultValue": 0,
+      "lag": 0,
+      "rate": "scalar",
+      "index": 2
+    },
+    {
+      "name": "freq",
+      "defaultValue": 500,
+      "lag": 0,
+      "rate": "scalar",
+      "spec": {
+        "default": 440,
+        "maxval": 10000,
+        "class": "ControlSpec",
+        "minval": 40,
+        "warp": "exp",
+        "step": 0,
+        "units": " Hz"
+      },
+      "index": 3
+    },
+    {
+      "name": "sweep",
+      "defaultValue": 1000,
+      "lag": 0,
+      "rate": "scalar",
+      "spec": {
+        "default": 1,
+        "maxval": 5000,
+        "class": "ControlSpec",
+        "minval": -5000,
+        "warp": "linear",
+        "step": 0,
+        "units": ""
+      },
       "index": 4
+    },
+    {
+      "name": "dur",
+      "defaultValue": 0.25,
+      "lag": 0,
+      "rate": "scalar",
+      "spec": {
+        "default": 0.05,
+        "maxval": 0.3,
+        "class": "ControlSpec",
+        "minval": 0.01,
+        "warp": "exp",
+        "step": 0,
+        "units": ""
+      },
+      "index": 5
     }
   ],
   "canFreeSynth": true,
-  "sourceCode": "SynthDef('shockwave-microsound-2', { |out, amp=0.1, freq=440, sustain=0.01, pan|var snd = FSinOsc.ar(freq);var amp2 = amp * AmpComp.ir(freq.max(50)) * 0.5;var env = EnvGen.ar(Env.sine(sustain, amp2), doneAction: 2);OffsetOut.ar(out, Pan2.ar(snd * env, pan));})",
+  "sourceCode": "SynthDef('panblip', { arg out, pan, verb, freq=500, sweep=1000, dur=0.25;  OffsetOut.ar(out,    Pan2.ar(      SinOsc.ar(Line.kr(freq, (freq + sweep).clip(1, 20000), dur, doneAction: 2), 0, dur),      pan    ) * 0.7,  )})",
   "controlNames": [
     "out",
-    "amp",
+    "pan",
+    "verb",
     "freq",
-    "sustain",
-    "pan"
+    "sweep",
+    "dur"
   ]
 }
