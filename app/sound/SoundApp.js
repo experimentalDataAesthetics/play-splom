@@ -23,6 +23,7 @@ const options = _.assign({}, config.supercolliderjs.options || {}, {
   // so it requires that a path to an external SuperCollider.app is supplied
   // in config/development.json
   scsynth: path.join(config.appRoot, 'vendor/supercollider/osx/scsynth'),
+  serverPort: 58000,
   echo: true,  // wonky. this means post osc messages to console
   debug: true,
   includePaths: [],
