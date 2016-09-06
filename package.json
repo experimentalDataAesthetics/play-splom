@@ -68,6 +68,7 @@
     "source-map-support": "^0.4.2",
     "supercolliderjs": "^0.12.0",
     "updeep": "^0.16.1",
+    "watch": "^0.19.2",
     "winston": "^2.2.0"
   },
   "devDependencies": {

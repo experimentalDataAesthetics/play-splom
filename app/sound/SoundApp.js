@@ -5,6 +5,7 @@ const path = require('path');
 const fs = require('fs');
 const Bacon = require('baconjs');
 const jetpack = require('fs-jetpack');
+const watch = require('watch');
 
 /**
  * config is loaded from config/(development|production|test).json
@@ -205,6 +206,12 @@ export default class SoundApp {
         type: 'SET_SOUNDS',
         payload: sounds
       });
+    });
+  }
+
+  watchDir(synthDefsDir, dispatch) {
+    watch.watchTree(synthDefsDir, {interval: 1}, () => {
+      this.loadSounds(synthDefsDir, dispatch);
     });
   }
 }

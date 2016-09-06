@@ -57,11 +57,17 @@ const synthDefsDir = path.join(__dirname, 'app/synthdefs');
 
 const soundApp = new SoundApp(sclog);
 
+
 function loadSounds(window) {
-  soundApp.loadSounds(synthDefsDir, (action) => {
+  const soundAppDispatch = (action) => {
     log.debug('dispatch-action', action);
     window.webContents.send('dispatch-action', action);
-  });
+  };
+
+  soundApp.loadSounds(synthDefsDir, soundAppDispatch);
+  if (process.env.NODE_ENV === 'development') {
+    soundApp.watchDir(synthDefsDir, soundAppDispatch);
+  }
 }
 
 // connect two-way calling of actions
@@ -109,15 +115,14 @@ app.on('ready', () => {
     mainWindow.focus();
 
     soundApp.start(synthDefsDir)
-      // .then(() => {
-      //   log.debug('SoundApp started');
-      // })
+      .then(() => {
+        loadSounds(mainWindow);
+      })
       .catch((error) => {
         log.error(error);
         throw error;
       });
 
-    loadSounds(mainWindow);
   });
 
   mainWindow.on('closed', () => {
