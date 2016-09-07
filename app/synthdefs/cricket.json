@@ -2,7 +2,7 @@
   "hasArrayArgs": false,
   "inputs": [],
   "hasGate": false,
-  "name": "shockwave-microsound",
+  "name": "cricket",
   "hasVariants": false,
   "output": [
     {
@@ -17,49 +17,49 @@
       "name": "out",
       "defaultValue": 0,
       "lag": 0,
-      "rate": "scalar",
+      "rate": "control",
       "index": 0
     },
     {
-      "name": "amp",
-      "defaultValue": 0.10000000149012,
+      "name": "y1",
+      "defaultValue": 1.4299999475479,
       "lag": 0,
-      "rate": "scalar",
+      "rate": "control",
       "spec": {
         "default": 0,
-        "maxval": 1,
+        "maxval": 7,
         "class": "ControlSpec",
-        "minval": 0,
-        "warp": "amp",
+        "minval": 1,
+        "warp": "linear",
         "step": 0,
         "units": ""
       },
       "index": 1
     },
     {
-      "name": "freq",
-      "defaultValue": 440,
+      "name": "y2",
+      "defaultValue": 1642,
       "lag": 0,
-      "rate": "scalar",
+      "rate": "control",
       "spec": {
-        "default": 440,
-        "maxval": 20000,
+        "default": 0,
+        "maxval": 2680,
         "class": "ControlSpec",
-        "minval": 20,
-        "warp": "exp",
+        "minval": 1642,
+        "warp": "linear",
         "step": 0,
-        "units": " Hz"
+        "units": ""
       },
       "index": 2
     },
     {
-      "name": "sustain",
-      "defaultValue": 0.0099999997764826,
+      "name": "timeScale",
+      "defaultValue": 1,
       "lag": 0,
-      "rate": "scalar",
+      "rate": "control",
       "spec": {
-        "default": 1,
-        "maxval": 4,
+        "default": 0,
+        "maxval": 1,
         "class": "ControlSpec",
         "minval": 0.05,
         "warp": "exp",
@@ -72,7 +72,7 @@
       "name": "pan",
       "defaultValue": 0,
       "lag": 0,
-      "rate": "scalar",
+      "rate": "control",
       "spec": {
         "default": 0,
         "maxval": 1,
@@ -86,12 +86,12 @@
     }
   ],
   "canFreeSynth": true,
-  "sourceCode": "SynthDef('shockwave-microsound', { |out, amp=0.1, freq=440, sustain=0.01, pan|var snd = FSinOsc.ar(freq);var amp2 = amp * AmpComp.ir(freq.max(50)) * 0.5;var env = EnvGen.ar(Env.sine(sustain, amp2), doneAction: 2);OffsetOut.ar(out, Pan2.ar(snd * env, pan));})",
+  "sourceCode": "SynthDef('cricket', { arg out=0, y1=1.43, y2=1642, timeScale=1, pan=0;  var modulator, mod1, mod2, mod3;  // repeat time is 0.7s: equates to 1.43 Hz.  modulator = LFSaw.ar(y1, 1, 0.5, 0.5);  // sound  mod2 = (modulator * y2 * 2pi).cos.squared;  mod3 = modulator * 3147;  mod3 = (mod3 * 2pi).cos + ((mod3 * 2 * 2pi).cos * 0.3);  mod1 = ((Wrap.ar(modulator.min(0.1714) * 5.84) - 0.5).squared * (-1) + 1) * (mod2 * mod3);  mod1 = mod1 * EnvGen.kr(Env.perc(0.01, 0.2), timeScale: timeScale, doneAction: 2);  mod1 = Pan2.ar(mod1 * 0.1, pan);  OffsetOut.ar(out, mod1);})",
   "controlNames": [
     "out",
-    "amp",
-    "freq",
-    "sustain",
+    "y1",
+    "y2",
+    "timeScale",
     "pan"
   ]
 }
