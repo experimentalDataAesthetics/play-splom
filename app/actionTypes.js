@@ -42,6 +42,7 @@ module.exports = keyMirror({
   SET_NOTIFICATION: null,
 
   // main
-  OPEN_DATASET_DIALOG: null
+  OPEN_DATASET_DIALOG: null,
+  ERROR_ON_MAIN: null
 
 });

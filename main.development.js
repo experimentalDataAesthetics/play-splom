@@ -20,7 +20,8 @@ const Menu = electron.Menu;
 const shell = electron.shell;
 const path = require('path');
 const pkg = require('./package.json');
-import SoundApp from './app/sound/SoundApp.js';
+import SoundApp from './app/sound/SoundApp';
+import {ERROR_ON_MAIN} from './app/actionTypes';
 
 const debug = process.env.NODE_ENV !== 'development';
 // uncomment this to force debug mode in a production build
@@ -57,6 +58,24 @@ const synthDefsDir = path.join(__dirname, 'app/synthdefs');
 
 const soundApp = new SoundApp(sclog);
 
+function errorOnMain(error) {
+  console.error(error);
+  console.error(error.stack);
+  if (error.data) {
+    console.error(error.data)
+  }
+
+  if (mainWindow) {
+    mainWindow.webContents.send('dispatch-action', {
+      type: ERROR_ON_MAIN,
+      payload: {
+        message: error.message,
+        stack: error.stack,
+        data: error.data
+      }
+    })
+  }
+}
 
 function loadSounds(window) {
   const soundAppDispatch = (action) => {
@@ -64,7 +83,7 @@ function loadSounds(window) {
     window.webContents.send('dispatch-action', action);
   };
 
-  soundApp.loadSounds(synthDefsDir, soundAppDispatch);
+  soundApp.loadSounds(synthDefsDir, soundAppDispatch).catch(errorOnMain);
   if (process.env.NODE_ENV === 'development') {
     soundApp.watchDir(synthDefsDir, soundAppDispatch);
   }
@@ -103,9 +122,11 @@ app.on('ready', () => {
 
   mainWindow.webContents.on('crashed', log.error);
   mainWindow.on('unresponsive', log.error);
-  process.on('uncaughtException', log.error);
+
+  process.on('uncaughtException', errorOnMain);
   process.on('unhandledRejection', (reason) => {
     log.error('Unhandled Rejection:', reason, reason && reason.stack);
+    errorOnMain(reason);
   });
 
   mainWindow.loadURL(`file://${__dirname}/app/app.html`);
@@ -119,8 +140,9 @@ app.on('ready', () => {
         loadSounds(mainWindow);
       })
       .catch((error) => {
-        log.error(error);
-        throw error;
+        console.error('SoundApp failed to start', error);
+        // and maybe push it to the browser thread to notify user
+        errorOnMain(error);
       });
 
   });

@@ -57,7 +57,8 @@ export default class SoundApp {
     return new Promise((resolve, reject) => {
       fs.readdir(synthDefsDir, (err, files) => {
         if (err) {
-          throw new Error(err);
+          reject(err);
+          return;
         }
 
         const hasSclang = Boolean(config.supercolliderjs.options.sclang)
@@ -186,32 +187,39 @@ export default class SoundApp {
    * Read sounds metadata files and dispatch setSounds action to renderer process.
    */
   loadSounds(synthDefsDir, dispatch) {
-    fs.readdir(synthDefsDir, (err, files) => {
-      if (err) {
-        throw new Error(err);
-      }
-
-      const sounds = [];
-
-      files.forEach((p) => {
-        if (path.extname(p) === '.json' && (p !== 'master.json') && (p !== 'mixToMaster.json')) {
-          const fullpath = path.join(synthDefsDir, p);
-          const data = jetpack.read(fullpath, 'json');
-          data.path = fullpath;
-          sounds.push(data);
+    return new Promise((resolve, reject) => {
+      fs.readdir(synthDefsDir, (error, files) => {
+        if (error) {
+          return reject(error);
         }
-      });
 
-      dispatch({
-        type: 'SET_SOUNDS',
-        payload: sounds
+        const sounds = [];
+
+        // reject on any error ?
+        // or dispatch the error
+        files.forEach((p) => {
+          if (path.extname(p) === '.json' && (p !== 'master.json') && (p !== 'mixToMaster.json')) {
+            const fullpath = path.join(synthDefsDir, p);
+            const data = jetpack.read(fullpath, 'json');
+            data.path = fullpath;
+            sounds.push(data);
+          }
+        });
+
+        dispatch({
+          type: 'SET_SOUNDS',
+          payload: sounds
+        });
+        resolve();
       });
     });
   }
 
   watchDir(synthDefsDir, dispatch) {
     watch.watchTree(synthDefsDir, {interval: 1}, () => {
-      this.loadSounds(synthDefsDir, dispatch);
+      this.loadSounds(synthDefsDir, dispatch).catch((error) => {
+        console.error(error);
+      });
     });
   }
 }
