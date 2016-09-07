@@ -16,7 +16,7 @@
       "rate": "audio",
       "startingChannel": "out",
       "numberOfChannels": 2,
-      "type": "Out"
+      "type": "OffsetOut"
     }
   ],
   "controls": [
@@ -36,7 +36,7 @@
     }
   ],
   "canFreeSynth": false,
-  "sourceCode": "SynthDef('mixToMaster', { arg out=0, in=0;  Out.ar(out, In.ar(in, 2));})",
+  "sourceCode": "SynthDef('mixToMaster', { arg out=0, in=0;  OffsetOut.ar(out, In.ar(in, 2));})",
   "controlNames": [
     "out",
     "in"

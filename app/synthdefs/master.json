@@ -16,7 +16,7 @@
       "rate": "audio",
       "startingChannel": "out",
       "numberOfChannels": 2,
-      "type": "Out"
+      "type": "OffsetOut"
     }
   ],
   "controls": [
