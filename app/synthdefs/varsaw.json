@@ -2,7 +2,7 @@
   "hasArrayArgs": false,
   "inputs": [],
   "hasGate": false,
-  "name": "grainFM",
+  "name": "varsaw",
   "hasVariants": false,
   "output": [
     {
@@ -17,14 +17,14 @@
       "name": "out",
       "defaultValue": 0,
       "lag": 0,
-      "rate": "scalar",
+      "rate": "control",
       "index": 0
     },
     {
-      "name": "carfreq",
+      "name": "freq",
       "defaultValue": 440,
       "lag": 0,
-      "rate": "scalar",
+      "rate": "control",
       "spec": {
         "default": 440,
         "maxval": 10000,
@@ -37,47 +37,8 @@
       "index": 1
     },
     {
-      "name": "modfreq",
-      "defaultValue": 20,
-      "lag": 0,
-      "rate": "scalar",
-      "spec": {
-        "default": 440,
-        "maxval": 10000,
-        "class": "ControlSpec",
-        "minval": 40,
-        "warp": "exp",
-        "step": 0,
-        "units": " Hz"
-      },
-      "index": 2
-    },
-    {
-      "name": "moddepth",
-      "defaultValue": 1,
-      "lag": 0,
-      "rate": "scalar",
-      "index": 3
-    },
-    {
-      "name": "sustain",
-      "defaultValue": 0.019999999552965,
-      "lag": 0,
-      "rate": "scalar",
-      "spec": {
-        "default": 1,
-        "maxval": 4,
-        "class": "ControlSpec",
-        "minval": 0.05,
-        "warp": "exp",
-        "step": 0,
-        "units": ""
-      },
-      "index": 4
-    },
-    {
-      "name": "amp",
-      "defaultValue": 0.10000000149012,
+      "name": "width",
+      "defaultValue": 0,
       "lag": 0,
       "rate": "control",
       "spec": {
@@ -85,11 +46,27 @@
         "maxval": 1,
         "class": "ControlSpec",
         "minval": 0,
-        "warp": "amp",
+        "warp": "linear",
         "step": 0,
         "units": ""
       },
-      "index": 5
+      "index": 2
+    },
+    {
+      "name": "timeScale",
+      "defaultValue": 1,
+      "lag": 0,
+      "rate": "control",
+      "spec": {
+        "default": 0,
+        "maxval": 1,
+        "class": "ControlSpec",
+        "minval": 0.05,
+        "warp": "exp",
+        "step": 0,
+        "units": ""
+      },
+      "index": 3
     },
     {
       "name": "pan",
@@ -105,18 +82,16 @@
         "step": 0,
         "units": ""
       },
-      "index": 6
+      "index": 4
     }
   ],
   "canFreeSynth": true,
-  "sourceCode": "SynthDef('grainFM', {|out, carfreq=440, modfreq=20, moddepth = 1, sustain=0.02, amp=0.1, pan|var env = EnvGen.ar(Env.sine(sustain, amp), doneAction: 2);var sound = SinOsc.ar(carfreq, SinOsc.ar(modfreq) * moddepth) * env * AmpCompA.ir(carfreq.max(50));OffsetOut.ar(out, Pan2.ar(sound, pan))})",
+  "sourceCode": "SynthDef('varsaw', { arg out=0, freq=440, width=0, timeScale=1, pan=0;  var saw, envd, panned;  saw = VarSaw.ar(freq, 0, width);  envd = saw * EnvGen.kr(Env.sine(0.1, 0.2), timeScale: timeScale, doneAction: 2);  panned = Pan2.ar(envd * AmpCompA.kr(freq, 0.2, 0.7), pan);  OffsetOut.ar(out, panned);})",
   "controlNames": [
     "out",
-    "carfreq",
-    "modfreq",
-    "moddepth",
-    "sustain",
-    "amp",
+    "freq",
+    "width",
+    "timeScale",
     "pan"
   ]
 }
