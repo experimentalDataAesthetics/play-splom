@@ -92,7 +92,7 @@ export default class SoundApp {
         const mixToMaster = [
           'synth',
           {
-            def: sc.h(synthDef('mixToMaster')),
+            def: synthDef('mixToMaster'),
             args: {
               in: (context) => context.out,
               out: 0
@@ -118,7 +118,7 @@ export default class SoundApp {
           [
             'synth',
             {
-              def: sc.h(synthDef('master')),
+              def: synthDef('master'),
               args: this.masterArgs
             },
             [
