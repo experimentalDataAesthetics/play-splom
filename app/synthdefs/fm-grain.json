@@ -2,7 +2,7 @@
   "hasArrayArgs": false,
   "inputs": [],
   "hasGate": false,
-  "name": "cricket",
+  "name": "fm-grain",
   "hasVariants": false,
   "output": [
     {
@@ -21,36 +21,52 @@
       "index": 0
     },
     {
-      "name": "y1",
-      "defaultValue": 1.4299999475479,
+      "name": "carrierFreq",
+      "defaultValue": 440,
       "lag": 0,
       "rate": "control",
       "spec": {
         "default": 0,
-        "maxval": 7,
+        "maxval": 9000,
         "class": "ControlSpec",
-        "minval": 1,
-        "warp": "linear",
+        "minval": 40,
+        "warp": "exp",
         "step": 0,
         "units": ""
       },
       "index": 1
     },
     {
-      "name": "y2",
-      "defaultValue": 1642,
+      "name": "modulatorFreq",
+      "defaultValue": 10,
       "lag": 0,
       "rate": "control",
       "spec": {
         "default": 0,
-        "maxval": 2680,
+        "maxval": 9000,
         "class": "ControlSpec",
-        "minval": 1642,
-        "warp": "linear",
+        "minval": 40,
+        "warp": "exp",
         "step": 0,
         "units": ""
       },
       "index": 2
+    },
+    {
+      "name": "modulatorIndex",
+      "defaultValue": 0,
+      "lag": 0,
+      "rate": "control",
+      "spec": {
+        "default": 0,
+        "maxval": 10,
+        "class": "ControlSpec",
+        "minval": 0,
+        "warp": "linear",
+        "step": 0,
+        "units": ""
+      },
+      "index": 3
     },
     {
       "name": "timeScale",
@@ -66,32 +82,16 @@
         "step": 0,
         "units": ""
       },
-      "index": 3
-    },
-    {
-      "name": "pan",
-      "defaultValue": 0,
-      "lag": 0,
-      "rate": "control",
-      "spec": {
-        "default": 0,
-        "maxval": 1,
-        "class": "ControlSpec",
-        "minval": -1,
-        "warp": "linear",
-        "step": 0,
-        "units": ""
-      },
       "index": 4
     }
   ],
   "canFreeSynth": true,
-  "sourceCode": "SynthDef('cricket', { arg out=0, y1=1.43, y2=1642, timeScale=1, pan=0;  var modulator, mod1, mod2, mod3;  // repeat time is 0.7s: equates to 1.43 Hz.  modulator = LFSaw.ar(y1, 1, 0.5, 0.5);  // sound  mod2 = (modulator * y2 * 2pi).cos.squared;  mod3 = modulator * 3147;  mod3 = (mod3 * 2pi).cos + ((mod3 * 2 * 2pi).cos * 0.3);  mod1 = ((Wrap.ar(modulator.min(0.1714) * 5.84) - 0.5).squared * (-1) + 1) * (mod2 * mod3);  mod1 = mod1 * EnvGen.kr(Env.perc(0.01, 0.2), timeScale: timeScale, doneAction: 2);  mod1 = Pan2.ar(mod1 * 0.1, pan);  OffsetOut.ar(out, mod1);})",
+  "sourceCode": "SynthDef('fm-grain', { arg out=0, carrierFreq=440, modulatorFreq=10, modulatorIndex=0, timeScale=1.0;  var amp, modulator, carrier;  amp = EnvGen.kr(Env.sine(0.1, 0.2),              timeScale: timeScale,              doneAction: 2);  modulator = SinOsc.ar(freq: modulatorFreq, mul: modulatorIndex * modulatorFreq);  carrier = SinOsc.ar(freq: carrierFreq + modulator, mul: amp);  OffsetOut.ar(out, [carrier, carrier]);})",
   "controlNames": [
     "out",
-    "y1",
-    "y2",
-    "timeScale",
-    "pan"
+    "carrierFreq",
+    "modulatorFreq",
+    "modulatorIndex",
+    "timeScale"
   ]
 }

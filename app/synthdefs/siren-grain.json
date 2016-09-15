@@ -2,7 +2,7 @@
   "hasArrayArgs": false,
   "inputs": [],
   "hasGate": false,
-  "name": "cricket",
+  "name": "siren-grain",
   "hasVariants": false,
   "output": [
     {
@@ -21,36 +21,52 @@
       "index": 0
     },
     {
-      "name": "y1",
-      "defaultValue": 1.4299999475479,
+      "name": "fundfreq",
+      "defaultValue": 440,
       "lag": 0,
       "rate": "control",
       "spec": {
         "default": 0,
-        "maxval": 7,
+        "maxval": 10240,
         "class": "ControlSpec",
-        "minval": 1,
-        "warp": "linear",
+        "minval": 40,
+        "warp": "exp",
         "step": 0,
         "units": ""
       },
       "index": 1
     },
     {
-      "name": "y2",
-      "defaultValue": 1642,
+      "name": "squelchSpeed",
+      "defaultValue": 0.5,
       "lag": 0,
       "rate": "control",
       "spec": {
         "default": 0,
-        "maxval": 2680,
+        "maxval": 20,
         "class": "ControlSpec",
-        "minval": 1642,
+        "minval": 0,
         "warp": "linear",
         "step": 0,
         "units": ""
       },
       "index": 2
+    },
+    {
+      "name": "squelchAmount",
+      "defaultValue": 100,
+      "lag": 0,
+      "rate": "control",
+      "spec": {
+        "default": 0,
+        "maxval": 10240,
+        "class": "ControlSpec",
+        "minval": 40,
+        "warp": "exp",
+        "step": 0,
+        "units": ""
+      },
+      "index": 3
     },
     {
       "name": "timeScale",
@@ -66,7 +82,7 @@
         "step": 0,
         "units": ""
       },
-      "index": 3
+      "index": 4
     },
     {
       "name": "pan",
@@ -82,15 +98,16 @@
         "step": 0,
         "units": ""
       },
-      "index": 4
+      "index": 5
     }
   ],
   "canFreeSynth": true,
-  "sourceCode": "SynthDef('cricket', { arg out=0, y1=1.43, y2=1642, timeScale=1, pan=0;  var modulator, mod1, mod2, mod3;  // repeat time is 0.7s: equates to 1.43 Hz.  modulator = LFSaw.ar(y1, 1, 0.5, 0.5);  // sound  mod2 = (modulator * y2 * 2pi).cos.squared;  mod3 = modulator * 3147;  mod3 = (mod3 * 2pi).cos + ((mod3 * 2 * 2pi).cos * 0.3);  mod1 = ((Wrap.ar(modulator.min(0.1714) * 5.84) - 0.5).squared * (-1) + 1) * (mod2 * mod3);  mod1 = mod1 * EnvGen.kr(Env.perc(0.01, 0.2), timeScale: timeScale, doneAction: 2);  mod1 = Pan2.ar(mod1 * 0.1, pan);  OffsetOut.ar(out, mod1);})",
+  "sourceCode": "SynthDef('siren-grain', { arg out=0, fundfreq=440, squelchSpeed=0.5, squelchAmount=100, timeScale=1, pan=0;  var modulator, tone, amp, env, envd, panned;  modulator = LFCub.kr(squelchSpeed).range(fundfreq, fundfreq + squelchAmount);  tone = LFCub.ar(modulator);  /*env = Env.perc(0.03, 0.01, 0.25, 4);*/  /*env = Env.perc;*/  env = Env.sine(0.5, 0.2);  amp = EnvGen.kr(env,                timeScale: timeScale,                doneAction: 2);  envd = tone * amp;  panned = Pan2.ar(envd * AmpCompA.kr(fundfreq, 0.2, 0.7), pan);  OffsetOut.ar(out, panned);})",
   "controlNames": [
     "out",
-    "y1",
-    "y2",
+    "fundfreq",
+    "squelchSpeed",
+    "squelchAmount",
     "timeScale",
     "pan"
   ]
