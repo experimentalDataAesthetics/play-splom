@@ -284,10 +284,9 @@ export function loopModeEvents(m, n, npoints, mapping, mappingControls, sound, l
     }
   });
 
-  // if loopMode is for any reason not up to date then
-  // just return an empty list
-  const np = npoints[m];
-  if (!np) {
+  // if size is wrong eg. after loading a new dataset and loopMode is set from previous one
+  if (!(npoints[m] && npoints[n])) {
+    // just return an empty list
     return [];
   }
 
