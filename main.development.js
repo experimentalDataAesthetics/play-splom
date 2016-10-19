@@ -71,7 +71,7 @@ function errorOnMain(error) {
   console.error(error);
   console.error(error.stack);
   if (error.data) {
-    console.error(error.data)
+    console.error(error.data);
   }
 
   if (mainWindow) {
@@ -82,7 +82,7 @@ function errorOnMain(error) {
         stack: error.stack,
         data: error.data
       }
-    })
+    });
   }
 }
 
@@ -162,7 +162,7 @@ app.on('ready', () => {
     template = [{
       label: pkg.productName,
       submenu: [{
-        label: 'About ' + pkg.productName,
+        label: `About ${pkg.productName}`,
         selector: 'orderFrontStandardAboutPanel:'
       }, {
         type: 'separator'
@@ -172,7 +172,7 @@ app.on('ready', () => {
       }, {
         type: 'separator'
       }, {
-        label: 'Hide ' + pkg.productName,
+        label: `Hide ${pkg.productName}`,
         accelerator: 'Command+H',
         selector: 'hide:'
       }, {
