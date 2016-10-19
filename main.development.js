@@ -73,6 +73,9 @@ function loadSounds(window) {
   }
 }
 
+// https://github.com/electron/electron/issues/973
+powerSaveBlocker.start('prevent-app-suspension');
+
 // Connect two-way calling of actions between renderer and main.
 // The other half is in app/index.js
 ipcMain.on('call-action-on-main', (event, payload) => {
