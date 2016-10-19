@@ -1,11 +1,11 @@
 
-const sc = require('supercolliderjs');
-const _ = require('lodash');
-const path = require('path');
-const fs = require('fs');
-const Bacon = require('baconjs');
-const jetpack = require('fs-jetpack');
-const watch = require('watch');
+import * as sc from 'supercolliderjs';
+import * as _ from 'lodash';
+import path from 'path';
+import fs from 'fs';
+import Bacon from 'baconjs';
+import jetpack from 'fs-jetpack';
+import watch from 'watch';
 
 /**
  * config is loaded from config/(development|production|test).json

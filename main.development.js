@@ -1,5 +1,8 @@
 /* eslint global-require: 0 */
 /* eslint import/no-unresolved: 0 */
+/* eslint import/extensions: 0 */
+/* eslint import/no-extraneous-dependencies: 0 */
+/* eslint no-console: 0 */
 /**
  * The backend application that creates windows
  * and launches the frontend application app/index.js
@@ -13,15 +16,21 @@
  */
 // process.env.NODE_ENV = process.env.NODE_ENV || 'production';
 
-const electron = require('electron');
-const app = electron.app;
-const BrowserWindow = electron.BrowserWindow;
-const Menu = electron.Menu;
-const shell = electron.shell;
-const path = require('path');
-const pkg = require('./package.json');
+import {
+  BrowserWindow,
+  app,
+  powerSaveBlocker,
+  Menu,
+  shell,
+  ipcMain
+} from 'electron';
+import path from 'path';
+// import winston from 'winston';
 import SoundApp from './app/sound/SoundApp';
-import {ERROR_ON_MAIN} from './app/actionTypes';
+import { ERROR_ON_MAIN } from './app/actionTypes';
+import handleActionOnMain from './app/ipc/handleActionOnMain';
+
+const pkg = require('./package.json');
 
 const debug = process.env.NODE_ENV !== 'development';
 // uncomment this to force debug mode in a production build
@@ -89,10 +98,8 @@ function loadSounds(window) {
   }
 }
 
-// connect two-way calling of actions
-// the other half is in app.js
-const ipcMain = require('electron').ipcMain;
-const handleActionOnMain = require('./app/ipc/handleActionOnMain');
+// Connect two-way calling of actions between renderer and main.
+// The other half is in app/index.js
 ipcMain.on('call-action-on-main', (event, payload) => {
   log.debug('call-action-on-main', payload);
   handleActionOnMain(event, payload, soundApp);

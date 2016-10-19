@@ -1,11 +1,12 @@
+import u from 'updeep';
+import * as _ from 'lodash';
+
 import {
   MAP_XY_TO_PARAM,
   SET_FIXED_PARAM,
   SET_MAPPING,
   SET_MAPPING_RANGE,
 } from '../actionTypes';
-import u from 'updeep';
-import * as _ from 'lodash';
 
 export default function(state = {}, action) {
   switch (action.type) {

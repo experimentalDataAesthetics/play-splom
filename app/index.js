@@ -1,5 +1,7 @@
 /* eslint global-require: 0 */
 /* eslint import/no-unresolved: 0 */
+/* eslint import/extensions: 0 */
+/* eslint import/no-extraneous-dependencies: 0 */
 
 /**
  * The frontend application.
@@ -10,30 +12,29 @@ import { Provider } from 'react-redux';
 import { Router, hashHistory } from 'react-router';
 import { syncHistoryWithStore } from 'react-router-redux';
 import injectTapEventPlugin from 'react-tap-event-plugin';
+import { join } from 'path';
+import { ipcRenderer } from 'electron';
 import routes from './routes';
 import configureStore from './store/configureStore';
 import { loadInternalDataset } from './actions/datasets';
 import { selectSound } from './actions/sounds';
 import { mapXYtoParam } from './actions/mapping';
-
+import handleActionOnRenderer from './ipc/handleActionOnRenderer';
+import connectSoundApp from './sound/connectSoundApp';
+import callActionOnMain from './ipc/callActionOnMain';
 import './app.global.css';
-import { join } from 'path';
 
 const store = configureStore();
 const history = syncHistoryWithStore(hashHistory, store);
 
-// connect two-way calling of actions
-// the other half is in main.js
-const ipcRenderer = require('electron').ipcRenderer;
-import handleActionOnRenderer from './ipc/handleActionOnRenderer';
+// Connect two-way calling of actions between renderer and main.
+// Tthe other half is in main.development.js
 ipcRenderer.on('dispatch-action', (sender, action) => {
   handleActionOnRenderer(store.dispatch, sender, action);
 });
 
-// listen to redux store changes and call actions on main thread
+// Listen to redux store changes and call actions on main thread
 // to create sounds
-import connectSoundApp from './sound/connectSoundApp';
-import callActionOnMain from './ipc/callActionOnMain';
 connectSoundApp(store, callActionOnMain);
 
 // Needed for onTouchTap and material-ui
@@ -42,7 +43,7 @@ connectSoundApp(store, callActionOnMain);
 // https://github.com/zilverline/react-tap-event-plugin
 injectTapEventPlugin();
 
-// add right click inspect element context menu
+// Add right click inspect element context menu
 if (process.env.NODE_ENV !== 'production') {
   require('debug-menu').install();
 }
