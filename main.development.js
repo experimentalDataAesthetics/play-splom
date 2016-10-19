@@ -7,14 +7,10 @@
  * The backend application that creates windows
  * and launches the frontend application app/index.js
  *
- * main.development.js is transpiled to main.js
- *
- * All module imports should use require, not import.
- * You can import from local files.
- *
  * The frontend and backend communicate using electron ipc
+
+ * main.development.js is transpiled to main.js when built for release.
  */
-// process.env.NODE_ENV = process.env.NODE_ENV || 'production';
 
 import {
   BrowserWindow,
@@ -25,39 +21,18 @@ import {
   ipcMain
 } from 'electron';
 import path from 'path';
-// import winston from 'winston';
 import SoundApp from './app/sound/SoundApp';
 import { ERROR_ON_MAIN } from './app/actionTypes';
 import handleActionOnMain from './app/ipc/handleActionOnMain';
 
 const pkg = require('./package.json');
 
-const debug = process.env.NODE_ENV !== 'development';
+const debug = process.env.NODE_ENV === 'development';
 // uncomment this to force debug mode in a production build
 // const debug = true;
 
-const debugLevel = debug ? 'debug' : 'info';
-// const debugLevel = 'debug';
-
-const winston = require('winston');
-winston.level = debugLevel;
-winston.loggers.add('sc', {
-  console: {
-    colorize: true,
-    level: debugLevel
-  }
-});
-
-if (debug) {
-  // os x only
-  winston.add(winston.transports.File, {
-    // filename: path.join(__dirname, 'logs/log.log')
-    filename: '/Users/crucial/Library/Logs/play-splom/log.log'
-  });
-}
-
-const log = winston;
-const sclog = winston;  // winston.loggers.get('sc');
+const log = console;
+const sclog = console;
 
 let menu;
 let template;
@@ -88,7 +63,7 @@ function errorOnMain(error) {
 
 function loadSounds(window) {
   const soundAppDispatch = (action) => {
-    log.debug('dispatch-action', action);
+    log.log('dispatch-action', action);
     window.webContents.send('dispatch-action', action);
   };
 
@@ -101,7 +76,7 @@ function loadSounds(window) {
 // Connect two-way calling of actions between renderer and main.
 // The other half is in app/index.js
 ipcMain.on('call-action-on-main', (event, payload) => {
-  log.debug('call-action-on-main', payload);
+  log.log('call-action-on-main', payload);
   handleActionOnMain(event, payload, soundApp);
 });
 
