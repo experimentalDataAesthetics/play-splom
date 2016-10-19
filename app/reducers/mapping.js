@@ -12,13 +12,14 @@ export default function(state = {}, action) {
   switch (action.type) {
 
     case MAP_XY_TO_PARAM:
-      // if already mapped to this then disconnect it
-      if (_.get(state, `xy.${action.payload.xy}.param`) === action.payload.param) {
+      // toggle: if already mapped to this then disconnect it
+      if (_.get(state, `xy.${action.payload.xy}.params.${action.payload.param}`)) {
         return u({
           mode: 'xy',
           xy: {
             [action.payload.xy]: {
-              param: null
+              // updeep: filter this param out of params
+              params: u.omit(action.payload.param)
             }
           }
         }, state);
@@ -29,8 +30,14 @@ export default function(state = {}, action) {
         mode: 'xy',
         xy: {
           [action.payload.xy]: {
-            param: action.payload.param
-            // mapper: get default for this param
+            params: {
+              [action.payload.param]: true
+            }
+          },
+          // disconnect the obverse if it is connected
+          // you cannot map both x and y to the same param
+          [action.payload.xy === 'x' ? 'y' : 'x']: {
+            params: u.omit(action.payload.param)
           }
         }
       }, state);
