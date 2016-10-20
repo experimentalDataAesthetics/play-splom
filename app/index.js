@@ -16,7 +16,7 @@ import { join } from 'path';
 import { ipcRenderer } from 'electron';
 import routes from './routes';
 import configureStore from './store/configureStore';
-import { loadInternalDataset } from './actions/datasets';
+import { readDefaultDatasets } from './actions/datasets';
 import { selectSound } from './actions/sounds';
 import { mapXYtoParam } from './actions/mapping';
 import handleActionOnRenderer from './ipc/handleActionOnRenderer';
@@ -33,12 +33,11 @@ ipcRenderer.on('dispatch-action', (sender, action) => {
   handleActionOnRenderer(store.dispatch, sender, action);
 });
 
-// Listen to redux store changes and call actions on main thread
-// to create sounds
+// Listen to redux store changes and call actions on main thread to create sounds
 connectSoundApp(store, callActionOnMain);
 
 // Needed for onTouchTap and material-ui
-// Can go away when react 1.0 release
+// Can go away when react 1.0 is released
 // Check this repo:
 // https://github.com/zilverline/react-tap-event-plugin
 injectTapEventPlugin();
@@ -55,10 +54,10 @@ render(
   document.getElementById('root')
 );
 
-// load an initial dataset and sound
+// Read vendor/datasets and populate the menu then load IRIS
 const appRoot = process.env.NODE_ENV === 'production' ? __dirname : join(__dirname, '../app');
-const iris = join(appRoot, 'vendor/datasets', 'iris.csv');
-store.dispatch(loadInternalDataset(iris));
+const datasetsDir = join(appRoot, 'vendor/datasets');
+store.dispatch(readDefaultDatasets(datasetsDir, join(datasetsDir, 'iris.csv')));
 
 store.dispatch(selectSound('grainFM'));
 store.dispatch(mapXYtoParam('x', 'modfreq'));

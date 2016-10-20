@@ -5,7 +5,7 @@ import jetpack from 'fs-jetpack';
 
 import {
   SELECT_DATASET,
-  SET_DATASETS,
+  ADD_DATASET_PATHS,
   OPEN_DATASET_DIALOG
 } from '../actionTypes';
 import callActionOnMain from '../ipc/callActionOnMain';
@@ -109,14 +109,24 @@ export function loadDataset(path) {
 }
 
 /**
- * You wouldn't want to load them all into memory and keep them there.
- * Should only store paths and load/dump on demand
+ * Read the list of included datasets and populate the menu.
+ * Then optionally load one of them.
+ * This is called at startup.
  */
 export function readDefaultDatasets(datasetsDir, thenLoadPath) {
   return (dispatch) => {
     jetpack.listAsync(datasetsDir).then((paths) => {
       if (paths) {
-        dispatch(setDatasets(paths.map((p) => join(datasetsDir, p))));
+        const dp = paths
+          .filter((p) => p.substr(0, 1) !== '.')
+          .map((p) => {
+            return {
+              name: p,
+              path: join(datasetsDir, p)
+            };
+          });
+        dispatch(addDatasetPaths(dp));
+
         if (thenLoadPath) {
           setTimeout(() => {
             dispatch(loadDataset(join(datasetsDir, thenLoadPath)));
@@ -129,9 +139,9 @@ export function readDefaultDatasets(datasetsDir, thenLoadPath) {
   };
 }
 
-export function setDatasets(paths) {
+export function addDatasetPaths(paths) {
   return {
-    type: SET_DATASETS,
+    type: ADD_DATASET_PATHS,
     payload: {
       paths
     }

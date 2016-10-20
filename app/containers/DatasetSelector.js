@@ -1,15 +1,15 @@
 import React, { Component } from 'react';
 import h from 'react-hyperscript';
-import connect from '../utils/reduxers';
 import RaisedButton from 'material-ui/RaisedButton';
 import { List, ListItem, MakeSelectable } from 'material-ui/List';
-const SelectableList = MakeSelectable(List);
+import connect from '../utils/reduxers';
 import styles from './Sidebar.css';
-
 import {
   loadDataset,
   openDatasetDialog
 } from '../actions/datasets';
+
+const SelectableList = MakeSelectable(List);
 
 
 /**
