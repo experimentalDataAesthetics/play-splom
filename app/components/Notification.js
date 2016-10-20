@@ -10,7 +10,7 @@ import connect from '../utils/reduxers';
 class Notification extends React.Component {
 
   render() {
-    let n = this.props.notification;
+    const n = this.props.notification;
     if (n && n.type) {
       return (
         <div className="notification--outer">

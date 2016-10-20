@@ -70,3 +70,12 @@ body {
   font-size: 3em;
   text-align: center;
 }
+
+.error {
+  max-width: 50rem;
+  margin: auto auto;
+  font-weight: bold;
+  background: #e05e5e;
+  padding: 4em;
+  word-break: break-all;
+}

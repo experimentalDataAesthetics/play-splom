@@ -53,13 +53,6 @@ const parsers = {
 };
 
 /**
- * Example datasets
- */
-export function loadInternalDataset(path) {
-  return loadDataset(path);
-}
-
-/**
  * loading should be moved to main
  *
  * path should be a resolved
@@ -69,18 +62,23 @@ export function loadDataset(path) {
     const ext = extname(path);
     const parser = parsers[ext];
 
+    function fail(message) {
+      dispatch(notify('error', message));
+    }
+
     if (!parser) {
-      return notify('error', `Filetype not supported: ${ext}`);
+      return fail(`Filetype not supported: ${ext}`);
     }
 
     dispatch(notify('inform', 'Loading...'));
+
     fs.readFile(path, {encoding: 'utf8'}, (err, data) => {
       if (err) {
-        return notify('error', err);
+        return fail(err.message);
       }
 
       if (!data) {
-        return notify('error', `No data loaded from ${path}`);
+        return fail(`No data loaded from ${path}`);
       }
 
       let data2;
@@ -88,7 +86,7 @@ export function loadDataset(path) {
         try {
           data2 = JSON.parse(data);
         } catch (e) {
-          return notify('error', e);
+          return fail(e);
         }
       } else {
         data2 = String(data);
@@ -103,7 +101,7 @@ export function loadDataset(path) {
         dispatch(notify());
         dispatch(setDataset(path, data3));
         dispatch(clipLoopBox());
-      }, (error) => notify('error', error));
+      }, (error) => fail(error));
     });
   };
 }
@@ -129,11 +127,11 @@ export function readDefaultDatasets(datasetsDir, thenLoadPath) {
 
         if (thenLoadPath) {
           setTimeout(() => {
-            dispatch(loadDataset(join(datasetsDir, thenLoadPath)));
+            dispatch(loadDataset(thenLoadPath));
           }, 500);
         }
       } else {
-        notify('error', `No paths found at: ${datasetsDir}`);
+        dispatch(notify('error', `No paths found at: ${datasetsDir}`));
       }
     });
   };
