@@ -5,7 +5,7 @@ import MainLayout from '../containers/MainLayout';
 import { debounce } from 'lodash';
 
 /**
- * This would is a top level container.
+ * This is a top level container.
  *
  * It handles window resizing and presents the MainLayout.
  */

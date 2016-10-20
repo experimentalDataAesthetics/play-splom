@@ -9,6 +9,13 @@
  *
  * This is the job of a reducer. The reducers handle the actions and return
  * a new state.
+ *
+ * Each module in reducers/ (interaction, datasets etc) contains one function
+ * that is given just it's slice of the state and should return a new state
+ * for that slice.
+ *
+ * So reducers/interaction is given state.interaction and should return a new
+ * state object which is saved back into state['interaction']
  */
 
 import { combineReducers } from 'redux';
