@@ -67,7 +67,7 @@
     "redux-thunk": "^2.1.0",
     "reselect": "^2.5.4",
     "source-map-support": "^0.4.5",
-    "supercolliderjs": "^0.12.0",
+    "supercolliderjs": "^0.13.0",
     "updeep": "^0.16.1",
     "watch": "^0.19.2"
   },
