@@ -116,7 +116,8 @@ export function readDefaultDatasets(datasetsDir, thenLoadPath) {
     jetpack.listAsync(datasetsDir).then((paths) => {
       if (paths) {
         const dp = paths
-          .filter((p) => p.substr(0, 1) !== '.')
+          // only show those that have a parser
+          .filter((p) => Boolean(parsers[extname(p)]))
           .map((p) => {
             return {
               name: p,
