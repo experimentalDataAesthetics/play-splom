@@ -21,6 +21,7 @@ import {
   ipcMain
 } from 'electron';
 import path from 'path';
+import log from 'electron-log';
 import SoundApp from './app/sound/SoundApp';
 import { ERROR_ON_MAIN } from './app/actionTypes';
 import handleActionOnMain from './app/ipc/handleActionOnMain';
@@ -31,8 +32,7 @@ const debug = process.env.NODE_ENV === 'development';
 // uncomment this to force debug mode in a production build
 // const debug = true;
 
-const log = console;
-const sclog = console;
+log.log('main');
 
 let menu;
 let template;
@@ -40,7 +40,7 @@ let mainWindow = null;
 
 const synthDefsDir = path.join(__dirname, 'app/synthdefs');
 
-const soundApp = new SoundApp(sclog);
+const soundApp = new SoundApp(log);
 
 function errorOnMain(error) {
   console.error(error);
