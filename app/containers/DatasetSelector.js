@@ -47,7 +47,7 @@ class DatasetSelector extends Component {
       ),
       h(RaisedButton, {
         label: 'Open...',
-        style: {display: 'block'},
+        style: {display: 'block', margin: '1rem 4rem'},
         onTouchTap: this.props.openDialog
       })
     ]);
