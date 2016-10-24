@@ -1,6 +1,3 @@
-const fs = require('fs');
-const path = require('path');
-const jetpack = require('fs-jetpack');
 
 import {
   SET_SOUNDS,

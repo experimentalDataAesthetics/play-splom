@@ -1,4 +1,3 @@
-const dialog = require('electron').dialog;
 import {LOAD_DATASET, ERROR_ON_MAIN} from '../actionTypes';
 import {loadDataset} from '../actions/datasets';
 import {notify} from '../actions/ui';

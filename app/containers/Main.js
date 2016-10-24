@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
+import _ from 'lodash';
 import connect from '../utils/reduxers';
 import { setWindowSize } from '../actions/ui';
 import MainLayout from '../containers/MainLayout';
-import { debounce } from 'lodash';
 
 /**
  * This is a top level container.
@@ -12,7 +12,7 @@ import { debounce } from 'lodash';
 class Main extends Component {
 
   componentDidMount() {
-    this._debouncedHandleResize = debounce(() => this.handleResize(), 300);
+    this._debouncedHandleResize = _.debounce(() => this.handleResize(), 300);
     window.addEventListener('resize', this._debouncedHandleResize);
   }
 

@@ -1,4 +1,7 @@
-const dialog = require('electron').dialog;
+/* eslint import/no-extraneous-dependencies: 0 */
+/* eslint import/no-unresolved: 0 */
+/* eslint import/extensions: 0 */
+import {dialog} from 'electron';
 import {
   OPEN_DATASET_DIALOG,
   LOAD_DATASET,
