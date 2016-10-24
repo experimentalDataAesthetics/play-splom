@@ -31,6 +31,8 @@ const options = _.assign({}, config.supercolliderjs.options || {}, {
   sclang_conf: null
 });
 
+const TIMEOUT = 2000;
+
 /**
  * Runs in the background.js process
  *
@@ -161,24 +163,23 @@ export default class SoundApp {
           reject(error);
         };
 
-        setTimeout(() => {
-          if (!this.playing) {
-            die(new Error('Timeout waiting to play'));
-          }
-        }, 10000);
-
-        this.player.play().then(() => {
-          this.playing = true;
-          resolve();
-        }, die);
+        this.player.play().timeout(TIMEOUT)
+          .then(() => {
+            this.playing = true;
+            resolve();
+          })
+          .catch(die);
       });
     });
   }
 
   stop() {
     if (this.player) {
-      return this.player.stop();
+      // will not actually complete because of Group and Synth
+      return this.player.stop().timeout(1000);
     }
+
+    return Promise.resolve();
   }
 
   spawnSynth(event) {

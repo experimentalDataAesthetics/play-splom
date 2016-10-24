@@ -73,6 +73,42 @@ function loadSounds(window) {
   }
 }
 
+/**
+ * Use this to quit so that soundApp is stopped correctly.
+ */
+function quit() {
+  return soundApp.stop()
+    .then(
+      () => app.quit(),
+      (error) => {
+        console.log(error);
+        // known issue
+        // it will timeout because Synth and Group don't resolve
+        // console.error('soundApp failed to stop');
+        // console.error(error);
+        // soundApp.player.dump();
+        app.quit();
+      });
+}
+
+function loadWindow() {
+  mainWindow.loadURL(`file://${__dirname}/app/app.html`);
+}
+
+/**
+ * reload the application (in development)
+ * correctly shutting down sound app with sclang/scsynth
+ * and then reloading app.html
+ */
+function reload() {
+  soundApp.stop().then(() => {
+    loadWindow();
+  }, (error) => {
+    // never stops because of Synth/Group not responding
+    loadWindow();
+  });
+}
+
 // https://github.com/electron/electron/issues/973
 powerSaveBlocker.start('prevent-app-suspension');
 
@@ -87,15 +123,7 @@ if (debug) {
   require('electron-debug')({showDevTools: true});
 }
 
-app.on('window-all-closed', () => {
-  if (process.platform !== 'darwin') {
-    app.quit();
-  }
-});
-
-app.on('will-quit', () => {
-  soundApp.stop();
-});
+app.on('window-all-closed', quit);
 
 app.on('ready', () => {
   mainWindow = new BrowserWindow({
@@ -113,8 +141,6 @@ app.on('ready', () => {
     log.error('Unhandled Rejection:', reason, reason && reason.stack);
     errorOnMain(reason);
   });
-
-  mainWindow.loadURL(`file://${__dirname}/app/app.html`);
 
   mainWindow.webContents.on('did-finish-load', () => {
     mainWindow.show();
@@ -135,6 +161,8 @@ app.on('ready', () => {
   mainWindow.on('closed', () => {
     mainWindow = null;
   });
+
+  loadWindow();
 
   if (process.platform === 'darwin') {
     template = [{
@@ -166,7 +194,7 @@ app.on('ready', () => {
         label: 'Quit',
         accelerator: 'Command+Q',
         click() {
-          app.quit();
+          quit();
         }
       }]
     }, {
@@ -202,9 +230,9 @@ app.on('ready', () => {
       label: 'View',
       submenu: debug ? [{
         label: 'Reload',
-        accelerator: 'Command+R',
+        accelerator: 'Shift+Command+R',
         click() {
-          mainWindow.restart();
+          reload()
         }
       }, {
         label: 'Toggle Full Screen',
@@ -272,7 +300,7 @@ app.on('ready', () => {
         label: '&Reload',
         accelerator: 'Ctrl+R',
         click() {
-          mainWindow.restart();
+          reload();
         }
       }, {
         label: 'Toggle &Full Screen',
