@@ -26,7 +26,7 @@ class DatasetSelector extends Component {
   };
 
   render() {
-    return h(`div.dataset-selector.${styles.datasets}`, [
+    return h(`div.${styles.datasetSelector}`, [
       h('h6', 'Datasets'),
       h(SelectableList,
         {
@@ -47,7 +47,7 @@ class DatasetSelector extends Component {
       ),
       h(RaisedButton, {
         label: 'Open...',
-        style: {float: 'right'},
+        style: {display: 'block'},
         onTouchTap: this.props.openDialog
       })
     ]);

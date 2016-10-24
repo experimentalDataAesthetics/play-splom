@@ -1,5 +1,5 @@
 import React from 'react';
-import h from 'react-hyperscript';
+import styles from './Sidebar.css';
 
 /**
  * As UI focus or hover changes,
@@ -12,9 +12,8 @@ import h from 'react-hyperscript';
  */
 export default class Help extends React.Component {
   render() {
-    return h('div.help', [
-      // h('h6', 'Help'),
-      h('div', '')
-    ]);
+    return (
+      <div className={styles.help} />
+    );
   }
 }

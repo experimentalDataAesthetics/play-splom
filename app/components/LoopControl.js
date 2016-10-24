@@ -1,13 +1,13 @@
 import React from 'react';
+import d3 from 'd3';
+import _ from 'lodash';
 import connect from '../utils/reduxers';
 import { getLoop } from '../selectors';
 import { toggleLoopMode, setLoopTime } from '../actions/interaction';
 import { Slider } from 'material-ui';
 import ToggleButton from './ToggleButton';
-import { debounce } from 'lodash';
-import d3 from 'd3';
 import style from './XYParamTable.css';
-
+import styles from '../containers/Sidebar.css';
 const MIN = 0.05;
 const MAX = 60.0;
 const mapv = d3.scale.pow().exponent(2).range([MIN, MAX]);
@@ -43,7 +43,7 @@ class LoopControl extends React.Component {
         min={0}
         max={1}
         step={0.01}
-        onChange={debounce(sliderAction, 100)}
+        onChange={_.debounce(sliderAction, 100)}
         sliderStyle={sliderStyle}
       />
     );
@@ -61,7 +61,7 @@ class LoopControl extends React.Component {
     );
 
     return (
-      <div className="loop-control">
+      <div className={styles.loopControl}>
         <table className={style.table}>
           <tbody>
             <tr>

@@ -30,28 +30,22 @@ body {
 
 /* sidebar heights that can't be done with css modules */
 .selectable-list {
+  /* vertical scrollbar */
   overflow-y: auto;
-  margin-bottom: 3px;
+  /* each one is maximized to it's parent - the size of title */
+  height: 75%;
+  border-top: 1px solid #eee;
+  border-bottom: 1px solid #eee;
+  background: rgba(28, 25, 19, 0.02);
 }
 
-.sound-selector .selectable-list {
-  height: 150px;
-}
-
-/*.dataset-selector {
-  height: 150px;
-}*/
-
-/*.dataset-selector .selectable-list {
-  height: 73px;
-}*/
 
 /* notifications */
 .notification--outer {
   width: 100%;
   height: auto;
-  bottom: 0px;
-  top: 0px;
+  bottom: 0;
+  top: 0;
   left: 0;
   position: absolute;
   background-color: rgba(0, 0, 0, 0.4);

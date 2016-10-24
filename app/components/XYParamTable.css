@@ -19,7 +19,8 @@
   padding: 0 1rem;
 }
 .table thead th {
-  padding: .25rem;
+  padding: 2rem 0 0;
+  font-size: .75em;
 }
 
 .table thead th {

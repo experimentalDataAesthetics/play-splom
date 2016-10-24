@@ -1,31 +1,42 @@
-
+/**
+ * This is imported by Sidebar
+ * and also by each of the items in it.
+ */
 .sidebar {
   width: 300px;
   display: flex;
   flex-direction: column;
   height: 100vh;
-  /*padding-top: 2rem;*/
 }
 
 .sidebar > div {
-  padding: 1rem;
+  padding: .5rem;
   padding-left: 0;
 }
 
 .sidebar h6 {
-  margin-bottom: 0;
+  margin: 1rem 0 0;
   font-weight: bold;
   letter-spacing: .16em;
   font-variant: small-caps;
 }
 
-
-@media (min-height: 1000px) {
-  .datasets {
-    margin-top: 7rem;
-  }
+/**
+ * These
+ */
+.datasetSelector {
+  height: 25%;
+  margin-bottom: 2rem;
 }
-
-.params {
+.loopControl {
+  /*height: 100px;*/
+}
+.soundSelector {
+  height: 25%;
+}
+.paramMapping {
   flex: 1;
+}
+.help {
+
 }
