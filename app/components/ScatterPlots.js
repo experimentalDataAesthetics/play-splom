@@ -18,7 +18,6 @@ class ScatterPlots extends React.Component {
     width: React.PropTypes.number.isRequired,
     dataset: React.PropTypes.object,
     features: React.PropTypes.array.isRequired,
-    numFeatures: React.PropTypes.number.isRequired,
     layout: React.PropTypes.object.isRequired,
     muiTheme: React.PropTypes.object
   };
@@ -58,8 +57,7 @@ class ScatterPlots extends React.Component {
           xOffset: box.x,
           yOffset: box.y,
           sideLength: sideLength - margin,
-          muiTheme: this.props.muiTheme,
-          pointsUnderBrush: this.props.pointsUnderBrush
+          muiTheme: this.props.muiTheme
         });
 
         children.push(sp);

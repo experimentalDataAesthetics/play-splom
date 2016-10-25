@@ -46,7 +46,7 @@ export default React.createClass({
     var props = this.props;
     var sign = props.orient === 'top' || props.orient === 'left' ? -1 : 1;
 
-    var range = this._d3_scaleRange(props.scale);
+    var range = this._d3_scaleRange(this.props.scale);
 
     var d;
 

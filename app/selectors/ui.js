@@ -1,5 +1,5 @@
-import { centeredSquareWithMargin } from '../utils/layout';
 import { createSelector } from 'reselect';
+import { centeredSquareWithMargin } from '../utils/layout';
 import { getDatasetMetadata, getFeatures } from './dataset';
 import { getLoop } from './sound';
 
@@ -60,9 +60,9 @@ export const getLayout = createSelector(
     // each box
     layout.boxes = [];
     if (layout.sideLength > 0) {
-      for (let m = 0; m < numFeatures; m++) {
+      for (let m = 0; m < numFeatures; m += 1) {
         const x = m * layout.sideLength;
-        for (let n = 0; n < numFeatures; n++) {
+        for (let n = 0; n < numFeatures; n += 1) {
           // identity
           // if (m === n) {
           //   continue;

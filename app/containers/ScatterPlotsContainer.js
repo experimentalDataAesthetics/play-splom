@@ -11,7 +11,6 @@ import LoopPlayHead from '../components/LoopPlayHead';
 import {
   getPointsForPlot,
   getLayout,
-  getNumFeatures,
   getDatasetMetadata
 } from '../selectors/index';
 
@@ -33,8 +32,7 @@ class ScatterPlotsContainer extends Component {
     height: React.PropTypes.number.isRequired,
     dataset: React.PropTypes.object,
     features: React.PropTypes.array.isRequired,
-    layout: React.PropTypes.object.isRequired,
-    numFeatures: React.PropTypes.number.isRequired
+    layout: React.PropTypes.object.isRequired
   };
 
   render() {
@@ -42,8 +40,7 @@ class ScatterPlotsContainer extends Component {
     const props = _.pick(this.props, [
       'dataset',
       'features',
-      'layout',
-      'numFeatures'
+      'layout'
     ]);
 
     props.height = this.props.height - (padding * 2);
@@ -77,6 +74,5 @@ class ScatterPlotsContainer extends Component {
 export default connect({
   dataset: getDatasetMetadata,
   features: getPointsForPlot,
-  layout: getLayout,
-  numFeatures: getNumFeatures
+  layout: getLayout
 })(ScatterPlotsContainer);

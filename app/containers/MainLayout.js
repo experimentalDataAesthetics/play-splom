@@ -1,7 +1,7 @@
-import React, { Component } from 'react';
-import connect from '../utils/reduxers';
+import _ from 'lodash';
+import React from 'react';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
-import * as _ from 'lodash';
+import connect from '../utils/reduxers';
 
 import Sidebar from './Sidebar';
 import SVGFrame from './SVGFrame';
@@ -11,11 +11,6 @@ import {
   getLayout,
   getMuiTheme
 } from '../selectors/index';
-
-const stateToProps = {
-  layout: getLayout,
-  muiTheme: getMuiTheme
-};
 
 /**
  * This is the layout of the application itself.
@@ -28,7 +23,7 @@ const stateToProps = {
  * when the window size changes, also on change of number of dataset features,
  * number of boxes etc.
  */
-class MainLayout extends Component {
+class MainLayout extends React.Component {
 
   static propTypes = {
     muiTheme: React.PropTypes.object.isRequired,
@@ -72,4 +67,7 @@ class MainLayout extends Component {
   }
 }
 
-export default connect(stateToProps)(MainLayout);
+export default connect({
+  layout: getLayout,
+  muiTheme: getMuiTheme
+})(MainLayout);
