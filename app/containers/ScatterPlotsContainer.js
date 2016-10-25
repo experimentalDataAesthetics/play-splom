@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
+import _ from 'lodash';
 import h from 'react-hyperscript';
 import connect from '../utils/reduxers';
 import ScatterPlots from '../components/ScatterPlots';
 import ScatterPlotsActivePoints from '../components/ScatterPlotsActivePoints';
 import ScatterPlotsInteractive from '../components/ScatterPlotsInteractive';
+import HoveringAxis from '../components/HoveringAxis';
 import LoopPlayHead from '../components/LoopPlayHead';
-import * as _ from 'lodash';
 
 import {
   getPointsForPlot,
@@ -52,6 +53,7 @@ class ScatterPlotsContainer extends Component {
     const activePoints = h(ScatterPlotsActivePoints);
     const loopPlayHead = h(LoopPlayHead);
     const surface = h(ScatterPlotsInteractive, props);
+    const hoveringAxis = h(HoveringAxis);
 
     return h(
       'g',
@@ -64,6 +66,7 @@ class ScatterPlotsContainer extends Component {
         plots,
         activePoints,
         loopPlayHead,
+        hoveringAxis,
         surface
       ]
     );

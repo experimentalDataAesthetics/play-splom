@@ -12,22 +12,14 @@ import {
   setHovering
 } from '../actions/ui';
 
-import {
-  getMuiTheme,
-  getFeatureSideLengthScale
-} from '../selectors/index';
-
-import Axis from './Axis';
+import HoveringAxis from './HoveringAxis';
 import SelectArea from './SelectArea';
 import style from './ScatterPlots.css';
 
 const unset = {};
 
 const selectors = {
-  loopMode: (state) => state.interaction.loopMode || unset,
-  muiTheme: getMuiTheme,
-  featureSideLengthScale: getFeatureSideLengthScale,
-  hovering: (state) => state.ui.hovering || unset
+  loopMode: (state) => state.interaction.loopMode || unset
 };
 
 const handlers = {
@@ -52,12 +44,8 @@ class ScatterPlotsInteractive extends React.Component {
   static propTypes = {
     width: React.PropTypes.number.isRequired,
     height: React.PropTypes.number.isRequired,
-    numFeatures: React.PropTypes.number.isRequired,
     loopMode: React.PropTypes.object.isRequired,
     layout: React.PropTypes.object.isRequired,
-    hovering: React.PropTypes.object.isRequired,
-    muiTheme: React.PropTypes.object.isRequired,
-    featureSideLengthScale: React.PropTypes.array.isRequired,
     features: React.PropTypes.array.isRequired,
     setPointsUnderBrush: React.PropTypes.func.isRequired,
     setHovering: React.PropTypes.func.isRequired,
@@ -109,9 +97,6 @@ class ScatterPlotsInteractive extends React.Component {
   }
 
   setHoveringBox(box) {
-    // this causes a full update
-    // could wrap Axis in something that connects to hovering featureSideLengthScale
-    // muiTheme
     this.props.setHovering(box.m, box.n);
   }
 
@@ -119,34 +104,9 @@ class ScatterPlotsInteractive extends React.Component {
     const sideLength = this.props.layout.sideLength;
     const layout = this.props.layout;
     const innerSideLength = sideLength - layout.margin;
-    const children = [];
-
-    const getBox = (m, n) => this.props.layout.boxes[(m * this.props.numFeatures) + n];
-
-    if (this.props.featureSideLengthScale.length > 0) {
-      if (_.isNumber(this.props.hovering.m)) {
-        const hovx = (this.props.hovering.m || 0);
-        const hovy = (this.props.hovering.n || 0);
-        const featx = this.props.featureSideLengthScale[hovx];
-        const featy = this.props.featureSideLengthScale[hovy];
-        // if loading a new dataset it is possible for the current hover to be invalidated.
-        if (featx && featy) {
-          const box = getBox(hovx, hovy);
-          if (box) {
-            children.push(h(Axis, {
-              xOffset: box.x,
-              yOffset: box.y,
-              sideLength: innerSideLength,
-              muiTheme: this.props.muiTheme,
-              xScale: featx.mappedScale,
-              yScale: featy.mappedScale,
-              xLabel: featx.feature.name,
-              yLabel: featy.feature.name
-            }));
-          }
-        }
-      }
-    }
+    const children = [
+      <HoveringAxis />
+    ];
 
     const s = {
       box: {
