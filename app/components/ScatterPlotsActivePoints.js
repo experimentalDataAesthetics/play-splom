@@ -36,24 +36,27 @@ class ScatterPlotsActivePoints extends React.Component {
 
       this.props.layout.boxes.forEach((box) => {
         const points = [];
-        this.props.pointsUnderBrush.forEach((i) => {
-          points.push([
-            this.props.features[box.m].values[i],
-            this.props.features[box.n].yValues[i]
-          ]);
-        });
 
-        const sp = h(ScatterPlot, {
-          xOffset: box.x,
-          yOffset: box.y,
-          points,
-          hideAxis: true,
-          sideLength: innerSide,
-          muiTheme: this.props.muiTheme,
-          className: 'active'
-        });
+        if (this.props.pointsUnderBrush.length <= 200) {
+          this.props.pointsUnderBrush.forEach((i) => {
+            points.push([
+              this.props.features[box.m].values[i],
+              this.props.features[box.n].yValues[i]
+            ]);
+          });
 
-        children.push(sp);
+          const sp = h(ScatterPlot, {
+            xOffset: box.x,
+            yOffset: box.y,
+            points,
+            hideAxis: true,
+            sideLength: innerSide,
+            muiTheme: this.props.muiTheme,
+            className: 'active'
+          });
+
+          children.push(sp);
+        }
       });
     }
 
