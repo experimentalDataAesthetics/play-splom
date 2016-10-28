@@ -127,8 +127,7 @@ function defaultFilter(event) {
 
 function box(list) {
   return {
-    x: list[0][0],
-    y: list[0][1],
+    transform: `translate(${list[0][0]}, ${list[0][1]})`,
     width: list[1][0] - list[0][0],
     height: list[1][1] - list[0][1]
   };
@@ -525,8 +524,9 @@ export default class SelectArea extends React.Component {
           key={h.type}
           className={`handle handle--${h.type}`}
           cursor={cursors[h.type]}
-          x={h.x(selected)}
-          y={h.y(selected)}
+          transform={`translate(${h.x(selected)}, ${h.y(selected)})`}
+          // x={h.x(selected)}
+          // y={h.y(selected)}
           width={h.width(selected)}
           height={h.height(selected)}
           onMouseDown={tapHandler}
