@@ -119,6 +119,8 @@ class ScatterPlotsInteractive extends React.Component {
       }
     };
 
+    const isLooping = this.props.loopMode.box;
+
     // pending should be erased once it becomes active
     const getClassName = (box) => {
       if ((s.box.m === box.m) && (s.box.n === box.n)) {
@@ -164,7 +166,12 @@ class ScatterPlotsInteractive extends React.Component {
             this.props.setLoopBox(box.m, box.n);
           }
         },
-        show: isLastFocused,
+        onClick: () => {
+          if (isLooping) {
+            this.props.setLoopBox(box.m, box.n);
+          }
+        },
+        show: isLastFocused,  // && !looping
         overlayClassName: getClassName(box)
       });
 
