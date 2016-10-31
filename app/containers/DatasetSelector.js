@@ -19,7 +19,7 @@ const SelectableList = MakeSelectable(List);
 class DatasetSelector extends Component {
 
   static propTypes = {
-    selected: React.PropTypes.bool.isRequired,
+    selected: React.PropTypes.string,
     datasets: React.PropTypes.array.isRequired,
     openDialog: React.PropTypes.func.isRequired,
     onSelect: React.PropTypes.func.isRequired
@@ -37,8 +37,8 @@ class DatasetSelector extends Component {
         this.props.datasets.map((dataset) => {
           return h(ListItem, {
             primaryText: dataset.name,
-            selected: true,
             value: dataset.path,
+            selected: dataset.name === this.props.selected,
             style: {
               fontSize: '1em'
             }
@@ -57,7 +57,7 @@ class DatasetSelector extends Component {
 export default connect(
   {
     datasets: 'datasets',
-    selected: (state) => Boolean(state.dataset && state.dataset.path)
+    selected: (state) => state.dataset && state.dataset.path
   },
   {
     onSelect: (e, path) => loadDataset(path),

@@ -27,7 +27,9 @@ export default (props) => {
       cy: (flip - xy[1]) || 0,
       r: radius,
       key: String(i),
-      className: props.className
+      style: {
+        fill: props.color
+      }
     });
   }));
 };

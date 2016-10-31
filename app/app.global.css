@@ -32,6 +32,7 @@ body {
 .selectable-list {
   /* vertical scrollbar */
   overflow-y: auto;
+  overflow-x: hidden;
   /* each one is maximized to it's parent - the size of title */
   height: 75%;
   border-top: 1px solid #eee;

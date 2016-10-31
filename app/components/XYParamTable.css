@@ -29,14 +29,13 @@
 
 .range {
   width: 100px;
-  padding: 0;
-  padding-right: 20px;
+  padding: 0 20px 0 0;
 }
 
 .connected td,
 .connected th {
   /*height: 75px;*/
-  background: rgba(116, 218, 69, 0.03);
+  /*background: rgba(116, 218, 69, 0.03);*/
   transition: background-color 0.5s ease;
 }
 
