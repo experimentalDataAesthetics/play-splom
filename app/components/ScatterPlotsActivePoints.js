@@ -1,7 +1,8 @@
 import React from 'react';
 import h from 'react-hyperscript';
-import connect from '../utils/reduxers';
+import _ from 'lodash';
 
+import connect from '../utils/reduxers';
 import ScatterPlot from '../components/ScatterPlot';
 
 import {

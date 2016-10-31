@@ -77,7 +77,6 @@ export function clipLoopBox() {
       return;
     }
 
-    console.log(s);
     const dataset = _.get(s, '.dataset.data');
     if (!dataset) {
       return;
