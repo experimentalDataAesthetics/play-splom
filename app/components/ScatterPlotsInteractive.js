@@ -55,11 +55,13 @@ class ScatterPlotsInteractive extends React.Component {
   setPointsIn(area, box, points) {
     // area is inverted y
     // points are normal y
-    const sideLength = this.props.layout.sideLength;
+    const sideLength = this.props.layout.sideLength - this.props.layout.margin;
     const minx = area.x;
     const maxx = minx + area.width;
-    const miny = sideLength - area.y - area.height;
+    const miny = sideLength - (area.y + area.height);
     const maxy = sideLength - area.y;
+
+    // console.log({minx, maxx, miny, maxy});
     const pointsIn = [];
     points.forEach((xy, i) => {
       if ((xy[0] >= minx)
@@ -70,10 +72,10 @@ class ScatterPlotsInteractive extends React.Component {
       }
     });
 
-    // keeping some micro-state values in this.
+    // Keeping some micro-state values in this.
     // its not ui state, does not require a re-render
     // and it is not application state.
-    // its just cacheing for performance
+    // Its just cacheing for performance.
     const next = {
       m: box.m,
       n: box.n,

@@ -460,6 +460,7 @@ export default class SelectArea extends React.Component {
       // w n e s
       this.props.onChange({
         x: selected[0][0] - this.props.domain.x,
+        // y is the top of the selected area
         y: selected[0][1] - this.props.domain.y,
         width: selected[1][0] - selected[0][0],
         height: selected[1][1] - selected[0][1]
