@@ -41,6 +41,9 @@ class DatasetSelector extends Component {
             selected: dataset.name === this.props.selected,
             style: {
               fontSize: '1em'
+            },
+            innerDivStyle: {
+              padding: '8px'
             }
           });
         })

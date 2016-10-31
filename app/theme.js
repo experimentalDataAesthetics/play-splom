@@ -25,7 +25,6 @@ const light = {
   }
 };
 
-// https://coolors.co/0b040c-021216-062720-2b2d27-bec1bd
 const dark = {
   palette: {
     canvasColor: '#292729',
@@ -38,7 +37,7 @@ const dark = {
     title: '#786f6f'
   },
   spacing: {
-    desktopDrawerMenuItemHeight: 10
+    desktopDrawerMenuItemHeight: 8
   },
   // L axis
   tableRow: {

@@ -27,7 +27,9 @@ class SoundSelector extends React.Component {
             style: {
               fontSize: '1em'
             },
-            // selected: true,
+            innerDivStyle: {
+              padding: '8px'
+            },
             value: sound.name
           });
         })

@@ -26,22 +26,22 @@ class ScatterPlots extends React.Component {
     const { muiTheme, layout, dataset } = this.props;
     const children = [];
 
-    if (this.props.dataset) {
+    if (dataset) {
       const title = h('text', {
         x: 50,
-        y: this.props.layout.svgStyle.height - 150,
+        y: layout.svgStyle.height - 150,
         className: style.title,
         style: {
           stroke: muiTheme.palette.title
         }
-      }, [this.props.dataset.name]);
+      }, [dataset.name]);
       children.push(title);
 
-      const sideLength = this.props.layout.sideLength;
-      const margin = this.props.layout.margin;
-      const columnNames = this.props.dataset.columnNames;
+      const sideLength = layout.sideLength;
+      const margin = layout.margin;
+      const columnNames = dataset.columnNames;
 
-      this.props.layout.boxes.forEach((box) => {
+      layout.boxes.forEach((box) => {
         // features go across the x
         // and down the y
         // SVG coords also go down the y
@@ -61,7 +61,7 @@ class ScatterPlots extends React.Component {
           xOffset: box.x,
           yOffset: box.y,
           sideLength: sideLength - margin,
-          muiTheme: this.props.muiTheme
+          muiTheme
         });
 
         children.push(sp);
