@@ -1,15 +1,15 @@
 import React, { Component } from 'react';
 import h from 'react-hyperscript';
-import connect from '../utils/reduxers';
 import RaisedButton from 'material-ui/RaisedButton';
 import { List, ListItem, MakeSelectable } from 'material-ui/List';
-const SelectableList = MakeSelectable(List);
+import connect from '../utils/reduxers';
 import styles from './Sidebar.css';
-
 import {
   loadDataset,
   openDatasetDialog
 } from '../actions/datasets';
+
+const SelectableList = MakeSelectable(List);
 
 
 /**
@@ -19,14 +19,14 @@ import {
 class DatasetSelector extends Component {
 
   static propTypes = {
-    selected: React.PropTypes.bool.isRequired,
+    selected: React.PropTypes.string,
     datasets: React.PropTypes.array.isRequired,
     openDialog: React.PropTypes.func.isRequired,
     onSelect: React.PropTypes.func.isRequired
   };
 
   render() {
-    return h(`div.dataset-selector.${styles.datasets}`, [
+    return h(`div.${styles.datasetSelector}`, [
       h('h6', 'Datasets'),
       h(SelectableList,
         {
@@ -37,17 +37,20 @@ class DatasetSelector extends Component {
         this.props.datasets.map((dataset) => {
           return h(ListItem, {
             primaryText: dataset.name,
-            selected: true,
             value: dataset.path,
+            selected: dataset.name === this.props.selected,
             style: {
               fontSize: '1em'
+            },
+            innerDivStyle: {
+              padding: '8px'
             }
           });
         })
       ),
       h(RaisedButton, {
         label: 'Open...',
-        style: {float: 'right'},
+        style: {display: 'block', margin: '1rem 4rem'},
         onTouchTap: this.props.openDialog
       })
     ]);
@@ -57,7 +60,7 @@ class DatasetSelector extends Component {
 export default connect(
   {
     datasets: 'datasets',
-    selected: (state) => Boolean(state.dataset && state.dataset.path)
+    selected: (state) => state.dataset && state.dataset.path
   },
   {
     onSelect: (e, path) => loadDataset(path),

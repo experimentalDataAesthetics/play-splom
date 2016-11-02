@@ -1,53 +1,38 @@
 /* eslint global-require: 0 */
 /* eslint import/no-unresolved: 0 */
+/* eslint import/extensions: 0 */
+/* eslint import/no-extraneous-dependencies: 0 */
+/* eslint no-console: 0 */
 /**
  * The backend application that creates windows
  * and launches the frontend application app/index.js
  *
- * main.development.js is transpiled to main.js
- *
- * All module imports should use require, not import.
- * You can import from local files.
- *
  * The frontend and backend communicate using electron ipc
+
+ * main.development.js is transpiled to main.js when built for release.
  */
-// process.env.NODE_ENV = process.env.NODE_ENV || 'production';
 
-const electron = require('electron');
-const app = electron.app;
-const BrowserWindow = electron.BrowserWindow;
-const Menu = electron.Menu;
-const shell = electron.shell;
-const path = require('path');
+import {
+  BrowserWindow,
+  app,
+  powerSaveBlocker,
+  Menu,
+  shell,
+  ipcMain
+} from 'electron';
+import path from 'path';
+import log from 'electron-log';
+import SoundApp from './app/sound/SoundApp';
+import { ERROR_ON_MAIN } from './app/actionTypes';
+import handleActionOnMain from './app/ipc/handleActionOnMain';
+
 const pkg = require('./package.json');
-import SoundApp from './app/sound/SoundApp.js';
 
-const debug = process.env.NODE_ENV !== 'development';
+const debug = process.env.NODE_ENV === 'development';
 // uncomment this to force debug mode in a production build
 // const debug = true;
 
-const debugLevel = debug ? 'debug' : 'info';
-// const debugLevel = 'debug';
-
-const winston = require('winston');
-winston.level = debugLevel;
-winston.loggers.add('sc', {
-  console: {
-    colorize: true,
-    level: debugLevel
-  }
-});
-
-if (debug) {
-  // os x only
-  winston.add(winston.transports.File, {
-    // filename: path.join(__dirname, 'logs/log.log')
-    filename: '/Users/crucial/Library/Logs/play-splom/log.log'
-  });
-}
-
-const log = winston;
-const sclog = winston;  // winston.loggers.get('sc');
+log.log('main');
 
 let menu;
 let template;
@@ -55,21 +40,82 @@ let mainWindow = null;
 
 const synthDefsDir = path.join(__dirname, 'app/synthdefs');
 
-const soundApp = new SoundApp(sclog);
+const soundApp = new SoundApp(log);
+
+function errorOnMain(error) {
+  console.error(error);
+  console.error(error.stack);
+  if (error.data) {
+    console.error(error.data);
+  }
+
+  if (mainWindow) {
+    mainWindow.webContents.send('dispatch-action', {
+      type: ERROR_ON_MAIN,
+      payload: {
+        message: error.message,
+        stack: error.stack,
+        data: error.data
+      }
+    });
+  }
+}
 
 function loadSounds(window) {
-  soundApp.loadSounds(synthDefsDir, (action) => {
-    log.debug('dispatch-action', action);
+  const soundAppDispatch = (action) => {
+    log.log('dispatch-action', action);
     window.webContents.send('dispatch-action', action);
+  };
+
+  soundApp.loadSounds(synthDefsDir, soundAppDispatch).catch(errorOnMain);
+  if (process.env.NODE_ENV === 'development') {
+    soundApp.watchDir(synthDefsDir, soundAppDispatch);
+  }
+}
+
+/**
+ * Use this to quit so that soundApp is stopped correctly.
+ */
+function quit() {
+  return soundApp.stop()
+    .then(
+      () => app.quit(),
+      (error) => {
+        console.log(error);
+        // known issue
+        // it will timeout because Synth and Group don't resolve
+        // console.error('soundApp failed to stop');
+        // console.error(error);
+        // soundApp.player.dump();
+        app.quit();
+      });
+}
+
+function loadWindow() {
+  mainWindow.loadURL(`file://${__dirname}/app/app.html`);
+}
+
+/**
+ * reload the application (in development)
+ * correctly shutting down sound app with sclang/scsynth
+ * and then reloading app.html
+ */
+function reload() {
+  soundApp.stop().then(() => {
+    loadWindow();
+  }, (error) => {
+    // never stops because of Synth/Group not responding
+    loadWindow();
   });
 }
 
-// connect two-way calling of actions
-// the other half is in app.js
-const ipcMain = require('electron').ipcMain;
-const handleActionOnMain = require('./app/ipc/handleActionOnMain');
+// https://github.com/electron/electron/issues/973
+powerSaveBlocker.start('prevent-app-suspension');
+
+// Connect two-way calling of actions between renderer and main.
+// The other half is in app/index.js
 ipcMain.on('call-action-on-main', (event, payload) => {
-  log.debug('call-action-on-main', payload);
+  log.log('call-action-on-main', payload);
   handleActionOnMain(event, payload, soundApp);
 });
 
@@ -77,15 +123,7 @@ if (debug) {
   require('electron-debug')({showDevTools: true});
 }
 
-app.on('window-all-closed', () => {
-  if (process.platform !== 'darwin') {
-    app.quit();
-  }
-});
-
-app.on('will-quit', () => {
-  soundApp.stop();
-});
+app.on('window-all-closed', quit);
 
 app.on('ready', () => {
   mainWindow = new BrowserWindow({
@@ -97,38 +135,40 @@ app.on('ready', () => {
 
   mainWindow.webContents.on('crashed', log.error);
   mainWindow.on('unresponsive', log.error);
-  process.on('uncaughtException', log.error);
+
+  process.on('uncaughtException', errorOnMain);
   process.on('unhandledRejection', (reason) => {
     log.error('Unhandled Rejection:', reason, reason && reason.stack);
+    errorOnMain(reason);
   });
-
-  mainWindow.loadURL(`file://${__dirname}/app/app.html`);
 
   mainWindow.webContents.on('did-finish-load', () => {
     mainWindow.show();
     mainWindow.focus();
 
     soundApp.start(synthDefsDir)
-      // .then(() => {
-      //   log.debug('SoundApp started');
-      // })
+      .then(() => {
+        loadSounds(mainWindow);
+      })
       .catch((error) => {
-        log.error(error);
-        throw error;
+        console.error('SoundApp failed to start', error);
+        // and maybe push it to the browser thread to notify user
+        errorOnMain(error);
       });
 
-    loadSounds(mainWindow);
   });
 
   mainWindow.on('closed', () => {
     mainWindow = null;
   });
 
+  loadWindow();
+
   if (process.platform === 'darwin') {
     template = [{
       label: pkg.productName,
       submenu: [{
-        label: 'About ' + pkg.productName,
+        label: `About ${pkg.productName}`,
         selector: 'orderFrontStandardAboutPanel:'
       }, {
         type: 'separator'
@@ -138,7 +178,7 @@ app.on('ready', () => {
       }, {
         type: 'separator'
       }, {
-        label: 'Hide ' + pkg.productName,
+        label: `Hide ${pkg.productName}`,
         accelerator: 'Command+H',
         selector: 'hide:'
       }, {
@@ -154,7 +194,7 @@ app.on('ready', () => {
         label: 'Quit',
         accelerator: 'Command+Q',
         click() {
-          app.quit();
+          quit();
         }
       }]
     }, {
@@ -190,9 +230,9 @@ app.on('ready', () => {
       label: 'View',
       submenu: debug ? [{
         label: 'Reload',
-        accelerator: 'Command+R',
+        accelerator: 'Shift+Command+R',
         click() {
-          mainWindow.restart();
+          reload()
         }
       }, {
         label: 'Toggle Full Screen',
@@ -260,7 +300,7 @@ app.on('ready', () => {
         label: '&Reload',
         accelerator: 'Ctrl+R',
         click() {
-          mainWindow.restart();
+          reload();
         }
       }, {
         label: 'Toggle &Full Screen',

@@ -4,6 +4,7 @@
  *
  * Adapted from https://github.com/d3/d3-brush
  */
+import _ from 'lodash';
 import React from 'react';
 import style from './SelectArea.css';
 
@@ -126,8 +127,7 @@ function defaultFilter(event) {
 
 function box(list) {
   return {
-    x: list[0][0],
-    y: list[0][1],
+    transform: `translate(${list[0][0]}, ${list[0][1]})`,
     width: list[1][0] - list[0][0],
     height: list[1][1] - list[0][1]
   };
@@ -161,6 +161,7 @@ export default class SelectArea extends React.Component {
     selected: React.PropTypes.object,
     onChange: React.PropTypes.func,
     onMouseEnter: React.PropTypes.func,
+    onClick: React.PropTypes.func,
     onMetaClick: React.PropTypes.func,
     show: React.PropTypes.bool
   };
@@ -203,6 +204,16 @@ export default class SelectArea extends React.Component {
         ]
       };
     }
+
+    this.handlers = {
+      overlayTap: (event) => this._started(event, {type: 'overlay'}),
+      selectionTap: (event) => this._started(event, {type: 'selection'}),
+      onMouseMove: this._moved.bind(this),
+      onMouseUp: this._ended.bind(this),
+      onTouchMove: this._moved.bind(this),
+      onTouchEnd: this._ended.bind(this),
+      onMouseEnter: this._mouseEnter.bind(this)
+    };
   }
 
   _shouldHandleEvent(event) {
@@ -227,6 +238,10 @@ export default class SelectArea extends React.Component {
         this.props.onMetaClick(event);
       }
       return;
+    }
+
+    if (event.buttons && this.props.onClick) {
+      this.props.onClick(event);
     }
 
     if (!this._shouldHandleEvent(event)) {
@@ -349,13 +364,13 @@ export default class SelectArea extends React.Component {
       }
       case MODE_CENTER: {
         if (signX) {
-          w1 = Math.max(W, Math.min(E, this.w0 - dx * signX));
-          e1 = Math.max(W, Math.min(E, this.e0 + dx * signX));
+          w1 = Math.max(W, Math.min(E, this.w0 - (dx * signX)));
+          e1 = Math.max(W, Math.min(E, this.e0 + (dx * signX)));
         }
 
         if (signY) {
-          n1 = Math.max(N, Math.min(S, this.n0 - dy * signY));
-          s1 = Math.max(N, Math.min(S, this.s0 + dy * signY));
+          n1 = Math.max(N, Math.min(S, this.n0 - (dy * signY)));
+          s1 = Math.max(N, Math.min(S, this.s0 + (dy * signY)));
         }
 
         break;
@@ -445,6 +460,7 @@ export default class SelectArea extends React.Component {
       // w n e s
       this.props.onChange({
         x: selected[0][0] - this.props.domain.x,
+        // y is the top of the selected area
         y: selected[0][1] - this.props.domain.y,
         width: selected[1][0] - selected[0][0],
         height: selected[1][1] - selected[0][1]
@@ -464,12 +480,24 @@ export default class SelectArea extends React.Component {
   }
 
   // TODO willsetProps copy extent
+  shouldComponentUpdate(nextProps, nextState) {
+    for (let prop of ['base', 'domain', 'overlayClassName', 'selected', 'show']) {
+      if (!_.isEqual(this.props[prop], nextProps[prop])) {
+        return true;
+      }
+    }
+
+    if (!_.isEqual(this.state.selected, nextState.selected)) {
+      return true;
+    }
+
+    return false;
+  }
 
   render() {
     const domain = this.props.domain;
     const selected = this.state.selected;
 
-    let overlayTapHandler = (event) => this._started(event, {type: 'overlay'});
     let overlay = (
       <rect
         className={this.props.overlayClassName || style.overlay}
@@ -477,21 +505,20 @@ export default class SelectArea extends React.Component {
         pointerEvents="all"
         cursor={cursors.overlay}
         style={{ visibility: 'visible', cursor: cursors.overlay }}
-        onMouseDown={overlayTapHandler}
-        onTouchStart={overlayTapHandler}
+        onMouseDown={this.handlers.overlayTap}
+        onTouchStart={this.handlers.overlayTap}
         {...domain}
       />
     );
 
-    let selectionTapHandler = (event) => this._started(event, {type: 'selection'});
     let selection = (
       <rect
         className={this.props.selectionClassName || style.selection}
         key="selection"
         cursor={cursors.selection}
         shapeRendering="crispEdges"
-        onMouseDown={selectionTapHandler}
-        onTouchStart={selectionTapHandler}
+        onMouseDown={this.handlers.selectionTap}
+        onTouchStart={this.handlers.selectionTap}
         {...box(selected)}
       />
     );
@@ -503,8 +530,9 @@ export default class SelectArea extends React.Component {
           key={h.type}
           className={`handle handle--${h.type}`}
           cursor={cursors[h.type]}
-          x={h.x(selected)}
-          y={h.y(selected)}
+          transform={`translate(${h.x(selected)}, ${h.y(selected)})`}
+          // x={h.x(selected)}
+          // y={h.y(selected)}
           width={h.width(selected)}
           height={h.height(selected)}
           onMouseDown={tapHandler}
@@ -522,11 +550,11 @@ export default class SelectArea extends React.Component {
           WebkitTapHighlightColor: 'rbga(0,0,0,0)',
           visibility: this.props.show ? 'visible' : 'hidden'
         }}
-        onMouseMove={this._moved.bind(this)}
-        onMouseUp={this._ended.bind(this)}
-        onTouchMove={this._moved.bind(this)}
-        onTouchEnd={this._ended.bind(this)}
-        onMouseEnter={this._mouseEnter.bind(this)}
+        onMouseMove={this.handlers.onMouseMove}
+        onMouseUp={this.handlers.onMouseUp}
+        onTouchMove={this.handlers.onTouchMove}
+        onTouchEnd={this.handlers.onTouchEnd}
+        onMouseEnter={this.handlers.onMouseEnter}
         {...domain}
       >
         {overlay}{selection}{handles}

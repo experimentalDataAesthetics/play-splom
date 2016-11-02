@@ -93,7 +93,6 @@ export default class XYParamTable extends React.Component {
             [
               h(ToggleButton, {
                 isActive: control.xConnected,
-                // TODO: or unmap if it is already the one that is set
                 action: () => this.props.mapXYtoParam('x', control.name),
                 iconActive: 'radio_button_checked',
                 iconInactive: 'radio_button_unchecked'

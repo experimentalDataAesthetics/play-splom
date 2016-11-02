@@ -1,0 +1,80 @@
+{
+  "hasArrayArgs": false,
+  "inputs": [],
+  "hasGate": false,
+  "name": "klanker",
+  "hasVariants": false,
+  "output": [
+    {
+      "rate": "audio",
+      "startingChannel": "out",
+      "numberOfChannels": 2,
+      "type": "OffsetOut"
+    }
+  ],
+  "controls": [
+    {
+      "name": "out",
+      "defaultValue": 0,
+      "lag": 0,
+      "rate": "control",
+      "index": 0
+    },
+    {
+      "name": "freqOffset",
+      "defaultValue": 0,
+      "lag": 0,
+      "rate": "control",
+      "spec": {
+        "default": 0,
+        "maxval": 18000,
+        "class": "ControlSpec",
+        "minval": 40,
+        "warp": "exp",
+        "step": 0,
+        "units": ""
+      },
+      "index": 1
+    },
+    {
+      "name": "timeScale",
+      "defaultValue": 1,
+      "lag": 0,
+      "rate": "control",
+      "spec": {
+        "default": 0,
+        "maxval": 1,
+        "class": "ControlSpec",
+        "minval": 0.05,
+        "warp": "exp",
+        "step": 0,
+        "units": ""
+      },
+      "index": 2
+    },
+    {
+      "name": "pan",
+      "defaultValue": 0,
+      "lag": 0,
+      "rate": "control",
+      "spec": {
+        "default": 0,
+        "maxval": 1,
+        "class": "ControlSpec",
+        "minval": -1,
+        "warp": "linear",
+        "step": 0,
+        "units": ""
+      },
+      "index": 3
+    }
+  ],
+  "canFreeSynth": true,
+  "sourceCode": "SynthDef('klanker', { arg out=0, freqOffset=0, timeScale=1, pan=0;    var sig, grain, env, sum, filt, pan1, pan2;    sig = DynKlank.ar(`[      Array.geom(14, 432, 1.3),      Array.fill(14,{ExpRand(0.128, 0.7)}),      Array.fill(14,{ExpRand(0.128, 0.7)})    ], Impulse.ar(0),      freqoffset: freqOffset    );    env = EnvGen.kr(      Env.perc(0.03, 1, 0.25, 4),      timeScale: timeScale,      doneAction: 2);    filt = sig;    sum = filt * env;    sum = Pan2.ar(sum, pan);    OffsetOut.ar(out, sum * 0.5);})",
+  "controlNames": [
+    "out",
+    "freqOffset",
+    "timeScale",
+    "pan"
+  ]
+}

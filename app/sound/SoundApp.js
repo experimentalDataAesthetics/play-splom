@@ -1,10 +1,11 @@
 
-const sc = require('supercolliderjs');
-const _ = require('lodash');
-const path = require('path');
-const fs = require('fs');
-const Bacon = require('baconjs');
-const jetpack = require('fs-jetpack');
+import * as sc from 'supercolliderjs';
+import * as _ from 'lodash';
+import path from 'path';
+import fs from 'fs';
+import Bacon from 'baconjs';
+import jetpack from 'fs-jetpack';
+import watch from 'watch';
 
 /**
  * config is loaded from config/(development|production|test).json
@@ -23,11 +24,14 @@ const options = _.assign({}, config.supercolliderjs.options || {}, {
   // so it requires that a path to an external SuperCollider.app is supplied
   // in config/development.json
   scsynth: path.join(config.appRoot, 'vendor/supercollider/osx/scsynth'),
+  serverPort: 58000,
   echo: true,  // wonky. this means post osc messages to console
-  debug: true,
+  debug: false,  // post sclang traffic
   includePaths: [],
   sclang_conf: null
 });
+
+const TIMEOUT = 2000;
 
 /**
  * Runs in the background.js process
@@ -55,15 +59,15 @@ export default class SoundApp {
     return new Promise((resolve, reject) => {
       fs.readdir(synthDefsDir, (err, files) => {
         if (err) {
-          throw new Error(err);
+          reject(err);
+          return;
         }
 
-        const hasSclang = Boolean(config.supercolliderjs.options.sclang)
-        && process.env.NODE_ENV === 'development';
+        const hasSclang = Boolean(config.supercolliderjs.options.sclang) && process.env.NODE_ENV === 'development';
         // hasSclang = true;
 
         // dryadic document
-        const synthDef = (name) => {
+        function synthDef(name) {
           let opts;
           if (hasSclang) {
             opts = {
@@ -78,81 +82,104 @@ export default class SoundApp {
           }
 
           return ['scsynthdef', opts];
-        };
-
-        const defs = files
-          .filter((p) => path.extname(p) === '.scd')
-          .map((p) => path.basename(p, '.scd'))
-          .filter((name) => !(_.includes(['master', 'mixToMaster'], name)))
-          .map(synthDef);
-
-        const mixToMaster = [
-          'synth',
-          {
-            def: sc.h(synthDef('mixToMaster')),
-            args: {
-              in: (context) => context.out,
-              out: 0
-            }
-          }
-        ];
-
-        const audiobus = (children) => [
-          'audiobus',
-          {
-            numChannels: 2
-          },
-          children.concat([mixToMaster])
-        ];
-
-        const body = [
-          ['synthstream', {
-            stream: this.synthStream
-          }],
-          ['syntheventlist', {
-            updateStream: this.loopModeEventStream
-          }],
-          [
-            'synth',
-            {
-              def: sc.h(synthDef('master')),
-              args: this.masterArgs
-            },
-            [
-              ['synthcontrol', {
-                stream: this.masterControlStream
-              }]
-            ]
-          ]
-        ];
-
-        const server = [
-          'scserver',
-          {
-            options
-          },
-          defs.concat([audiobus(body)])
-        ];
-
-        if (hasSclang) {
-          this.root = sc.h(['sclang', { options }, [server]]);
-        } else {
-          this.root = server;
         }
 
+        let defs = () => {
+          return files
+            .filter((p) => path.extname(p) === '.scd')
+            .map((p) => path.basename(p, '.scd'))
+            .filter((name) => !(_.includes(['master', 'mixToMaster'], name)))
+            .map(synthDef);
+        };
+
+        let mixToMaster = () => ['synth', {def: synthDef('mixToMaster')}];
+
+        let audiobus = (children) => {
+          return [
+            'audiobus',
+            {
+              numChannels: 2
+            },
+            children.concat([mixToMaster()])
+          ];
+        };
+
+        let synthStream = () => {
+          return ['synthstream', {
+            stream: () => this.synthStream
+          }];
+        };
+
+        let busContents = () => {
+          return [
+            synthStream(),
+            ['syntheventlist', {
+              updateStream: () => this.loopModeEventStream
+            }],
+            [
+              'synth',
+              {
+                def: synthDef('master'),
+                args: this.masterArgs
+              }
+            ]
+          ];
+        };
+
+        function server(body) {
+          return [
+            'scserver',
+            {
+              options
+            },
+            defs().concat([body])
+          ];
+        }
+
+        function sclang(inner) {
+          if (hasSclang) {
+            return ['sclang', { options }, [inner]];
+          } else {
+            return inner;
+          }
+        }
+
+        this.root = sclang(server(audiobus(busContents())));
+
         this.player = sc.dryadic(this.root, [], {log: this.log});
-        this.player.play().then(() => {
-          this.playing = true;
-          resolve();
-        }, reject);
+
+        const die = (error) => {
+          this.playing = false;
+          console.error('FAILED TO START');
+          // this.log doesn't print ?
+          // this.log.log
+          console.error(error);
+          this.player.dump();
+          // console.log(JSON.stringify(this.player.getPlayGraph(), null, 2));
+          // circular structure
+          // console.log(JSON.stringify(this.player.getDebugState(), null, 2));
+          // console.log(this.player.getDebugState());
+          // which ones failed
+          reject(error);
+        };
+
+        this.player.play().timeout(TIMEOUT)
+          .then(() => {
+            this.playing = true;
+            resolve();
+          })
+          .catch(die);
       });
     });
   }
 
   stop() {
-    // if (this.player) {
-    //   return this.player.stop();
-    // }
+    if (this.player) {
+      // will not actually complete because of Group and Synth
+      return this.player.stop().timeout(1000);
+    }
+
+    return Promise.resolve();
   }
 
   spawnSynth(event) {
@@ -160,7 +187,7 @@ export default class SoundApp {
   }
 
   spawnSynths(synthEvents) {
-    this.log.debug(synthEvents);
+    // this.log.log(synthEvents);
     synthEvents.forEach((synthEvent) => this.synthStream.push(synthEvent));
   }
 
@@ -184,25 +211,38 @@ export default class SoundApp {
    * Read sounds metadata files and dispatch setSounds action to renderer process.
    */
   loadSounds(synthDefsDir, dispatch) {
-    fs.readdir(synthDefsDir, (err, files) => {
-      if (err) {
-        throw new Error(err);
-      }
-
-      const sounds = [];
-
-      files.forEach((p) => {
-        if (path.extname(p) === '.json' && (p !== 'master.json') && (p !== 'mixToMaster.json')) {
-          const fullpath = path.join(synthDefsDir, p);
-          const data = jetpack.read(fullpath, 'json');
-          data.path = fullpath;
-          sounds.push(data);
+    return new Promise((resolve, reject) => {
+      fs.readdir(synthDefsDir, (error, files) => {
+        if (error) {
+          return reject(error);
         }
-      });
 
-      dispatch({
-        type: 'SET_SOUNDS',
-        payload: sounds
+        const sounds = [];
+
+        // reject on any error ?
+        // or dispatch the error
+        files.forEach((p) => {
+          if (path.extname(p) === '.json' && (p !== 'master.json') && (p !== 'mixToMaster.json')) {
+            const fullpath = path.join(synthDefsDir, p);
+            const data = jetpack.read(fullpath, 'json');
+            data.path = fullpath;
+            sounds.push(data);
+          }
+        });
+
+        dispatch({
+          type: 'SET_SOUNDS',
+          payload: sounds
+        });
+        resolve();
+      });
+    });
+  }
+
+  watchDir(synthDefsDir, dispatch) {
+    watch.watchTree(synthDefsDir, {interval: 1}, () => {
+      this.loadSounds(synthDefsDir, dispatch).catch((error) => {
+        console.error(error);
       });
     });
   }

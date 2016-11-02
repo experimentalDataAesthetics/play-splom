@@ -66,13 +66,9 @@ export default React.createClass({
       tickArguments = [d3.time[props.xAxisTickInterval.unit], props.xAxisTickInterval.interval];
     }
 
-    return React.createElement(
-      'g',
-      {
-        className: props.xAxisClassName,
-        transform: `translate(0 ,${props.xAxisOffset + props.height})`
-      },
-      React.createElement(AxisTicks, {
+    let ticks;
+    if (props.xAxisTickCount !== 0) {
+      ticks = React.createElement(AxisTicks, {
         tickValues: props.xAxisTickValues,
         tickFormatting: props.tickFormatting,
         tickArguments,
@@ -89,7 +85,16 @@ export default React.createClass({
         gridVerticalStroke: props.gridVerticalStroke,
         gridVerticalStrokeWidth: props.gridVerticalStrokeWidth,
         gridVerticalStrokeDash: props.gridVerticalStrokeDash
-      }),
+      });
+    }
+
+    return React.createElement(
+      'g',
+      {
+        className: props.xAxisClassName,
+        transform: `translate(0 ,${props.xAxisOffset + props.height})`
+      },
+      ticks,
       React.createElement(AxisLine, Object.assign({
         scale: props.xScale,
         stroke: props.stroke,

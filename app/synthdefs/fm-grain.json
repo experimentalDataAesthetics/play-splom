@@ -1,0 +1,97 @@
+{
+  "hasArrayArgs": false,
+  "inputs": [],
+  "hasGate": false,
+  "name": "fm-grain",
+  "hasVariants": false,
+  "output": [
+    {
+      "rate": "audio",
+      "startingChannel": "out",
+      "numberOfChannels": 2,
+      "type": "OffsetOut"
+    }
+  ],
+  "controls": [
+    {
+      "name": "out",
+      "defaultValue": 0,
+      "lag": 0,
+      "rate": "control",
+      "index": 0
+    },
+    {
+      "name": "carrierFreq",
+      "defaultValue": 440,
+      "lag": 0,
+      "rate": "control",
+      "spec": {
+        "default": 0,
+        "maxval": 9000,
+        "class": "ControlSpec",
+        "minval": 40,
+        "warp": "exp",
+        "step": 0,
+        "units": ""
+      },
+      "index": 1
+    },
+    {
+      "name": "modulatorFreq",
+      "defaultValue": 10,
+      "lag": 0,
+      "rate": "control",
+      "spec": {
+        "default": 0,
+        "maxval": 9000,
+        "class": "ControlSpec",
+        "minval": 40,
+        "warp": "exp",
+        "step": 0,
+        "units": ""
+      },
+      "index": 2
+    },
+    {
+      "name": "modulatorIndex",
+      "defaultValue": 0,
+      "lag": 0,
+      "rate": "control",
+      "spec": {
+        "default": 0,
+        "maxval": 10,
+        "class": "ControlSpec",
+        "minval": 0,
+        "warp": "linear",
+        "step": 0,
+        "units": ""
+      },
+      "index": 3
+    },
+    {
+      "name": "timeScale",
+      "defaultValue": 1,
+      "lag": 0,
+      "rate": "control",
+      "spec": {
+        "default": 0,
+        "maxval": 1,
+        "class": "ControlSpec",
+        "minval": 0.05,
+        "warp": "exp",
+        "step": 0,
+        "units": ""
+      },
+      "index": 4
+    }
+  ],
+  "canFreeSynth": true,
+  "sourceCode": "SynthDef('fm-grain', { arg out=0, carrierFreq=440, modulatorFreq=10, modulatorIndex=0, timeScale=1.0;  var amp, modulator, carrier;  amp = EnvGen.kr(Env.sine(0.1, 0.2),              timeScale: timeScale,              doneAction: 2);  modulator = SinOsc.ar(freq: modulatorFreq, mul: modulatorIndex * modulatorFreq);  carrier = SinOsc.ar(freq: carrierFreq + modulator, mul: amp);  OffsetOut.ar(out, [carrier, carrier]);})",
+  "controlNames": [
+    "out",
+    "carrierFreq",
+    "modulatorFreq",
+    "modulatorIndex",
+    "timeScale"
+  ]
+}

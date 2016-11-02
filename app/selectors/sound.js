@@ -65,7 +65,7 @@ export function xyMappingControls(mapping, sound) {
       return false;
     }
 
-    return _.get(mapping, `xy.${xy}.param`) === param;
+    return Boolean(_.get(mapping, `xy.${xy}.params.${param}`));
   };
 
   const findDefault = (control) => {
@@ -153,6 +153,36 @@ export function spawnEventsFromBrush(state) {
     npoints);
 }
 
+
+/**
+ * Given the current mapping assignments and the mappingControls,
+ * return a function that maps x and y to synth args.
+ *
+ * @param  {Object} mapping         [description]
+ * @param  {Object} mappingControls [description]
+ * @return {Object}                 [description]
+ */
+function makeXYMappingFn(mapping, mappingControls) {
+  const paramsX = _.get(mapping, 'xy.x.params', {});
+  const paramsY = _.get(mapping, 'xy.y.params', {});
+
+  // {paramName: mappingFunction, ...}
+  // If there is no available mapper (because mode is switching etc)
+  // then map to null and then in the mapping function omit those nulls
+  const alwaysNull = () => null;
+  const mappersX = _.mapValues(paramsX, (v, paramX) => makeXYMapper(mappingControls, paramX) || alwaysNull);
+  const mappersY = _.mapValues(paramsY, (v, paramY) => makeXYMapper(mappingControls, paramY) || alwaysNull);
+  // mapping funciton
+  return (x, y) => {
+    return _.assign({},
+      // {paramName: mappingFunction, ...} -> {paramName: mappedValue, ...}
+      _.omitBy(_.mapValues(mappersX, mapper => mapper(x)), _.isNull),
+      _.omitBy(_.mapValues(mappersY, mapper => mapper(y)), _.isNull)
+    );
+  };
+}
+
+
 export function xyPointsEnteringToSynthEvents(pointsEntering,
   m,
   n,
@@ -168,11 +198,8 @@ export function xyPointsEnteringToSynthEvents(pointsEntering,
     return [];
   }
 
-  // these only change when mapping changes
-  const paramX = _.get(mapping, 'xy.x.param');
-  const paramY = _.get(mapping, 'xy.y.param');
-  const mapperX = makeXYMapper(mappingControls, paramX);
-  const mapperY = makeXYMapper(mappingControls, paramY);
+  const mapXY = makeXYMappingFn(mapping, mappingControls);
+
   const fixedArgs = {};
   mappingControls.forEach((mc) => {
     if (!mc.connected) {
@@ -183,14 +210,7 @@ export function xyPointsEnteringToSynthEvents(pointsEntering,
   return pointsEntering.map((index) => {
     const x = npoints[m].values[index];
     const y = 1.0 - npoints[n].values[index];
-    const args = {};
-    if (mapperX) {
-      args[paramX] = mapperX(x);
-    }
-
-    if (mapperY) {
-      args[paramY] = mapperY(1.0 - y);
-    }
+    const args = mapXY(x, 1.0 - y);
 
     return {
       defName: sound.name,
@@ -263,11 +283,22 @@ export const getLoopModePayload = createSelector(
 );
 
 
+/**
+ * Generate synth events for each point in the loop
+ *
+ * @param  {[type]} m               [description]
+ * @param  {[type]} n               [description]
+ * @param  {[type]} npoints         [description]
+ * @param  {[type]} mapping         [description]
+ * @param  {[type]} mappingControls [description]
+ * @param  {[type]} sound           [description]
+ * @param  {[type]} loopTime        [description]
+ * @return {[type]}                 [description]
+ */
 export function loopModeEvents(m, n, npoints, mapping, mappingControls, sound, loopTime) {
-  // now you have time and x doing the same movement
-  // it will accentuate it I guess
-  const paramX = _.get(mapping, 'xy.x.param');
-  const paramY = _.get(mapping, 'xy.y.param');
+  // Now you have both time and x mapped to the same parameters.
+  // It will accentuate it I guess
+  const mapXY = makeXYMappingFn(mapping, mappingControls);
 
   const timeSpec = {
     warp: 'lin',
@@ -275,8 +306,7 @@ export function loopModeEvents(m, n, npoints, mapping, mappingControls, sound, l
     maxval: loopTime
   };
   const timeMapper = makeMapper(timeSpec);
-  const mapperX = makeXYMapper(mappingControls, paramX);
-  const mapperY = makeXYMapper(mappingControls, paramY);
+
   const fixedArgs = {};
   mappingControls.forEach((mc) => {
     if (!mc.connected) {
@@ -284,16 +314,15 @@ export function loopModeEvents(m, n, npoints, mapping, mappingControls, sound, l
     }
   });
 
+  // if size is wrong eg. after loading a new dataset and loopMode is set from previous one
+  if (!(npoints[m] && npoints[n])) {
+    // just return an empty list
+    return [];
+  }
+
   return npoints[m].values.map((x, i) => {
     const y = npoints[n].values[i];
-    const args = {};
-    if (mapperX) {
-      args[paramX] = mapperX(x);
-    }
-
-    if (mapperY) {
-      args[paramY] = mapperY(y);
-    }
+    const args = mapXY(x, y);
 
     return {
       time: timeMapper(x),

@@ -1,16 +1,16 @@
 import React, { Component } from 'react';
+import _ from 'lodash';
 import h from 'react-hyperscript';
 import connect from '../utils/reduxers';
 import ScatterPlots from '../components/ScatterPlots';
 import ScatterPlotsActivePoints from '../components/ScatterPlotsActivePoints';
 import ScatterPlotsInteractive from '../components/ScatterPlotsInteractive';
+import HoveringAxis from '../components/HoveringAxis';
 import LoopPlayHead from '../components/LoopPlayHead';
-import * as _ from 'lodash';
 
 import {
   getPointsForPlot,
   getLayout,
-  getNumFeatures,
   getDatasetMetadata
 } from '../selectors/index';
 
@@ -32,8 +32,7 @@ class ScatterPlotsContainer extends Component {
     height: React.PropTypes.number.isRequired,
     dataset: React.PropTypes.object,
     features: React.PropTypes.array.isRequired,
-    layout: React.PropTypes.object.isRequired,
-    numFeatures: React.PropTypes.number.isRequired
+    layout: React.PropTypes.object.isRequired
   };
 
   render() {
@@ -41,8 +40,7 @@ class ScatterPlotsContainer extends Component {
     const props = _.pick(this.props, [
       'dataset',
       'features',
-      'layout',
-      'numFeatures'
+      'layout'
     ]);
 
     props.height = this.props.height - (padding * 2);
@@ -52,18 +50,20 @@ class ScatterPlotsContainer extends Component {
     const activePoints = h(ScatterPlotsActivePoints);
     const loopPlayHead = h(LoopPlayHead);
     const surface = h(ScatterPlotsInteractive, props);
+    const hoveringAxis = h(HoveringAxis);
 
     return h(
       'g',
       {
         height: props.height,
         width: props.width,
-        transform: `translate(${padding}, ${padding})`,
+        transform: `translate(${padding}, ${padding})`
       },
       [
         plots,
         activePoints,
         loopPlayHead,
+        hoveringAxis,
         surface
       ]
     );
@@ -74,6 +74,5 @@ class ScatterPlotsContainer extends Component {
 export default connect({
   dataset: getDatasetMetadata,
   features: getPointsForPlot,
-  layout: getLayout,
-  numFeatures: getNumFeatures
+  layout: getLayout
 })(ScatterPlotsContainer);

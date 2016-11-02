@@ -1,8 +1,9 @@
 import React from 'react';
+import _ from 'lodash';
 import h from 'react-hyperscript';
 import connect from '../utils/reduxers';
 import XYParamTable from '../components/XYParamTable';
-import { pick } from 'lodash';
+import styles from './Sidebar.css';
 
 import {
   getSound,
@@ -41,12 +42,11 @@ const handlers = {
  */
 class ParamMapping extends React.Component {
   render() {
-    return h('div',
-      {className: this.props.className},
+    return h(`div.${styles.paramMapping}`,
       [
         h('h6', this.props.sound ? this.props.sound.name : ''),
         h(XYParamTable,
-          pick(this.props, [
+          _.pick(this.props, [
             'sound',
             'mapping',
             'xyMappingControls',

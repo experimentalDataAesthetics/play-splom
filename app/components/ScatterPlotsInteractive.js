@@ -12,22 +12,14 @@ import {
   setHovering
 } from '../actions/ui';
 
-import {
-  getMuiTheme,
-  getFeatureSideLengthScale
-} from '../selectors/index';
-
-import Axis from './Axis';
+import HoveringAxis from './HoveringAxis';
 import SelectArea from './SelectArea';
 import style from './ScatterPlots.css';
 
 const unset = {};
 
 const selectors = {
-  loopMode: (state) => state.interaction.loopMode || unset,
-  muiTheme: getMuiTheme,
-  featureSideLengthScale: getFeatureSideLengthScale,
-  hovering: (state) => state.ui.hovering || unset
+  loopMode: (state) => state.interaction.loopMode || unset
 };
 
 const handlers = {
@@ -52,12 +44,8 @@ class ScatterPlotsInteractive extends React.Component {
   static propTypes = {
     width: React.PropTypes.number.isRequired,
     height: React.PropTypes.number.isRequired,
-    numFeatures: React.PropTypes.number.isRequired,
     loopMode: React.PropTypes.object.isRequired,
     layout: React.PropTypes.object.isRequired,
-    hovering: React.PropTypes.object.isRequired,
-    muiTheme: React.PropTypes.object.isRequired,
-    featureSideLengthScale: React.PropTypes.array.isRequired,
     features: React.PropTypes.array.isRequired,
     setPointsUnderBrush: React.PropTypes.func.isRequired,
     setHovering: React.PropTypes.func.isRequired,
@@ -67,11 +55,13 @@ class ScatterPlotsInteractive extends React.Component {
   setPointsIn(area, box, points) {
     // area is inverted y
     // points are normal y
-    const sideLength = this.props.layout.sideLength;
+    const sideLength = this.props.layout.sideLength - this.props.layout.margin;
     const minx = area.x;
     const maxx = minx + area.width;
-    const miny = sideLength - area.y - area.height;
+    const miny = sideLength - (area.y + area.height);
     const maxy = sideLength - area.y;
+
+    // console.log({minx, maxx, miny, maxy});
     const pointsIn = [];
     points.forEach((xy, i) => {
       if ((xy[0] >= minx)
@@ -82,10 +72,10 @@ class ScatterPlotsInteractive extends React.Component {
       }
     });
 
-    // keeping some micro-state values in this.
+    // Keeping some micro-state values in this.
     // its not ui state, does not require a re-render
     // and it is not application state.
-    // its just cacheing for performance
+    // Its just cacheing for performance.
     const next = {
       m: box.m,
       n: box.n,
@@ -109,9 +99,6 @@ class ScatterPlotsInteractive extends React.Component {
   }
 
   setHoveringBox(box) {
-    // this causes a full update
-    // could wrap Axis in something that connects to hovering featureSideLengthScale
-    // muiTheme
     this.props.setHovering(box.m, box.n);
   }
 
@@ -119,31 +106,9 @@ class ScatterPlotsInteractive extends React.Component {
     const sideLength = this.props.layout.sideLength;
     const layout = this.props.layout;
     const innerSideLength = sideLength - layout.margin;
-    const children = [];
-
-    const getBox = (m, n) => this.props.layout.boxes[m * this.props.numFeatures + n];
-
-    if (this.props.featureSideLengthScale.length > 0) {
-      if (_.isNumber(this.props.hovering.m)) {
-        const hovx = (this.props.hovering.m || 0);
-        const hovy = (this.props.hovering.n || 0);
-        const featx = this.props.featureSideLengthScale[hovx];
-        const featy = this.props.featureSideLengthScale[hovy];
-        const box = getBox(hovx, hovy);
-        if (box) {
-          children.push(h(Axis, {
-            xOffset: box.x,
-            yOffset: box.y,
-            sideLength: innerSideLength,
-            muiTheme: this.props.muiTheme,
-            xScale: featx.mappedScale,
-            yScale: featy.mappedScale,
-            xLabel: featx.feature.name,
-            yLabel: featy.feature.name
-          }));
-        }
-      }
-    }
+    const children = [
+      <HoveringAxis />
+    ];
 
     const s = {
       box: {
@@ -155,6 +120,8 @@ class ScatterPlotsInteractive extends React.Component {
         n: _.get(this.state, 'last.n')
       }
     };
+
+    const isLooping = this.props.loopMode.box;
 
     // pending should be erased once it becomes active
     const getClassName = (box) => {
@@ -201,7 +168,12 @@ class ScatterPlotsInteractive extends React.Component {
             this.props.setLoopBox(box.m, box.n);
           }
         },
-        show: isLastFocused,
+        onClick: () => {
+          if (isLooping) {
+            this.props.setLoopBox(box.m, box.n);
+          }
+        },
+        show: isLastFocused,  // && !looping
         overlayClassName: getClassName(box)
       });
 
@@ -213,7 +185,10 @@ class ScatterPlotsInteractive extends React.Component {
       {
         width: this.props.width,
         height: this.props.height,
-        className: 'ScatterPlotsInteractive'
+        className: 'ScatterPlotsInteractive',
+        onMouseLeave: () => {
+          this.setHoveringBox({})
+        }
       },
       children
     );

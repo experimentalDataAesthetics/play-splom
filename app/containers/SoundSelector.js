@@ -3,6 +3,7 @@ import h from 'react-hyperscript';
 import connect from '../utils/reduxers';
 import { List, ListItem, MakeSelectable } from 'material-ui/List';
 import { selectSound } from '../actions/sounds';
+import styles from './Sidebar.css';
 
 const SelectableList = MakeSelectable(List);
 
@@ -11,17 +12,13 @@ const SelectableList = MakeSelectable(List);
  */
 class SoundSelector extends React.Component {
   render() {
-    return h('div.sound-selector', [
+    return h(`div.${styles.soundSelector}`, [
       h('h6', 'Sounds'),
       h(SelectableList,
         {
           value: this.props.selectedSound,
           onChange: this.props.onSelect,
-          className: 'selectable-list',
-          style: {
-            borderBottom: '1px solid #eee',
-            borderTop: '1px solid #eee'
-          }
+          className: 'selectable-list'
         },
         this.props.sounds.map((sound) => {
           return h(ListItem, {
@@ -30,7 +27,9 @@ class SoundSelector extends React.Component {
             style: {
               fontSize: '1em'
             },
-            // selected: true,
+            innerDivStyle: {
+              padding: '8px'
+            },
             value: sound.name
           });
         })

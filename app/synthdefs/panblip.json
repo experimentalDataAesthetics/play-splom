@@ -1,0 +1,105 @@
+{
+  "hasArrayArgs": false,
+  "inputs": [],
+  "hasGate": false,
+  "name": "panblip",
+  "hasVariants": false,
+  "output": [
+    {
+      "rate": "audio",
+      "startingChannel": "out",
+      "numberOfChannels": 2,
+      "type": "OffsetOut"
+    }
+  ],
+  "controls": [
+    {
+      "name": "out",
+      "defaultValue": 0,
+      "lag": 0,
+      "rate": "scalar",
+      "index": 0
+    },
+    {
+      "name": "pan",
+      "defaultValue": 0,
+      "lag": 0,
+      "rate": "scalar",
+      "spec": {
+        "default": 0,
+        "maxval": 1,
+        "class": "ControlSpec",
+        "minval": -1,
+        "warp": "linear",
+        "step": 0,
+        "units": ""
+      },
+      "index": 1
+    },
+    {
+      "name": "verb",
+      "defaultValue": 0,
+      "lag": 0,
+      "rate": "scalar",
+      "index": 2
+    },
+    {
+      "name": "freq",
+      "defaultValue": 500,
+      "lag": 0,
+      "rate": "scalar",
+      "spec": {
+        "default": 440,
+        "maxval": 20000,
+        "class": "ControlSpec",
+        "minval": 20,
+        "warp": "exp",
+        "step": 0,
+        "units": " Hz"
+      },
+      "index": 3
+    },
+    {
+      "name": "sweep",
+      "defaultValue": 1000,
+      "lag": 0,
+      "rate": "scalar",
+      "spec": {
+        "default": 1,
+        "maxval": 5000,
+        "class": "ControlSpec",
+        "minval": -5000,
+        "warp": "linear",
+        "step": 0,
+        "units": ""
+      },
+      "index": 4
+    },
+    {
+      "name": "dur",
+      "defaultValue": 0.25,
+      "lag": 0,
+      "rate": "scalar",
+      "spec": {
+        "default": 0.05,
+        "maxval": 0.3,
+        "class": "ControlSpec",
+        "minval": 0.01,
+        "warp": "exp",
+        "step": 0,
+        "units": ""
+      },
+      "index": 5
+    }
+  ],
+  "canFreeSynth": true,
+  "sourceCode": "SynthDef('panblip', { arg out, pan, verb, freq=500, sweep=1000, dur=0.25;  OffsetOut.ar(out,    Pan2.ar(      SinOsc.ar(Line.kr(freq, (freq + sweep).clip(1, 20000), dur, doneAction: 2), 0, dur),      pan    ) * 0.7,  )})",
+  "controlNames": [
+    "out",
+    "pan",
+    "verb",
+    "freq",
+    "sweep",
+    "dur"
+  ]
+}

@@ -1,7 +1,6 @@
-import { autoScale } from '../utils/mapping';
+import d3 from 'd3';
 import * as _ from 'lodash';
 import { createSelector } from 'reselect';
-import d3 from 'd3';
 
 export const getDataset = (state) => state.dataset;
 

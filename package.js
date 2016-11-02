@@ -1,4 +1,10 @@
-/* eslint strict: 0, no-shadow: 0, no-unused-vars: 0, no-console: 0 */
+/* eslint strict: 0,
+  no-shadow: 0,
+  no-unused-vars: 0,
+  no-console: 0 ,
+  import/no-extraneous-dependencies: 0
+  */
+
 'use strict';
 
 require('babel-polyfill');
@@ -11,6 +17,7 @@ const del = require('del');
 const exec = require('child_process').exec;
 const argv = require('minimist')(process.argv.slice(2));
 const pkg = require('./package.json');
+
 const deps = Object.keys(pkg.dependencies);
 const devDeps = Object.keys(pkg.devDependencies);
 
@@ -27,7 +34,13 @@ const DEFAULT_OPTS = {
     '^/test($|/)',
     '^/tools($|/)',
     '^/release($|/)',
-    '^/main.development.js'
+    '^/main.development.js',
+    '^/_org($|/)',
+    // '^/app($|/)',
+    // '^/\.[a-z\.]+',
+    // '^/package.js',
+    // '^/server.js',
+    // '^/webpack*'
   ].concat(devDeps.map(name => `/node_modules/${name}($|/)`))
   .concat(
     deps.filter(name => !electronCfg.externals.includes(name))

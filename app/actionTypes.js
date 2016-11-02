@@ -3,7 +3,7 @@ import keyMirror from 'keymirror';
 
 module.exports = keyMirror({
   SELECT_DATASET: null,
-  SET_DATASETS: null,
+  ADD_DATASET_PATHS: null,
   LOAD_DATASET: null,
 
   // sounds
@@ -42,6 +42,7 @@ module.exports = keyMirror({
   SET_NOTIFICATION: null,
 
   // main
-  OPEN_DATASET_DIALOG: null
+  OPEN_DATASET_DIALOG: null,
+  ERROR_ON_MAIN: null
 
 });

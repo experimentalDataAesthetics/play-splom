@@ -1,5 +1,5 @@
-import { centeredSquareWithMargin } from '../utils/layout';
 import { createSelector } from 'reselect';
+import { centeredSquareWithMargin } from '../utils/layout';
 import { getDatasetMetadata, getFeatures } from './dataset';
 import { getLoop } from './sound';
 
@@ -35,7 +35,6 @@ export const getLayout = createSelector(
     const sidebarWidth = big ? 300 : 0;
     layout.showSidebar = big;
     layout.svgWidth = windowSize.width - sidebarWidth;
-    layout.margin = MARGIN_BETWEEN_PLOTS;
 
     if (layout.showSidebar) {
       layout.sideBarStyle = {
@@ -56,13 +55,14 @@ export const getLayout = createSelector(
       - (2 * layout.scatterPlotsMargin);
 
     layout.sideLength = layout.plotsWidth / (numFeatures || 1);
+    layout.margin = layout.sideLength > 150 ? MARGIN_BETWEEN_PLOTS : 8;
 
     // each box
     layout.boxes = [];
     if (layout.sideLength > 0) {
-      for (let m = 0; m < numFeatures; m++) {
+      for (let m = 0; m < numFeatures; m += 1) {
         const x = m * layout.sideLength;
-        for (let n = 0; n < numFeatures; n++) {
+        for (let n = 0; n < numFeatures; n += 1) {
           // identity
           // if (m === n) {
           //   continue;
@@ -141,13 +141,15 @@ export const getLoopBox = createSelector(
   [getLayout, getNumFeatures, getLoop],
   (layout, numFeatures, loopMode) => {
     if (loopMode.box) {
-      const box = layout.boxes[loopMode.box.m * numFeatures + loopMode.box.n];
-      return {
-        x: box.x,
-        y: box.y,
-        width: layout.sideLength - layout.margin,
-        height: layout.sideLength - layout.margin
-      };
+      const box = layout.boxes[(loopMode.box.m * numFeatures) + loopMode.box.n];
+      if (box) {
+        return {
+          x: box.x,
+          y: box.y,
+          width: layout.sideLength - layout.margin,
+          height: layout.sideLength - layout.margin
+        };
+      }
     }
   }
 );

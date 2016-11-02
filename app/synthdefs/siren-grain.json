@@ -1,0 +1,114 @@
+{
+  "hasArrayArgs": false,
+  "inputs": [],
+  "hasGate": false,
+  "name": "siren-grain",
+  "hasVariants": false,
+  "output": [
+    {
+      "rate": "audio",
+      "startingChannel": "out",
+      "numberOfChannels": 2,
+      "type": "OffsetOut"
+    }
+  ],
+  "controls": [
+    {
+      "name": "out",
+      "defaultValue": 0,
+      "lag": 0,
+      "rate": "control",
+      "index": 0
+    },
+    {
+      "name": "fundfreq",
+      "defaultValue": 440,
+      "lag": 0,
+      "rate": "control",
+      "spec": {
+        "default": 0,
+        "maxval": 10240,
+        "class": "ControlSpec",
+        "minval": 40,
+        "warp": "exp",
+        "step": 0,
+        "units": ""
+      },
+      "index": 1
+    },
+    {
+      "name": "squelchSpeed",
+      "defaultValue": 0.5,
+      "lag": 0,
+      "rate": "control",
+      "spec": {
+        "default": 0,
+        "maxval": 20,
+        "class": "ControlSpec",
+        "minval": 0,
+        "warp": "linear",
+        "step": 0,
+        "units": ""
+      },
+      "index": 2
+    },
+    {
+      "name": "squelchAmount",
+      "defaultValue": 100,
+      "lag": 0,
+      "rate": "control",
+      "spec": {
+        "default": 0,
+        "maxval": 10240,
+        "class": "ControlSpec",
+        "minval": 40,
+        "warp": "exp",
+        "step": 0,
+        "units": ""
+      },
+      "index": 3
+    },
+    {
+      "name": "timeScale",
+      "defaultValue": 1,
+      "lag": 0,
+      "rate": "control",
+      "spec": {
+        "default": 0,
+        "maxval": 1,
+        "class": "ControlSpec",
+        "minval": 0.05,
+        "warp": "exp",
+        "step": 0,
+        "units": ""
+      },
+      "index": 4
+    },
+    {
+      "name": "pan",
+      "defaultValue": 0,
+      "lag": 0,
+      "rate": "control",
+      "spec": {
+        "default": 0,
+        "maxval": 1,
+        "class": "ControlSpec",
+        "minval": -1,
+        "warp": "linear",
+        "step": 0,
+        "units": ""
+      },
+      "index": 5
+    }
+  ],
+  "canFreeSynth": true,
+  "sourceCode": "SynthDef('siren-grain', { arg out=0, fundfreq=440, squelchSpeed=0.5, squelchAmount=100, timeScale=1, pan=0;  var modulator, tone, amp, env, envd, panned;  modulator = LFCub.kr(squelchSpeed).range(fundfreq, fundfreq + squelchAmount);  tone = LFCub.ar(modulator);  /*env = Env.perc(0.03, 0.01, 0.25, 4);*/  /*env = Env.perc;*/  env = Env.sine(0.5, 0.2);  amp = EnvGen.kr(env,                timeScale: timeScale,                doneAction: 2);  envd = tone * amp;  panned = Pan2.ar(envd * AmpCompA.kr(fundfreq, 0.2, 0.7), pan);  OffsetOut.ar(out, panned);})",
+  "controlNames": [
+    "out",
+    "fundfreq",
+    "squelchSpeed",
+    "squelchAmount",
+    "timeScale",
+    "pan"
+  ]
+}

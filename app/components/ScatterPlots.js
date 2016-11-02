@@ -1,9 +1,9 @@
 import React from 'react';
 import h from 'react-hyperscript';
-import * as _ from 'lodash';
+import _ from 'lodash';
 
-import ScatterPlot from '../components/ScatterPlot';
 import muiThemeable from 'material-ui/styles/muiThemeable';
+import ScatterPlot from '../components/ScatterPlot';
 import style from './ScatterPlots.css';
 
 /**
@@ -18,27 +18,30 @@ class ScatterPlots extends React.Component {
     width: React.PropTypes.number.isRequired,
     dataset: React.PropTypes.object,
     features: React.PropTypes.array.isRequired,
-    numFeatures: React.PropTypes.number.isRequired,
     layout: React.PropTypes.object.isRequired,
     muiTheme: React.PropTypes.object
   };
 
   render() {
+    const { muiTheme, layout, dataset } = this.props;
     const children = [];
 
-    if (this.props.dataset) {
+    if (dataset) {
       const title = h('text', {
         x: 50,
-        y: this.props.layout.svgStyle.height - 150,
-        className: style.title
-      }, [this.props.dataset.name]);
+        y: layout.svgStyle.height - 150,
+        className: style.title,
+        style: {
+          stroke: muiTheme.palette.title
+        }
+      }, [dataset.name]);
       children.push(title);
 
-      const sideLength = this.props.layout.sideLength;
-      const margin = this.props.layout.margin;
-      const columnNames = this.props.dataset.columnNames;
+      const sideLength = layout.sideLength;
+      const margin = layout.margin;
+      const columnNames = dataset.columnNames;
 
-      this.props.layout.boxes.forEach((box) => {
+      layout.boxes.forEach((box) => {
         // features go across the x
         // and down the y
         // SVG coords also go down the y
@@ -58,8 +61,7 @@ class ScatterPlots extends React.Component {
           xOffset: box.x,
           yOffset: box.y,
           sideLength: sideLength - margin,
-          muiTheme: this.props.muiTheme,
-          pointsUnderBrush: this.props.pointsUnderBrush
+          muiTheme
         });
 
         children.push(sp);

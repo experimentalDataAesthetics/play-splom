@@ -84,12 +84,10 @@ export default React.createClass({
       ticks = scale.ticks.apply(scale, props.tickArguments);
     } else {
       ticks = scale.domain();
-      // classes
-      // console.log('AxisTicks', ticks);
     }
 
-    if (props.tickFormatting) {
-      tickFormat = props.tickFormatting;
+    if (props.tickFormat) {
+      tickFormat = props.tickFormat;
     } else if (scale.tickFormat) {
       tickFormat = scale.tickFormat.apply(scale, props.tickArguments);
     } else {
@@ -121,8 +119,10 @@ export default React.createClass({
         y2grid = -props.height;
         break;
       case 'left':
-        tr = (tick) => `translate(0,${adjustedScale(tick)})`;
+        // translates each tick line to the correct vertical position
+        tr = (tick) => `translate(0,${props.height - adjustedScale(tick)})`;
         textAnchor = 'end';
+        // tick line from, to
         x2 = props.innerTickSize * -sign;
         x1 = tickSpacing * -sign;
         dy = '.32em';
@@ -130,7 +130,7 @@ export default React.createClass({
         y2grid = 0;
         break;
       case 'right':
-        tr = (tick) => `translate(0,${adjustedScale(tick)})`;
+        tr = (tick) => `translate(0,${props.height - adjustedScale(tick)})`;
         textAnchor = 'start';
         x2 = props.innerTickSize * -sign;
         x1 = tickSpacing * -sign;
@@ -217,11 +217,11 @@ export default React.createClass({
           {key: idx, className: 'tick', transform: tr(tick)},
           gridLine(adjustedScale(tick)),
           React.createElement('line', {
-            style: {shapeRendering: 'crispEdges', opacity: '1', stroke: props.tickStroke}, x2,
+            style: {shapeRendering: 'crispEdges', opacity: '1', stroke: props.tickStroke}, 
+            x2,
             y2
           }),
-          React.createElement(
-            'text',
+          React.createElement('text',
             Object.assign({
               strokeWidth: '0.01',
               dy,

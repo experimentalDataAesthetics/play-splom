@@ -1,18 +1,28 @@
+import fs from 'fs';
+import { extname, basename, join } from 'path';
+import Miso from 'miso.dataset';
+import jetpack from 'fs-jetpack';
+
 import {
   SELECT_DATASET,
-  SET_DATASETS,
+  ADD_DATASET_PATHS,
   OPEN_DATASET_DIALOG
 } from '../actionTypes';
 import callActionOnMain from '../ipc/callActionOnMain';
 import {
   notify
 } from './ui';
+import {
+  clipLoopBox
+} from './interaction';
 
-const Miso = require('miso.dataset');
-const jetpack = require('fs-jetpack');
-const fs = require('fs');
-import { extname, basename, join } from 'path';
-
+/**
+ * setDataset - having loaded and parsed a dataset, put that into the redux state
+ *
+ * @param {String} path         Path the dataset was loaded from
+ * @param {Miso.Dataset} data   The data itself
+ * @param {Object} metadata     Database metadata information (from Miso. often blank)
+ */
 export function setDataset(path, data, metadata) {
   const name = basename(path, extname(path));
   return {
@@ -26,6 +36,9 @@ export function setDataset(path, data, metadata) {
   };
 }
 
+/**
+ * Call the main process to open a select file dialog
+ */
 export function openDatasetDialog() {
   return () => {
     callActionOnMain({
@@ -40,13 +53,6 @@ const parsers = {
 };
 
 /**
- * Example datasets
- */
-export function loadInternalDataset(path) {
-  return loadDataset(path);
-}
-
-/**
  * loading should be moved to main
  *
  * path should be a resolved
@@ -56,18 +62,23 @@ export function loadDataset(path) {
     const ext = extname(path);
     const parser = parsers[ext];
 
+    function fail(message) {
+      dispatch(notify('error', message));
+    }
+
     if (!parser) {
-      return notify('error', `Filetype not supported: ${ext}`);
+      return fail(`Filetype not supported: ${ext}`);
     }
 
     dispatch(notify('inform', 'Loading...'));
+
     fs.readFile(path, {encoding: 'utf8'}, (err, data) => {
       if (err) {
-        return notify('error', err);
+        return fail(err.message);
       }
 
       if (!data) {
-        return notify('error', `No data loaded from ${path}`);
+        return fail(`No data loaded from ${path}`);
       }
 
       let data2;
@@ -75,7 +86,7 @@ export function loadDataset(path) {
         try {
           data2 = JSON.parse(data);
         } catch (e) {
-          return notify('error', e);
+          return fail(e);
         }
       } else {
         data2 = String(data);
@@ -89,35 +100,47 @@ export function loadDataset(path) {
       ds.fetch().then((data3) => {
         dispatch(notify());
         dispatch(setDataset(path, data3));
-      }, (error) => notify('error', error));
+        dispatch(clipLoopBox());
+      }, (error) => fail(error));
     });
   };
 }
 
 /**
- * You wouldn't want to load them all into memory and keep them there.
- * Should only store paths and load/dump on demand
+ * Read the list of included datasets and populate the menu.
+ * Then optionally load one of them.
+ * This is called at startup.
  */
 export function readDefaultDatasets(datasetsDir, thenLoadPath) {
   return (dispatch) => {
     jetpack.listAsync(datasetsDir).then((paths) => {
       if (paths) {
-        dispatch(setDatasets(paths.map((p) => join(datasetsDir, p))));
+        const dp = paths
+          // only show those that have a parser
+          .filter((p) => Boolean(parsers[extname(p)]))
+          .map((p) => {
+            return {
+              name: p,
+              path: join(datasetsDir, p)
+            };
+          });
+        dispatch(addDatasetPaths(dp));
+
         if (thenLoadPath) {
           setTimeout(() => {
-            dispatch(loadDataset(join(datasetsDir, thenLoadPath)));
+            dispatch(loadDataset(thenLoadPath));
           }, 500);
         }
       } else {
-        notify('error', `No paths found at: ${datasetsDir}`);
+        dispatch(notify('error', `No paths found at: ${datasetsDir}`));
       }
     });
   };
 }
 
-export function setDatasets(paths) {
+export function addDatasetPaths(paths) {
   return {
-    type: SET_DATASETS,
+    type: ADD_DATASET_PATHS,
     payload: {
       paths
     }
