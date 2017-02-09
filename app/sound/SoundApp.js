@@ -1,5 +1,5 @@
 
-import * as sc from 'supercolliderjs';
+import { dryadic } from 'supercolliderjs/lib/dryads';
 import * as _ from 'lodash';
 import path from 'path';
 import fs from 'fs';
@@ -146,7 +146,7 @@ export default class SoundApp {
 
         this.root = sclang(server(audiobus(busContents())));
 
-        this.player = sc.dryadic(this.root, [], {log: this.log});
+        this.player = dryadic(this.root, [], {log: this.log});
 
         const die = (error) => {
           this.playing = false;
