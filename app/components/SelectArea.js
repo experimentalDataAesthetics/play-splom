@@ -205,15 +205,29 @@ export default class SelectArea extends React.Component {
       };
     }
 
+    const overlayTap = (event) => this.started(event, {type: 'overlay'});
+    const selectionTap = (event) => this.started(event, {type: 'selection'});
     this.handlers = {
-      overlayTap: (event) => this._started(event, {type: 'overlay'}),
-      selectionTap: (event) => this._started(event, {type: 'selection'}),
-      onMouseMove: this._moved.bind(this),
-      onMouseUp: this._ended.bind(this),
-      onTouchMove: this._moved.bind(this),
-      onTouchEnd: this._ended.bind(this),
-      onMouseEnter: this._mouseEnter.bind(this)
+      overlay: {
+        onMouseDown: overlayTap,
+        onTouchStart: overlayTap
+      },
+      selection: {
+        onMouseDown: selectionTap,
+        onTouchStart: selectionTap
+      },
+      base: {
+        onMouseMove: this.moved.bind(this),
+        onMouseUp: this.ended.bind(this),
+        onTouchMove: this.moved.bind(this),
+        onTouchEnd: this.ended.bind(this),
+        onMouseEnter: this._mouseEnter.bind(this)
+      }
     };
+
+    if (this.props.mouseDownPointEvent) {
+      this.setMouseDownPointFromEvent(this.props.mouseDownPointEvent);
+    }
   }
 
   _shouldHandleEvent(event) {
@@ -232,7 +246,7 @@ export default class SelectArea extends React.Component {
     return true;
   }
 
-  _started(event, handle) {
+  started(event, handle) {
     if (event.buttons && event.metaKey) {
       if (this.props.onMetaClick) {
         this.props.onMetaClick(event);
@@ -262,6 +276,11 @@ export default class SelectArea extends React.Component {
 
     // mouse position within the g or svg I am on
     // but the rest of the calculations are in absolute
+    // setMousePoint
+    this.setMouseDownPointFromEvent(event);
+  }
+
+  setMouseDownPointFromEvent(event) {
     this.point0 = this._eventPoint(event);
     this.pointLatest = this.point0;
 
@@ -284,7 +303,7 @@ export default class SelectArea extends React.Component {
     }
   }
 
-  _moved(event) {
+  moved(event) {
     if (!this.mouseMode) {
       return;
     }
@@ -419,7 +438,7 @@ export default class SelectArea extends React.Component {
     }
   }
 
-  _ended(event) {
+  ended(event) {
     event.stopPropagation();
     if (event.touches) {
       if (event.touches.length) {
@@ -437,14 +456,6 @@ export default class SelectArea extends React.Component {
     } else {
       this.mouseMode = null;
     }
-
-    //   dragEnable(event.view, moving);
-    //   view.on("keydown.brush keyup.brush mousemove.brush mouseup.brush", null);
-    // }
-
-    // group.attr("pointer-events", "all");
-    // overlay.attr("cursor", cursors.overlay);
-    // if (empty(selection)) state.selection = null, redraw.call(that);
   }
 
   _mouseEnter(e) {
@@ -505,8 +516,7 @@ export default class SelectArea extends React.Component {
         pointerEvents="all"
         cursor={cursors.overlay}
         style={{ visibility: 'visible', cursor: cursors.overlay }}
-        onMouseDown={this.handlers.overlayTap}
-        onTouchStart={this.handlers.overlayTap}
+        {...this.handlers.overlay}
         {...domain}
       />
     );
@@ -517,14 +527,13 @@ export default class SelectArea extends React.Component {
         key="selection"
         cursor={cursors.selection}
         shapeRendering="crispEdges"
-        onMouseDown={this.handlers.selectionTap}
-        onTouchStart={this.handlers.selectionTap}
+        {...this.handlers.selection}
         {...box(selected)}
       />
     );
 
-    let handles = this.dim.handles.map((h) => {
-      let tapHandler = (event) => this._started(event, h);
+    const handles = this.dim.handles.map((h) => {
+      const tapHandler = (event) => this.started(event, h);
       return (
         <rect
           key={h.type}
@@ -550,14 +559,12 @@ export default class SelectArea extends React.Component {
           WebkitTapHighlightColor: 'rbga(0,0,0,0)',
           visibility: this.props.show ? 'visible' : 'hidden'
         }}
-        onMouseMove={this.handlers.onMouseMove}
-        onMouseUp={this.handlers.onMouseUp}
-        onTouchMove={this.handlers.onTouchMove}
-        onTouchEnd={this.handlers.onTouchEnd}
-        onMouseEnter={this.handlers.onMouseEnter}
+        {...this.handlers.base}
         {...domain}
       >
-        {overlay}{selection}{handles}
+        {overlay}
+        {selection}
+        {handles}
       </g>
     );
   }

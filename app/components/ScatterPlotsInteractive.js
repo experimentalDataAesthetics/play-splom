@@ -19,7 +19,8 @@ import style from './ScatterPlots.css';
 const unset = {};
 
 const selectors = {
-  loopMode: (state) => state.interaction.loopMode || unset
+  loopMode: (state) => state.interaction.loopMode || unset,
+  hovering: (state) => state.ui.hovering
 };
 
 const handlers = {
@@ -51,6 +52,99 @@ class ScatterPlotsInteractive extends React.Component {
     setHovering: React.PropTypes.func.isRequired,
     setLoopBox: React.PropTypes.func.isRequired
   };
+
+  constructor(props) {
+    super(props);
+    this.state = {};
+  }
+
+  onMouseDown(event) {
+    let box = this._boxForEvent(event);
+
+    if (event.buttons && event.metaKey) {
+      if (this.props.setLoopBox) {
+        this.props.setLoopBox(box.m, box.n);
+      }
+      return;
+    }
+
+    // click and loop mode is on
+    if (event.buttons) {
+      if (this.props.loopMode.box) {
+        this.props.setLoopBox(box.m, box.n);
+      }
+    }
+
+    if (!this._shouldHandleEvent(event)) {
+      return;
+    }
+
+    // if different then switch
+    if (!_.isEqual(box, this.state.selectedBox)) {
+      this.setState({
+        selectedBox: box,
+        mouseDownPointEvent: {
+          clientX: event.clientX,
+          clientY: event.clientY
+        }
+      });
+    }
+  }
+
+  onMouseMove(event) {
+    // console.log({type: 'move', x: event.clientX, y: event.clientY});
+    let box = this._boxForEvent(event);
+    let changed = !_.isEqual(box, this.state.selectedBox);
+    if (event.buttons) {
+      // moving internally
+      if (changed) {
+        // this.setHoveringBox(box);
+        // clip to box
+      }
+    } else if (changed) {
+      this.setHoveringBox(box);
+    }
+  }
+
+  onMouseUp(event) {
+    let box = this._boxForEvent(event);
+    let changed = !_.isEqual(box, this.state.selectedBox);
+    if (changed) {
+      // just unset selectedBox
+      // this._selectedBox.ended(event);
+      this.setState({
+        selectedBox: null,
+        mouseDownPointEvent: null
+      });
+    }
+  }
+
+  _boxForEvent(event) {
+    let layout = this.props.layout;
+    let x = event.clientX;
+    let y = event.clientY;
+    let rx = x - layout.svgStyle.left - layout.scatterPlotsMargin;
+    let ry = y - layout.svgStyle.top - layout.scatterPlotsMargin;
+    let m = Math.floor(rx / layout.sideLength);
+    let n = this.props['data-num-features'] - Math.floor(ry / layout.sideLength) - 1;
+    return {m, n};
+  }
+
+  _shouldHandleEvent(event) {
+    if (event.touches) {
+      if (event.changedTouches.length < event.touches.length) {
+        return false;
+      }
+    } else if (this.touchending) {
+      return false;
+    }
+    // right click
+    if (event.button) {
+      return false;
+    }
+
+    return true;
+  }
 
   setPointsIn(area, box, points) {
     // area is inverted y
@@ -110,6 +204,20 @@ class ScatterPlotsInteractive extends React.Component {
       <HoveringAxis />
     ];
 
+    // To handle catch mouse actions
+    // that don't hit the SelectArea
+    children.push(
+      <rect
+        x={0}
+        y={0}
+        width={this.props.width}
+        height={this.props.height}
+        style={{
+          opacity: 0
+        }}
+      />
+    );
+
     const s = {
       box: {
         m: _.get(this.props.loopMode, 'box.m'),
@@ -120,8 +228,6 @@ class ScatterPlotsInteractive extends React.Component {
         n: _.get(this.state, 'last.n')
       }
     };
-
-    const isLooping = this.props.loopMode.box;
 
     // pending should be erased once it becomes active
     const getClassName = (box) => {
@@ -136,17 +242,14 @@ class ScatterPlotsInteractive extends React.Component {
       return 'none';
     };
 
-    layout.boxes.forEach((box) => {
-      // TODO: move to a selector
+    // show one box at this.state.selectedBox
+    if (this.state.selectedBox) {
+      // find box by {m: n: }
+      const box = _.find(layout.boxes, this.state.selectedBox);
       const featx = this.props.features[box.m].values;
       const featy = this.props.features[box.n].values;
       const points = _.zip(featx, featy);
 
-      const isLastFocused =
-        (_.get(this.state, 'last.m') === box.m) &&
-        (_.get(this.state, 'last.n') === box.n);
-
-      // Each of these handle all mouse events
       const selectedArea = h(SelectArea, {
         selected: {
           x: 0,
@@ -169,16 +272,21 @@ class ScatterPlotsInteractive extends React.Component {
           }
         },
         onClick: () => {
-          if (isLooping) {
+          if (this.props.loopMode.box) {
             this.props.setLoopBox(box.m, box.n);
           }
         },
-        show: isLastFocused,  // && !looping
-        overlayClassName: getClassName(box)
+        handleMouseEvents: true,
+        show: true,
+        overlayClassName: getClassName(box),
+        // The first click that selects a new box was at this point.
+        // Transfer it to the SelectArea so it can start with that as point0
+        // and not have to wait for a post-focus click.
+        mouseDownPointEvent: this.state.mouseDownPointEvent
       });
 
       children.push(selectedArea);
-    });
+    }
 
     return h(
       'g',
@@ -186,9 +294,15 @@ class ScatterPlotsInteractive extends React.Component {
         width: this.props.width,
         height: this.props.height,
         className: 'ScatterPlotsInteractive',
-        onMouseLeave: () => {
-          this.setHoveringBox({})
-        }
+        onMouseLeave: (event) => {
+          // this.setHoveringBox({});
+        },
+        onMouseDown: this.onMouseDown.bind(this),
+        onTouchStart: this.onMouseDown.bind(this),
+        onMouseMove: this.onMouseMove.bind(this),
+        onTouchMove: this.onMouseMove.bind(this),
+        onMouseUp: this.onMouseUp.bind(this),
+        onTouchEnd: this.onMouseUp.bind(this)
       },
       children
     );
