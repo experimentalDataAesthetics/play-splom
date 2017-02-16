@@ -49,23 +49,23 @@ const cursors = {
   sw: 'nesw-resize'
 };
 
-const flipX = {
-  e: 'w',
-  w: 'e',
-  nw: 'ne',
-  ne: 'nw',
-  se: 'sw',
-  sw: 'se'
-};
-
-const flipY = {
-  n: 's',
-  s: 'n',
-  nw: 'sw',
-  ne: 'se',
-  se: 'ne',
-  sw: 'nw'
-};
+// const flipX = {
+//   e: 'w',
+//   w: 'e',
+//   nw: 'ne',
+//   ne: 'nw',
+//   se: 'sw',
+//   sw: 'se'
+// };
+//
+// const flipY = {
+//   n: 's',
+//   s: 'n',
+//   nw: 'sw',
+//   ne: 'se',
+//   se: 'ne',
+//   sw: 'nw'
+// };
 
 const signsX = {
   overlay: +1,
@@ -99,22 +99,22 @@ function makeHandle(t) {
     type: t,
     x: (selection) => {
       return t[t.length - 1] === 'e' ?
-        selection[1][0] - handleSize / 2
-        : selection[0][0] - handleSize / 2;
+        selection[1][0] - (handleSize / 2)
+        : selection[0][0] - (handleSize / 2);
     },
     y: (selection) => {
       return t[0] === 's' ?
-        selection[1][1] - handleSize / 2
-        : selection[0][1] - handleSize / 2;
+        selection[1][1] - (handleSize / 2)
+        : selection[0][1] - (handleSize / 2);
     },
     width: (selection) => {
       return t === 'n' || t === 's' ?
-        selection[1][0] - selection[0][0] + handleSize
+        (selection[1][0] - selection[0][0]) + handleSize
         : handleSize;
     },
     height: (selection) => {
       return t === 'e' || t === 'w' ?
-        selection[1][1] - selection[0][1] + handleSize
+        (selection[1][1] - selection[0][1]) + handleSize
         : handleSize;
     }
   };
@@ -181,11 +181,13 @@ export default class SelectArea extends React.Component {
     this.n0 = null;
     this.e0 = null;
     this.s0 = null;
-    // a timer is used to cleanly detach
-    // this stores the timer and marks it as in progress
+
+    // A timer is used to cleanly detach
+    // this stores the timer and marks it as in progress.
     this.touchending = null;
 
-    // selected is supplied as an area within and relative to the domain
+    // selected is supplied as {x y width height} relative to the domain.
+    // It is stored in this.state as [[x1, y1], [x2, y2]]
     const selected = this.props.selected;
     if (selected) {
       const x = selected.x + this.props.domain.x;

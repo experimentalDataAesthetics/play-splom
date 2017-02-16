@@ -92,14 +92,16 @@ class ScatterPlotsInteractive extends React.Component {
   }
 
   onMouseMove(event) {
-    // console.log({type: 'move', x: event.clientX, y: event.clientY});
-    let box = this._boxForEvent(event);
-    let changed = !_.isEqual(box, this.state.selectedBox);
+    const box = this._boxForEvent(event);
+    const changed = !_.isEqual(box, this.state.selectedBox);
     if (event.buttons) {
       // moving internally
       if (changed) {
-        // this.setHoveringBox(box);
-        // clip to box
+        // dragged outside of the current box
+        // so the SelectArea will not get any mouse events
+        // as they are outside of it's DOM element.
+        // Call moved directly using the ref
+        this.selectArea.moved(event);
       }
     } else if (changed) {
       this.setHoveringBox(box);
@@ -107,15 +109,16 @@ class ScatterPlotsInteractive extends React.Component {
   }
 
   onMouseUp(event) {
-    let box = this._boxForEvent(event);
-    let changed = !_.isEqual(box, this.state.selectedBox);
-    if (changed) {
-      // just unset selectedBox
-      // this._selectedBox.ended(event);
-      this.setState({
-        selectedBox: null,
-        mouseDownPointEvent: null
-      });
+    // moused up in a different box then you mouse down in
+    // so fire the selectArea mouseUp since it will not otherwise
+    // capture that event as it is outside of it's DOM element.
+    if (!event.buttons) {
+      const box = this._boxForEvent(event);
+      const changed = !_.isEqual(box, this.state.selectedBox);
+      if (changed) {
+        this.selectArea.ended(event);
+        this.setHoveringBox(box);
+      }
     }
   }
 
@@ -251,6 +254,11 @@ class ScatterPlotsInteractive extends React.Component {
       const points = _.zip(featx, featy);
 
       const selectedArea = h(SelectArea, {
+        // Store a reference to this child element
+        // so we can call initimate methods on it directly.
+        ref: sa => {
+          this.selectArea = sa;
+        },
         selected: {
           x: 0,
           y: 0,
@@ -264,7 +272,10 @@ class ScatterPlotsInteractive extends React.Component {
           height: innerSideLength
         },
         base: [box.baseClientX, box.baseClientY],
-        onChange: (area) => this.setPointsIn(area, box, points),
+        onChange: (area) => {
+          this._selectedArea = area;
+          this.setPointsIn(area, box, points);
+        },
         onMouseEnter: () => this.setHoveringBox(box),
         onMetaClick: () => {
           if (this.props.setLoopBox) {
