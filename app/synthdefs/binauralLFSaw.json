@@ -2,7 +2,7 @@
   "hasArrayArgs": false,
   "inputs": [],
   "hasGate": false,
-  "name": "stereoGrain3",
+  "name": "binauralLFSaw",
   "hasVariants": false,
   "output": [
     {
@@ -37,7 +37,7 @@
       "index": 1
     },
     {
-      "name": "freq",
+      "name": "freqL",
       "defaultValue": 440,
       "lag": 0,
       "rate": "scalar",
@@ -53,7 +53,7 @@
       "index": 2
     },
     {
-      "name": "freq2",
+      "name": "freqR",
       "defaultValue": 440,
       "lag": 0,
       "rate": "scalar",
@@ -86,12 +86,12 @@
     }
   ],
   "canFreeSynth": true,
-  "sourceCode": "SynthDef('stereoGrain3', { |out, amp=0.1, freq=440, freq2=440, sustain=0.01|var snd = [LFSaw.ar(freq), LFSaw.ar(freq2)];var amp2 = amp * AmpComp.ir(freq.max(50)) * 0.5;var env = EnvGen.ar(Env.perc(1.0, 1.0), timeScale: sustain, levelScale: amp2, doneAction: 2);OffsetOut.ar(out, snd * env);})",
+  "sourceCode": "SynthDef('binauralLFSaw', { |out, amp=0.1, freqL=440, freqR=440, sustain=0.01|var snd = [LFSaw.ar(freqL), LFSaw.ar(freqR)];var amp2 = amp * AmpComp.ir(freqL.max(50)) * 0.5;var env = EnvGen.ar(Env.perc(1.0, 1.0), timeScale: sustain, levelScale: amp2, doneAction: 2);OffsetOut.ar(out, snd * env);})",
   "controlNames": [
     "out",
     "amp",
-    "freq",
-    "freq2",
+    "freqL",
+    "freqR",
     "sustain"
   ]
 }

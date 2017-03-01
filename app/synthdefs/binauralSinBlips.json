@@ -2,7 +2,7 @@
   "hasArrayArgs": false,
   "inputs": [],
   "hasGate": false,
-  "name": "syncsaw",
+  "name": "binauralSinBlips",
   "hasVariants": false,
   "output": [
     {
@@ -17,19 +17,19 @@
       "name": "out",
       "defaultValue": 0,
       "lag": 0,
-      "rate": "control",
+      "rate": "scalar",
       "index": 0
     },
     {
-      "name": "freq",
+      "name": "freqL",
       "defaultValue": 440,
       "lag": 0,
-      "rate": "control",
+      "rate": "scalar",
       "spec": {
         "default": 440,
-        "maxval": 20000,
+        "maxval": 10000,
         "class": "ControlSpec",
-        "minval": 20,
+        "minval": 40,
         "warp": "exp",
         "step": 0,
         "units": " Hz"
@@ -37,29 +37,29 @@
       "index": 1
     },
     {
-      "name": "syncOffset",
-      "defaultValue": 0,
+      "name": "freqR",
+      "defaultValue": 440,
       "lag": 0,
-      "rate": "control",
+      "rate": "scalar",
       "spec": {
-        "default": 0,
-        "maxval": 2,
+        "default": 440,
+        "maxval": 10000,
         "class": "ControlSpec",
-        "minval": 0,
-        "warp": "linear",
+        "minval": 40,
+        "warp": "exp",
         "step": 0,
-        "units": ""
+        "units": " Hz"
       },
       "index": 2
     },
     {
-      "name": "timeScale",
-      "defaultValue": 1,
+      "name": "sustain",
+      "defaultValue": 0.0099999997764826,
       "lag": 0,
-      "rate": "control",
+      "rate": "scalar",
       "spec": {
-        "default": 0,
-        "maxval": 1,
+        "default": 1,
+        "maxval": 4,
         "class": "ControlSpec",
         "minval": 0.05,
         "warp": "exp",
@@ -69,16 +69,16 @@
       "index": 3
     },
     {
-      "name": "pan",
-      "defaultValue": 0,
+      "name": "amp",
+      "defaultValue": 0.5,
       "lag": 0,
-      "rate": "control",
+      "rate": "scalar",
       "spec": {
         "default": 0,
         "maxval": 1,
         "class": "ControlSpec",
-        "minval": -1,
-        "warp": "linear",
+        "minval": 0,
+        "warp": "amp",
         "step": 0,
         "units": ""
       },
@@ -86,12 +86,12 @@
     }
   ],
   "canFreeSynth": true,
-  "sourceCode": "SynthDef('syncsaw', { arg out=0, freq=440, syncOffset=0, timeScale=1, pan=0;  var saw, envd, panned;  saw = SyncSaw.ar(freq, freq * syncOffset + freq);  envd = saw * EnvGen.kr(Env.sine(0.1, 0.2), timeScale: timeScale, doneAction: 2);  panned = Pan2.ar(envd * AmpCompA.kr(freq, 0.2, 0.7), pan);  OffsetOut.ar(out, panned);})",
+  "sourceCode": "SynthDef('binauralSinBlips', { |out, freqL=440, freqR=440, sustain=0.01, amp=0.5|var snd = [PSinGrain.ar(freqL, sustain, amp) * AmpComp.ir(freqL.max(50)),PSinGrain.ar(freqR, sustain, amp) * AmpComp.ir(freqR.max(50))];var env = snd * EnvGen.kr(Env.sine(sustain), doneAction: 2);OffsetOut.ar(out, snd * env);})",
   "controlNames": [
     "out",
-    "freq",
-    "syncOffset",
-    "timeScale",
-    "pan"
+    "freqL",
+    "freqR",
+    "sustain",
+    "amp"
   ]
 }
