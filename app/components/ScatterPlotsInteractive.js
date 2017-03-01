@@ -59,7 +59,8 @@ class ScatterPlotsInteractive extends React.Component {
   }
 
   onMouseDown(event) {
-    let box = this._boxForEvent(event);
+    // console.log({type: 'down', x: event.clientX, y: event.clientY});
+    const box = this._boxForEvent(event);
 
     if (event.buttons && event.metaKey) {
       if (this.props.setLoopBox) {
@@ -69,10 +70,8 @@ class ScatterPlotsInteractive extends React.Component {
     }
 
     // click and loop mode is on
-    if (event.buttons) {
-      if (this.props.loopMode.box) {
-        this.props.setLoopBox(box.m, box.n);
-      }
+    if (event.buttons && this.props.loopMode.box) {
+      this.props.setLoopBox(box.m, box.n);
     }
 
     if (!this._shouldHandleEvent(event)) {
@@ -81,6 +80,34 @@ class ScatterPlotsInteractive extends React.Component {
 
     // if different then switch
     if (!_.isEqual(box, this.state.selectedBox)) {
+      // if there is a selectedArea then keep that
+      if (this.selectArea) {
+        const newBox = _.find(this.props.layout.boxes, box);
+
+        // Initialize dragging state at this point for SelectArea
+        this.selectArea.setMouseDownPointFromEvent(event);
+
+        const [bottomLeft, topRight] = this.selectArea.state.selected;
+        const width = topRight[0] - bottomLeft[0];
+        const height = topRight[1] - bottomLeft[1];
+
+        // move it to new box, centered on mouse click
+        const eventPoint = this.selectArea._eventPoint(event);
+        const pointInBox = [eventPoint[0] - newBox.x, eventPoint[1] - newBox.y];
+
+        let newX = (newBox.x + pointInBox[0]) - (width / 2);
+        newX = _.clamp(newX, newBox.x, (newBox.x + this.props.layout.sideLength) - width);
+        let newY = (newBox.y + pointInBox[1]) - (height / 2);
+        newY = _.clamp(newY, newBox.y, (newBox.y + this.props.layout.sideLength) - height);
+
+        this.selectArea.setSelected(
+          [newX, newY],
+          [newX + width, newY + height]
+        );
+        // That sets the local state of the selectArea
+        // but it does not set the redux state that would highlight the points
+        // and does not make sound until you drag
+      }
       this.setState({
         selectedBox: box,
         mouseDownPointEvent: {
@@ -120,33 +147,6 @@ class ScatterPlotsInteractive extends React.Component {
         this.setHoveringBox(box);
       }
     }
-  }
-
-  _boxForEvent(event) {
-    let layout = this.props.layout;
-    let x = event.clientX;
-    let y = event.clientY;
-    let rx = x - layout.svgStyle.left - layout.scatterPlotsMargin;
-    let ry = y - layout.svgStyle.top - layout.scatterPlotsMargin;
-    let m = Math.floor(rx / layout.sideLength);
-    let n = this.props['data-num-features'] - Math.floor(ry / layout.sideLength) - 1;
-    return {m, n};
-  }
-
-  _shouldHandleEvent(event) {
-    if (event.touches) {
-      if (event.changedTouches.length < event.touches.length) {
-        return false;
-      }
-    } else if (this.touchending) {
-      return false;
-    }
-    // right click
-    if (event.button) {
-      return false;
-    }
-
-    return true;
   }
 
   setPointsIn(area, box, points) {
@@ -197,6 +197,33 @@ class ScatterPlotsInteractive extends React.Component {
 
   setHoveringBox(box) {
     this.props.setHovering(box.m, box.n);
+  }
+
+  _boxForEvent(event) {
+    const layout = this.props.layout;
+    const x = event.clientX;
+    const y = event.clientY;
+    const rx = x - layout.svgStyle.left - layout.scatterPlotsMargin;
+    const ry = y - layout.svgStyle.top - layout.scatterPlotsMargin;
+    const m = Math.floor(rx / layout.sideLength);
+    const n = this.props['data-num-features'] - Math.floor(ry / layout.sideLength) - 1;
+    return {m, n};
+  }
+
+  _shouldHandleEvent(event) {
+    if (event.touches) {
+      if (event.changedTouches.length < event.touches.length) {
+        return false;
+      }
+    } else if (this.touchending) {
+      return false;
+    }
+    // right click
+    if (event.button) {
+      return false;
+    }
+
+    return true;
   }
 
   render() {
@@ -305,7 +332,8 @@ class ScatterPlotsInteractive extends React.Component {
         width: this.props.width,
         height: this.props.height,
         className: 'ScatterPlotsInteractive',
-        onMouseLeave: (event) => {
+        onMouseLeave: () => {  // event
+          // console.log('hovered off the grid', event, event.clientX, event.clientY);
           // this.setHoveringBox({});
         },
         onMouseDown: this.onMouseDown.bind(this),

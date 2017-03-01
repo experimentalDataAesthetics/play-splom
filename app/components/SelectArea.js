@@ -232,6 +232,13 @@ export default class SelectArea extends React.Component {
     }
   }
 
+  setSelected(bottomLeft, topRight) {
+    // clip it
+    this.setState({
+      selected: [bottomLeft, topRight]
+    });
+  }
+
   _shouldHandleEvent(event) {
     if (event.touches) {
       if (event.changedTouches.length < event.touches.length) {
@@ -264,6 +271,12 @@ export default class SelectArea extends React.Component {
       return;
     }
 
+    this.setMouseDownPointFromEvent(event, handle);
+  }
+
+  setMouseDownPointFromEvent(event, handle) {
+    // mouse position within the g or svg I am on
+    // but the rest of the calculations are in absolute
     if (event.metaKey) {
       this.mouseMoveType = 'overlay';
     } else {
@@ -276,13 +289,6 @@ export default class SelectArea extends React.Component {
       this.mouseMode = (event.altKey ? MODE_CENTER : MODE_HANDLE);
     }
 
-    // mouse position within the g or svg I am on
-    // but the rest of the calculations are in absolute
-    // setMousePoint
-    this.setMouseDownPointFromEvent(event);
-  }
-
-  setMouseDownPointFromEvent(event) {
     this.point0 = this._eventPoint(event);
     this.pointLatest = this.point0;
 
@@ -487,8 +493,8 @@ export default class SelectArea extends React.Component {
    */
   _eventPoint(event) {
     return [
-      event.clientX - this.props.base[0] + this.props.domain.x,
-      event.clientY - this.props.base[1] + this.props.domain.y
+      (event.clientX - this.props.base[0]) + this.props.domain.x,
+      (event.clientY - this.props.base[1]) + this.props.domain.y
     ];
   }
 
