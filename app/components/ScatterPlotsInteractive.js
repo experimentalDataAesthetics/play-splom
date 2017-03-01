@@ -82,10 +82,12 @@ class ScatterPlotsInteractive extends React.Component {
     if (!_.isEqual(box, this.state.selectedBox)) {
       // if there is a selectedArea then keep that
       if (this.selectArea) {
+        // do same thing if initiating a drag
         const newBox = _.find(this.props.layout.boxes, box);
 
         // Initialize dragging state at this point for SelectArea
-        this.selectArea.setMouseDownPointFromEvent(event);
+        // this is in draw area mode
+        this.selectArea.setDragMode();
 
         const [bottomLeft, topRight] = this.selectArea.state.selected;
         const width = topRight[0] - bottomLeft[0];
@@ -107,6 +109,7 @@ class ScatterPlotsInteractive extends React.Component {
         // That sets the local state of the selectArea
         // but it does not set the redux state that would highlight the points
         // and does not make sound until you drag
+        // this.selectArea.setMouseDownPoint(this.selectArea._eventPoint(event));
       }
       this.setState({
         selectedBox: box,

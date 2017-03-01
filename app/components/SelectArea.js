@@ -188,6 +188,7 @@ export default class SelectArea extends React.Component {
 
     // selected is supplied as {x y width height} relative to the domain.
     // It is stored in this.state as [[x1, y1], [x2, y2]]
+    // When setting props you should reset state
     const selected = this.props.selected;
     if (selected) {
       const x = selected.x + this.props.domain.x;
@@ -228,12 +229,11 @@ export default class SelectArea extends React.Component {
     };
 
     if (this.props.mouseDownPointEvent) {
-      this.setMouseDownPointFromEvent(this.props.mouseDownPointEvent);
+      this.setMouseDownPoint(this.props.mouseDownPointEvent);
     }
   }
 
   setSelected(bottomLeft, topRight) {
-    // clip it
     this.setState({
       selected: [bottomLeft, topRight]
     });
@@ -271,10 +271,6 @@ export default class SelectArea extends React.Component {
       return;
     }
 
-    this.setMouseDownPointFromEvent(event, handle);
-  }
-
-  setMouseDownPointFromEvent(event, handle) {
     // mouse position within the g or svg I am on
     // but the rest of the calculations are in absolute
     if (event.metaKey) {
@@ -289,7 +285,15 @@ export default class SelectArea extends React.Component {
       this.mouseMode = (event.altKey ? MODE_CENTER : MODE_HANDLE);
     }
 
-    this.point0 = this._eventPoint(event);
+    this.setMouseDownPoint(this._eventPoint(event));
+  }
+
+  setDragMode() {
+    this.mouseMode = MODE_DRAG;
+  }
+
+  setMouseDownPoint(point) {
+    this.point0 = point;
     this.pointLatest = this.point0;
 
     if (this.mouseMoveType === 'overlay') {
