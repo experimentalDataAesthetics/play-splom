@@ -7,6 +7,7 @@
  * The frontend application.
  */
 import React from 'react';
+import injectTapEventPlugin from 'react-tap-event-plugin';
 import { render } from 'react-dom';
 import { Provider } from 'react-redux';
 import { Router, hashHistory } from 'react-router';
@@ -25,6 +26,8 @@ import './app.global.css';
 
 const store = configureStore();
 const history = syncHistoryWithStore(hashHistory, store);
+
+injectTapEventPlugin();
 
 // Connect two-way calling of actions between renderer and main.
 // Tthe other half is in main.development.js
