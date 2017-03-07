@@ -1,0 +1,131 @@
+{
+  "hasArrayArgs": false,
+  "inputs": [],
+  "hasGate": false,
+  "name": "binauralFormant",
+  "hasVariants": false,
+  "output": [
+    {
+      "rate": "audio",
+      "startingChannel": "out",
+      "numberOfChannels": 2,
+      "type": "OffsetOut"
+    }
+  ],
+  "controls": [
+    {
+      "name": "out",
+      "defaultValue": 0,
+      "lag": 0,
+      "rate": "scalar",
+      "index": 0
+    },
+    {
+      "name": "freqL",
+      "defaultValue": 440,
+      "lag": 0,
+      "rate": "scalar",
+      "spec": {
+        "default": 440,
+        "maxval": 10000,
+        "class": "ControlSpec",
+        "minval": 40,
+        "warp": "exp",
+        "step": 0,
+        "units": " Hz"
+      },
+      "index": 1
+    },
+    {
+      "name": "freqR",
+      "defaultValue": 440,
+      "lag": 0,
+      "rate": "scalar",
+      "spec": {
+        "default": 440,
+        "maxval": 10000,
+        "class": "ControlSpec",
+        "minval": 40,
+        "warp": "exp",
+        "step": 0,
+        "units": " Hz"
+      },
+      "index": 2
+    },
+    {
+      "name": "formFreq",
+      "defaultValue": 1760,
+      "lag": 0,
+      "rate": "scalar",
+      "spec": {
+        "default": 440,
+        "maxval": 10000,
+        "class": "ControlSpec",
+        "minval": 40,
+        "warp": "exp",
+        "step": 0,
+        "units": " Hz"
+      },
+      "index": 3
+    },
+    {
+      "name": "bandwidth",
+      "defaultValue": 800,
+      "lag": 0,
+      "rate": "scalar",
+      "spec": {
+        "default": 440,
+        "maxval": 6000,
+        "class": "ControlSpec",
+        "minval": 40,
+        "warp": "exp",
+        "step": 0,
+        "units": " Hz"
+      },
+      "index": 4
+    },
+    {
+      "name": "sustain",
+      "defaultValue": 0.20000000298023,
+      "lag": 0,
+      "rate": "scalar",
+      "spec": {
+        "default": 0.2,
+        "maxval": 1,
+        "class": "ControlSpec",
+        "minval": 0.02,
+        "warp": "exp",
+        "step": 0,
+        "units": ""
+      },
+      "index": 5
+    },
+    {
+      "name": "amp",
+      "defaultValue": 0.25,
+      "lag": 0,
+      "rate": "scalar",
+      "spec": {
+        "default": 0,
+        "maxval": 1,
+        "class": "ControlSpec",
+        "minval": 0,
+        "warp": "amp",
+        "step": 0,
+        "units": ""
+      },
+      "index": 6
+    }
+  ],
+  "canFreeSynth": true,
+  "sourceCode": "SynthDef('binauralFormant', { |out, freqL=440, freqR=440, formFreq=1760, bandwidth=800, sustain=0.2, amp=0.25|  var snd = [    Formant.ar(freqL, formFreq, bandwidth),    Formant.ar(freqR, formFreq, bandwidth)  ];  var env = snd * EnvGen.kr(Env.perc(0.001, sustain), doneAction: 2) * amp;  OffsetOut.ar(out, snd * env);})",
+  "controlNames": [
+    "out",
+    "freqL",
+    "freqR",
+    "formFreq",
+    "bandwidth",
+    "sustain",
+    "amp"
+  ]
+}

@@ -1,5 +1,4 @@
 
-
 import React from 'react';
 
 /**
@@ -13,25 +12,25 @@ module.exports = React.createClass({
   displayName: 'Label',
 
   propTypes: {
-    label:               React.PropTypes.string.isRequired,
-    height:              React.PropTypes.number,
-    offset:              React.PropTypes.number,
-    horizontalChart:     React.PropTypes.bool,
+    label: React.PropTypes.string.isRequired,
+    height: React.PropTypes.number,
+    offset: React.PropTypes.number,
+    horizontalChart: React.PropTypes.bool,
     horizontalTransform: React.PropTypes.string,
     textColor: React.PropTypes.string,
-    width:               React.PropTypes.number,
-    strokeWidth:         React.PropTypes.number,
-    textAnchor:          React.PropTypes.string,
-    verticalTransform:   React.PropTypes.string
+    width: React.PropTypes.number,
+    strokeWidth: React.PropTypes.number,
+    textAnchor: React.PropTypes.string,
+    verticalTransform: React.PropTypes.string
   },
 
   getDefaultProps() {
     return {
       horizontalTransform: 'rotate(270)',
-      strokeWidth:         0.01,
+      strokeWidth: 0.01,
       offset: 0,
-      textAnchor:          'middle',
-      verticalTransform:   'rotate(0)',
+      textAnchor: 'middle',
+      verticalTransform: 'rotate(0)',
       textColor: '#000000'
     };
   },
@@ -41,7 +40,7 @@ module.exports = React.createClass({
     var props = this.props;
 
     if (!props.label) {
-      return <text/>;
+      return <text />;
     }
 
     var transform, x, y;

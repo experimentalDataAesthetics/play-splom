@@ -7,11 +7,11 @@
  * The frontend application.
  */
 import React from 'react';
+import injectTapEventPlugin from 'react-tap-event-plugin';
 import { render } from 'react-dom';
 import { Provider } from 'react-redux';
 import { Router, hashHistory } from 'react-router';
 import { syncHistoryWithStore } from 'react-router-redux';
-import injectTapEventPlugin from 'react-tap-event-plugin';
 import { join } from 'path';
 import { ipcRenderer } from 'electron';
 import routes from './routes';
@@ -27,20 +27,16 @@ import './app.global.css';
 const store = configureStore();
 const history = syncHistoryWithStore(hashHistory, store);
 
+injectTapEventPlugin();
+
 // Connect two-way calling of actions between renderer and main.
-// Tthe other half is in main.development.js
+// The other half is in main.development.js
 ipcRenderer.on('dispatch-action', (sender, action) => {
   handleActionOnRenderer(store.dispatch, sender, action);
 });
 
 // Listen to redux store changes and call actions on main thread to create sounds
 connectSoundApp(store, callActionOnMain);
-
-// Needed for onTouchTap and material-ui
-// Can go away when react 1.0 is released
-// Check this repo:
-// https://github.com/zilverline/react-tap-event-plugin
-injectTapEventPlugin();
 
 // Add right click inspect element context menu
 if (process.env.NODE_ENV !== 'production') {

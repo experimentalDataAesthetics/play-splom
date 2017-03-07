@@ -1,5 +1,3 @@
-/* eslint strict: 0 */
-'use strict';
 
 const webpack = require('webpack');
 const baseConfig = require('./webpack.config.base');
@@ -38,9 +36,7 @@ config.plugins.push(
   new webpack.NoErrorsPlugin(),
   new webpack.DefinePlugin({
     __DEV__: true,
-    'process.env': {
-      NODE_ENV: JSON.stringify('development')
-    }
+    'process.env.NODE_ENV': JSON.stringify('development')
   })
 );
 

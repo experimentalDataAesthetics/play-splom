@@ -5,8 +5,8 @@
  */
 
 import webpack from 'webpack';
-import baseConfig from './webpack.config.base';
 import CopyWebpackPlugin from 'copy-webpack-plugin';
+import baseConfig from './webpack.config.base';
 
 export default {
   ...baseConfig,
@@ -47,9 +47,7 @@ export default {
       { raw: true, entryOnly: false }
     ),
     new webpack.DefinePlugin({
-      'process.env': {
-        NODE_ENV: JSON.stringify('production')
-      }
+      'process.env.NODE_ENV': JSON.stringify('production')
     })
   ],
 

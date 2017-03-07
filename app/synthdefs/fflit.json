@@ -37,22 +37,6 @@
       "index": 1
     },
     {
-      "name": "ffreq",
-      "defaultValue": 0,
-      "lag": 0,
-      "rate": "control",
-      "spec": {
-        "default": 0,
-        "maxval": 9000,
-        "class": "ControlSpec",
-        "minval": 40,
-        "warp": "exp",
-        "step": 0,
-        "units": ""
-      },
-      "index": 2
-    },
-    {
       "name": "pan",
       "defaultValue": 0,
       "lag": 0,
@@ -63,6 +47,22 @@
         "class": "ControlSpec",
         "minval": -1,
         "warp": "linear",
+        "step": 0,
+        "units": ""
+      },
+      "index": 2
+    },
+    {
+      "name": "ffreq",
+      "defaultValue": 0,
+      "lag": 0,
+      "rate": "control",
+      "spec": {
+        "default": 0,
+        "maxval": 9000,
+        "class": "ControlSpec",
+        "minval": 40,
+        "warp": "exp",
         "step": 0,
         "units": ""
       },
@@ -86,12 +86,12 @@
     }
   ],
   "canFreeSynth": true,
-  "sourceCode": "SynthDef('fflit', {arg out, freq, ffreq, pan, timeScale;  OffsetOut.ar(out,    Pan2.ar(      RLPF.ar(        Saw.ar(freq,          EnvGen.kr(Env.perc(0.03, 0.01, 0.25, 4),            levelScale: 0.5,            timeScale: timeScale,            doneAction: 2)),        ffreq * EnvGen.kr(Env.asr(0.001, 1, 0.0001, 4), doneAction: 2),        EnvGen.kr(Env.asr(0.01, 1, 0.01, 4), timeScale: timeScale).range(0.02, 0.2)      ),      pan    )  )})",
+  "sourceCode": "SynthDef('fflit', {arg out, freq, pan, ffreq, timeScale;  OffsetOut.ar(out,    Pan2.ar(      RLPF.ar(        Saw.ar(freq,          EnvGen.kr(Env.perc(0.03, 0.01, 0.25, 4),            levelScale: 0.5,            timeScale: timeScale,            doneAction: 2)),        ffreq * EnvGen.kr(Env.asr(0.001, 1, 0.0001, 4), doneAction: 2),        EnvGen.kr(Env.asr(0.01, 1, 0.01, 4), timeScale: timeScale).range(0.02, 0.2)      ),      pan    )  )})",
   "controlNames": [
     "out",
     "freq",
-    "ffreq",
     "pan",
+    "ffreq",
     "timeScale"
   ]
 }

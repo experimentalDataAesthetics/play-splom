@@ -18,6 +18,7 @@ module.exports = keyMirror({
   // mapping
   SET_MAPPING: null,
   MAP_XY_TO_PARAM: null,
+  AUTO_MAP: null,
   SET_MAPPING_RANGE: null,
   SET_FIXED_PARAM: null,
   SET_PCA: null,

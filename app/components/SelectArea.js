@@ -49,23 +49,23 @@ const cursors = {
   sw: 'nesw-resize'
 };
 
-const flipX = {
-  e: 'w',
-  w: 'e',
-  nw: 'ne',
-  ne: 'nw',
-  se: 'sw',
-  sw: 'se'
-};
-
-const flipY = {
-  n: 's',
-  s: 'n',
-  nw: 'sw',
-  ne: 'se',
-  se: 'ne',
-  sw: 'nw'
-};
+// const flipX = {
+//   e: 'w',
+//   w: 'e',
+//   nw: 'ne',
+//   ne: 'nw',
+//   se: 'sw',
+//   sw: 'se'
+// };
+//
+// const flipY = {
+//   n: 's',
+//   s: 'n',
+//   nw: 'sw',
+//   ne: 'se',
+//   se: 'ne',
+//   sw: 'nw'
+// };
 
 const signsX = {
   overlay: +1,
@@ -99,22 +99,22 @@ function makeHandle(t) {
     type: t,
     x: (selection) => {
       return t[t.length - 1] === 'e' ?
-        selection[1][0] - handleSize / 2
-        : selection[0][0] - handleSize / 2;
+        selection[1][0] - (handleSize / 2)
+        : selection[0][0] - (handleSize / 2);
     },
     y: (selection) => {
       return t[0] === 's' ?
-        selection[1][1] - handleSize / 2
-        : selection[0][1] - handleSize / 2;
+        selection[1][1] - (handleSize / 2)
+        : selection[0][1] - (handleSize / 2);
     },
     width: (selection) => {
       return t === 'n' || t === 's' ?
-        selection[1][0] - selection[0][0] + handleSize
+        (selection[1][0] - selection[0][0]) + handleSize
         : handleSize;
     },
     height: (selection) => {
       return t === 'e' || t === 'w' ?
-        selection[1][1] - selection[0][1] + handleSize
+        (selection[1][1] - selection[0][1]) + handleSize
         : handleSize;
     }
   };
@@ -181,11 +181,14 @@ export default class SelectArea extends React.Component {
     this.n0 = null;
     this.e0 = null;
     this.s0 = null;
-    // a timer is used to cleanly detach
-    // this stores the timer and marks it as in progress
+
+    // A timer is used to cleanly detach
+    // this stores the timer and marks it as in progress.
     this.touchending = null;
 
-    // selected is supplied as an area within and relative to the domain
+    // selected is supplied as {x y width height} relative to the domain.
+    // It is stored in this.state as [[x1, y1], [x2, y2]]
+    // When setting props you should reset state
     const selected = this.props.selected;
     if (selected) {
       const x = selected.x + this.props.domain.x;
@@ -205,15 +208,35 @@ export default class SelectArea extends React.Component {
       };
     }
 
+    const overlayTap = (event) => this.started(event, {type: 'overlay'});
+    const selectionTap = (event) => this.started(event, {type: 'selection'});
     this.handlers = {
-      overlayTap: (event) => this._started(event, {type: 'overlay'}),
-      selectionTap: (event) => this._started(event, {type: 'selection'}),
-      onMouseMove: this._moved.bind(this),
-      onMouseUp: this._ended.bind(this),
-      onTouchMove: this._moved.bind(this),
-      onTouchEnd: this._ended.bind(this),
-      onMouseEnter: this._mouseEnter.bind(this)
+      overlay: {
+        onMouseDown: overlayTap,
+        onTouchStart: overlayTap
+      },
+      selection: {
+        onMouseDown: selectionTap,
+        onTouchStart: selectionTap
+      },
+      base: {
+        onMouseMove: this.moved.bind(this),
+        onMouseUp: this.ended.bind(this),
+        onTouchMove: this.moved.bind(this),
+        onTouchEnd: this.ended.bind(this),
+        onMouseEnter: this._mouseEnter.bind(this)
+      }
     };
+
+    if (this.props.mouseDownPointEvent) {
+      this.setMouseDownPoint(this.props.mouseDownPointEvent);
+    }
+  }
+
+  setSelected(bottomLeft, topRight) {
+    this.setState({
+      selected: [bottomLeft, topRight]
+    });
   }
 
   _shouldHandleEvent(event) {
@@ -232,7 +255,7 @@ export default class SelectArea extends React.Component {
     return true;
   }
 
-  _started(event, handle) {
+  started(event, handle) {
     if (event.buttons && event.metaKey) {
       if (this.props.onMetaClick) {
         this.props.onMetaClick(event);
@@ -248,6 +271,8 @@ export default class SelectArea extends React.Component {
       return;
     }
 
+    // mouse position within the g or svg I am on
+    // but the rest of the calculations are in absolute
     if (event.metaKey) {
       this.mouseMoveType = 'overlay';
     } else {
@@ -260,9 +285,15 @@ export default class SelectArea extends React.Component {
       this.mouseMode = (event.altKey ? MODE_CENTER : MODE_HANDLE);
     }
 
-    // mouse position within the g or svg I am on
-    // but the rest of the calculations are in absolute
-    this.point0 = this._eventPoint(event);
+    this.setMouseDownPoint(this._eventPoint(event));
+  }
+
+  setDragMode() {
+    this.mouseMode = MODE_DRAG;
+  }
+
+  setMouseDownPoint(point) {
+    this.point0 = point;
     this.pointLatest = this.point0;
 
     if (this.mouseMoveType === 'overlay') {
@@ -284,7 +315,7 @@ export default class SelectArea extends React.Component {
     }
   }
 
-  _moved(event) {
+  moved(event) {
     if (!this.mouseMode) {
       return;
     }
@@ -419,7 +450,7 @@ export default class SelectArea extends React.Component {
     }
   }
 
-  _ended(event) {
+  ended(event) {
     event.stopPropagation();
     if (event.touches) {
       if (event.touches.length) {
@@ -437,14 +468,6 @@ export default class SelectArea extends React.Component {
     } else {
       this.mouseMode = null;
     }
-
-    //   dragEnable(event.view, moving);
-    //   view.on("keydown.brush keyup.brush mousemove.brush mouseup.brush", null);
-    // }
-
-    // group.attr("pointer-events", "all");
-    // overlay.attr("cursor", cursors.overlay);
-    // if (empty(selection)) state.selection = null, redraw.call(that);
   }
 
   _mouseEnter(e) {
@@ -474,8 +497,8 @@ export default class SelectArea extends React.Component {
    */
   _eventPoint(event) {
     return [
-      event.clientX - this.props.base[0] + this.props.domain.x,
-      event.clientY - this.props.base[1] + this.props.domain.y
+      (event.clientX - this.props.base[0]) + this.props.domain.x,
+      (event.clientY - this.props.base[1]) + this.props.domain.y
     ];
   }
 
@@ -505,8 +528,7 @@ export default class SelectArea extends React.Component {
         pointerEvents="all"
         cursor={cursors.overlay}
         style={{ visibility: 'visible', cursor: cursors.overlay }}
-        onMouseDown={this.handlers.overlayTap}
-        onTouchStart={this.handlers.overlayTap}
+        {...this.handlers.overlay}
         {...domain}
       />
     );
@@ -517,14 +539,13 @@ export default class SelectArea extends React.Component {
         key="selection"
         cursor={cursors.selection}
         shapeRendering="crispEdges"
-        onMouseDown={this.handlers.selectionTap}
-        onTouchStart={this.handlers.selectionTap}
+        {...this.handlers.selection}
         {...box(selected)}
       />
     );
 
-    let handles = this.dim.handles.map((h) => {
-      let tapHandler = (event) => this._started(event, h);
+    const handles = this.dim.handles.map((h) => {
+      const tapHandler = (event) => this.started(event, h);
       return (
         <rect
           key={h.type}
@@ -550,14 +571,12 @@ export default class SelectArea extends React.Component {
           WebkitTapHighlightColor: 'rbga(0,0,0,0)',
           visibility: this.props.show ? 'visible' : 'hidden'
         }}
-        onMouseMove={this.handlers.onMouseMove}
-        onMouseUp={this.handlers.onMouseUp}
-        onTouchMove={this.handlers.onTouchMove}
-        onTouchEnd={this.handlers.onTouchEnd}
-        onMouseEnter={this.handlers.onMouseEnter}
+        {...this.handlers.base}
         {...domain}
       >
-        {overlay}{selection}{handles}
+        {overlay}
+        {selection}
+        {handles}
       </g>
     );
   }

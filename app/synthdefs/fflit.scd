@@ -3,7 +3,7 @@
 Spec.specs.put(\timeScale, ControlSpec.new(0.05, 1, 'exp', 0, 0));
 Spec.specs.put(\ffreq, ControlSpec.new(40, 9000, 'exp', 0, 0));
 
-SynthDef(\fflit, {arg out, freq, ffreq, pan, timeScale;
+SynthDef(\fflit, {arg out, freq, pan, ffreq, timeScale;
   OffsetOut.ar(out,
     Pan2.ar(
       RLPF.ar(

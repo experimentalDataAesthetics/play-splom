@@ -1,7 +1,7 @@
 
 Spec.specs.put(\freqOffset, ControlSpec.new(40, 18000, 'exp', 0, 0));
 
-SynthDef(\klanker, { arg out=0, freqOffset=0, timeScale=1, pan=0;
+SynthDef(\klanker, { arg out=0, pan=0, freqOffset=0, timeScale=1;
     var sig, grain, env, sum, filt, pan1, pan2;
 
     sig = DynKlank.ar(`[

@@ -2,9 +2,8 @@
 import {
   expect
 } from 'chai';
-// import { spy, stub } from 'sinon';
+import _ from 'lodash';
 import * as selectors from '../../app/selectors/sound';
-import * as _ from 'lodash';
 
 describe('selectors/sound', () => {
   const sound = {

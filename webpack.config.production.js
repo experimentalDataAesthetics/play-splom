@@ -1,5 +1,3 @@
-/* eslint strict: 0 */
-'use strict';
 
 const webpack = require('webpack');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
@@ -32,9 +30,7 @@ config.plugins.push(
   new webpack.optimize.OccurenceOrderPlugin(),
   new webpack.DefinePlugin({
     __DEV__: false,
-    'process.env': {
-      NODE_ENV: JSON.stringify('production')
-    }
+    'process.env.NODE_ENV': JSON.stringify('production')
   }),
   new webpack.optimize.UglifyJsPlugin({
     compressor: {

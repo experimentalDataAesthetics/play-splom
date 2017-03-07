@@ -32,7 +32,7 @@ const debug = process.env.NODE_ENV === 'development';
 // uncomment this to force debug mode in a production build
 // const debug = true;
 
-log.log('main');
+log.debug('main');
 
 let menu;
 let template;
@@ -43,9 +43,12 @@ const synthDefsDir = path.join(__dirname, 'app/synthdefs');
 const soundApp = new SoundApp(log);
 
 function errorOnMain(error) {
+  log.error(error);
+  log.error(error.stack);
   console.error(error);
   console.error(error.stack);
   if (error.data) {
+    log.error(error.data);
     console.error(error.data);
   }
 
@@ -63,7 +66,7 @@ function errorOnMain(error) {
 
 function loadSounds(window) {
   const soundAppDispatch = (action) => {
-    log.log('dispatch-action', action);
+    log.debug('dispatch-action', action);
     window.webContents.send('dispatch-action', action);
   };
 
@@ -77,6 +80,11 @@ function loadSounds(window) {
  * Use this to quit so that soundApp is stopped correctly.
  */
 function quit() {
+  if (!(soundApp && soundApp.playing)) {
+    app.quit();
+    return;
+  }
+
   return soundApp.stop()
     .then(
       () => app.quit(),
@@ -103,7 +111,7 @@ function loadWindow() {
 function reload() {
   soundApp.stop().then(() => {
     loadWindow();
-  }, (error) => {
+  }, () => {
     // never stops because of Synth/Group not responding
     loadWindow();
   });
@@ -115,7 +123,7 @@ powerSaveBlocker.start('prevent-app-suspension');
 // Connect two-way calling of actions between renderer and main.
 // The other half is in app/index.js
 ipcMain.on('call-action-on-main', (event, payload) => {
-  log.log('call-action-on-main', payload);
+  log.debug('call-action-on-main', payload);
   handleActionOnMain(event, payload, soundApp);
 });
 
@@ -232,7 +240,7 @@ app.on('ready', () => {
         label: 'Reload',
         accelerator: 'Shift+Command+R',
         click() {
-          reload()
+          reload();
         }
       }, {
         label: 'Toggle Full Screen',

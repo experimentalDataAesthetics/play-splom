@@ -1,14 +1,14 @@
 
 import React from 'react';
 import h from 'react-hyperscript';
-import ToggleButton from './ToggleButton';
 // single value slider:
 import { Slider } from 'material-ui';
 // dual value range slider:
 import ReactSlider from 'react-slider';
-import style from './XYParamTable.css';
 import { round } from 'd3';
 import { debounce } from 'lodash';
+import ToggleButton from './ToggleButton';
+import style from './XYParamTable.css';
 
 /**
  * Editable params in the right sidebar of the app

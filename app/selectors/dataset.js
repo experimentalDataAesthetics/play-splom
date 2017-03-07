@@ -1,5 +1,5 @@
 import d3 from 'd3';
-import * as _ from 'lodash';
+import _ from 'lodash';
 import { createSelector } from 'reselect';
 
 export const getDataset = (state) => state.dataset;

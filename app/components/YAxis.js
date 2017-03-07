@@ -1,9 +1,10 @@
 
 import React from 'react';
-var d3 = require('d3');
+import d3 from 'd3';
 import AxisTicks from './AxisTicks';
 import AxisLine from './AxisLine';
 import Label from './Label';
+
 
 /**
  * YAxis with lines, ticks and string label

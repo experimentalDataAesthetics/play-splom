@@ -4,7 +4,7 @@ import { jsdom } from 'jsdom';
 global.document = jsdom('<!doctype html><html><body></body></html>');
 global.window = document.defaultView;
 global.navigator = global.window.navigator;
-window.localStorage = window.sessionStorage = {
+window.localStorage = {
   getItem(key) {
     return this[key];
   },
@@ -15,3 +15,4 @@ window.localStorage = window.sessionStorage = {
     this[key] = undefined;
   },
 };
+window.sessionStorage = window.localStorage;

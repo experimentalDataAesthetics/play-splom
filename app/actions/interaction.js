@@ -1,4 +1,4 @@
-import * as _ from 'lodash';
+import _ from 'lodash';
 import {
   SHOW_BRUSH,
   SET_POINTS_UNDER_BRUSH,

@@ -1,6 +1,6 @@
 Spec.specs.put(\sustain, ControlSpec.new(0.05, 4, 'exp', 0, 1));
 
-SynthDef("grain", { |out, amp=0.1, freq=440, sustain=0.01, pan|
+SynthDef("grain", { |out, freq=440, pan, sustain=0.01, amp=0.1|
 	var snd = FSinOsc.ar(freq);
 	var amp2 = amp * AmpCompA.ir(freq.max(50));
 	var env = EnvGen.ar(Env.sine(sustain, amp2), doneAction: 2);

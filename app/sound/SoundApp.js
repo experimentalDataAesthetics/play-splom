@@ -1,6 +1,6 @@
 
-import * as sc from 'supercolliderjs';
-import * as _ from 'lodash';
+import { dryadic } from 'supercolliderjs/lib/dryads';
+import _ from 'lodash';
 import path from 'path';
 import fs from 'fs';
 import Bacon from 'baconjs';
@@ -31,7 +31,7 @@ const options = _.assign({}, config.supercolliderjs.options || {}, {
   sclang_conf: null
 });
 
-const TIMEOUT = 2000;
+const TIMEOUT = 20000;
 
 /**
  * Runs in the background.js process
@@ -49,7 +49,7 @@ export default class SoundApp {
     this.log = log;
 
     this.masterArgs = {
-      amp: 0.5
+      amp: 0.3
     };
   }
 
@@ -63,7 +63,9 @@ export default class SoundApp {
           return;
         }
 
-        const hasSclang = Boolean(config.supercolliderjs.options.sclang) && process.env.NODE_ENV === 'development';
+        this.log.info('SoundApp options', JSON.stringify(options, null, 2));
+
+        const hasSclang = Boolean(options.sclang) && process.env.NODE_ENV === 'development';
         // hasSclang = true;
 
         // dryadic document
@@ -84,7 +86,7 @@ export default class SoundApp {
           return ['scsynthdef', opts];
         }
 
-        let defs = () => {
+        const defs = () => {
           return files
             .filter((p) => path.extname(p) === '.scd')
             .map((p) => path.basename(p, '.scd'))
@@ -92,9 +94,9 @@ export default class SoundApp {
             .map(synthDef);
         };
 
-        let mixToMaster = () => ['synth', {def: synthDef('mixToMaster')}];
+        const mixToMaster = () => ['synth', {def: synthDef('mixToMaster')}];
 
-        let audiobus = (children) => {
+        const audiobus = (children) => {
           return [
             'audiobus',
             {
@@ -104,13 +106,13 @@ export default class SoundApp {
           ];
         };
 
-        let synthStream = () => {
+        const synthStream = () => {
           return ['synthstream', {
             stream: () => this.synthStream
           }];
         };
 
-        let busContents = () => {
+        const busContents = () => {
           return [
             synthStream(),
             ['syntheventlist', {
@@ -146,20 +148,13 @@ export default class SoundApp {
 
         this.root = sclang(server(audiobus(busContents())));
 
-        this.player = sc.dryadic(this.root, [], {log: this.log});
+        this.player = dryadic(this.root, [], {log: this.log});
 
         const die = (error) => {
           this.playing = false;
-          console.error('FAILED TO START');
-          // this.log doesn't print ?
-          // this.log.log
-          console.error(error);
+          this.log.error('SoundApp FAILED TO START');
+          this.log.error(error);
           this.player.dump();
-          // console.log(JSON.stringify(this.player.getPlayGraph(), null, 2));
-          // circular structure
-          // console.log(JSON.stringify(this.player.getDebugState(), null, 2));
-          // console.log(this.player.getDebugState());
-          // which ones failed
           reject(error);
         };
 

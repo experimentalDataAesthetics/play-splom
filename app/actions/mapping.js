@@ -1,5 +1,6 @@
 import {
   MAP_XY_TO_PARAM,
+  AUTO_MAP,
   SET_MAPPING,
   SET_MAPPING_RANGE,
   SET_PCA,
@@ -19,6 +20,17 @@ export function mapXYtoParam(xy, param) {
     }
   };
 }
+
+/**
+ * Automatically map x and y if they are not yet assigned
+ */
+export function autoMap() {
+  return {
+    type: AUTO_MAP,
+    payload: {}
+  };
+}
+
 
 /**
  * Set a non-mapped sound param to a fixed value.

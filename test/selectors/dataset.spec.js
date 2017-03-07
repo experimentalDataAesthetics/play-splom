@@ -3,8 +3,8 @@ import {
   expect
 } from 'chai';
 // import { spy, stub } from 'sinon';
+import _ from 'lodash';
 import * as selectors from '../../app/selectors/dataset';
-import * as _ from 'lodash';
 
 describe('selectors/dataset', () => {
   describe('normalizePoints', () => {

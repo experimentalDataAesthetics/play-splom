@@ -97,6 +97,8 @@ export function loadDataset(path) {
         parser
       });
 
+      // This can fail inside here but it will not
+      // reject the Promise. It only posts the error to console.
       ds.fetch().then((data3) => {
         dispatch(notify());
         dispatch(setDataset(path, data3));

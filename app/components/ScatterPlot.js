@@ -1,6 +1,5 @@
 import React from 'react';
 import h from 'react-hyperscript';
-import style from './ScatterPlot.css';
 import LAxis from '../components/LAxis';
 import Points from '../components/Points';
 
