@@ -1,0 +1,99 @@
+{
+    "canFreeSynth": true,
+    "controlNames": ["out", "freqL", "freqR", "width", "sustain", "amp"],
+    "controls": [{
+        "defaultValue": 0,
+        "index": 0,
+        "lag": 0,
+        "name": "out",
+        "rate": "scalar"
+    }, {
+        "defaultValue": 440,
+        "index": 1,
+        "lag": 0,
+        "name": "freqL",
+        "rate": "scalar",
+        "spec": {
+            "class": "ControlSpec",
+            "default": 440,
+            "maxval": 10000,
+            "minval": 40,
+            "step": 0,
+            "units": " Hz",
+            "warp": "exp"
+        }
+    }, {
+        "defaultValue": 440,
+        "index": 2,
+        "lag": 0,
+        "name": "freqR",
+        "rate": "scalar",
+        "spec": {
+            "class": "ControlSpec",
+            "default": 440,
+            "maxval": 10000,
+            "minval": 40,
+            "step": 0,
+            "units": " Hz",
+            "warp": "exp"
+        }
+    }, {
+        "defaultValue": 0.10000000149012,
+        "index": 3,
+        "lag": 0,
+        "name": "width",
+        "rate": "scalar",
+        "spec": {
+            "class": "ControlSpec",
+            "default": 0.1,
+            "maxval": 2.9,
+            "minval": 0.1,
+            "step": 0,
+            "units": "",
+            "warp": "linear"
+        }
+    }, {
+        "defaultValue": 0.20000000298023,
+        "index": 4,
+        "lag": 0,
+        "name": "sustain",
+        "rate": "scalar",
+        "spec": {
+            "class": "ControlSpec",
+            "default": 0.2,
+            "maxval": 4,
+            "minval": 0.02,
+            "step": 0,
+            "units": "",
+            "warp": "exp"
+        }
+    }, {
+        "defaultValue": 0.5,
+        "index": 5,
+        "lag": 0,
+        "name": "amp",
+        "rate": "scalar",
+        "spec": {
+            "class": "ControlSpec",
+            "default": 0,
+            "maxval": 1,
+            "minval": 0,
+            "step": 0,
+            "units": "",
+            "warp": "amp"
+        }
+    }],
+    "hasArrayArgs": false,
+    "hasGate": false,
+    "hasVariants": false,
+    "inputs": [],
+    "name": "binauralLFGauss",
+    "output": [{
+        "numberOfChannels": 2,
+        "rate": "audio",
+        "startingChannel": "out",
+        "type": "OffsetOut"
+    }],
+    "path": "/Users/crucial/code/idmx/playsplom/app/synthdefs/binauralLFGauss.json",
+    "sourceCode": "SynthDef('binauralLFGauss', { |out, freqL=440, freqR=440, width=0.1, sustain=0.2, amp=0.5|  var snd = [    LFGauss.ar(freqL, width),    LFGauss.ar(freqR, width)  ];  var env = snd * EnvGen.kr(Env.perc(0.001, sustain), doneAction: 2) * amp;  OffsetOut.ar(out, snd * env);})"
+}
