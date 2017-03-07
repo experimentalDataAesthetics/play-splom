@@ -1,7 +1,7 @@
 import React from 'react';
 import h from 'react-hyperscript';
-import connect from '../utils/reduxers';
 import { List, ListItem, MakeSelectable } from 'material-ui/List';
+import connect from '../utils/reduxers';
 import { selectSound } from '../actions/sounds';
 import styles from './Sidebar.css';
 

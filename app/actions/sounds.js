@@ -1,4 +1,6 @@
+import _ from 'lodash';
 
+import callActionOnMain from '../ipc/callActionOnMain';
 import {
   SET_SOUNDS,
   SELECT_SOUND,
@@ -7,8 +9,6 @@ import {
   AUTO_MAP
 } from '../actionTypes';
 
-import callActionOnMain from '../ipc/callActionOnMain';
-import _ from 'lodash';
 
 /**
  * Set sounds (objects with synthdef descriptions) to store

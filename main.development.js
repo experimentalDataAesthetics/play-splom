@@ -103,7 +103,7 @@ function loadWindow() {
 function reload() {
   soundApp.stop().then(() => {
     loadWindow();
-  }, (error) => {
+  }, () => {
     // never stops because of Synth/Group not responding
     loadWindow();
   });
@@ -232,7 +232,7 @@ app.on('ready', () => {
         label: 'Reload',
         accelerator: 'Shift+Command+R',
         click() {
-          reload()
+          reload();
         }
       }, {
         label: 'Toggle Full Screen',

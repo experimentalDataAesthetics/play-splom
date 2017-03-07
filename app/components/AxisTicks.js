@@ -94,7 +94,7 @@ export default React.createClass({
       tickFormat = (d) => d;
     }
 
-    const adjustedScale = scale.rangeBand ? d => scale(d) + scale.rangeBand() / 2 : scale;
+    const adjustedScale = scale.rangeBand ? d => (scale(d) + scale.rangeBand()) / 2 : scale;
 
     // Still working on this
     // Ticks and lines are not fully aligned
@@ -217,7 +217,11 @@ export default React.createClass({
           {key: idx, className: 'tick', transform: tr(tick)},
           gridLine(adjustedScale(tick)),
           React.createElement('line', {
-            style: {shapeRendering: 'crispEdges', opacity: '1', stroke: props.tickStroke}, 
+            style: {
+              shapeRendering: 'crispEdges',
+              opacity: '1',
+              stroke: props.tickStroke
+            },
             x2,
             y2
           }),

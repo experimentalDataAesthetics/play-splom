@@ -24,12 +24,12 @@
     "build": "npm run build-main && npm run build-renderer",
     "build-main": "cross-env NODE_ENV=production node -r babel-register ./node_modules/webpack/bin/webpack --config webpack.config.electron.js --display-modules --progress --profile --colors",
     "build-renderer": "cross-env NODE_ENV=production node -r babel-register ./node_modules/webpack/bin/webpack --config webpack.config.production.js --display-modules --progress --profile --colors",
-    "start": "cross-env NODE_ENV=production electron ./",
+    "production": "cross-env NODE_ENV=production electron ./",
     "start-hot": "cross-env HOT=1 NODE_ENV=development electron -r babel-register ./main.development",
     "package": "cross-env NODE_ENV=production node -r babel-register package.js",
     "package-all": "npm run package -- --all",
     "postinstall": "node node_modules/fbjs-scripts/node/check-dev-engines.js package.json",
-    "dev": "concurrently --kill-others \"npm run hot-server\" \"npm run start-hot\"",
+    "start": "concurrently --kill-others \"npm run hot-server\" \"npm run start-hot\"",
     "webpack-stats": "cross-env NODE_ENV=production node ./node_modules/webpack/bin/webpack --config webpack.config.production.js --profile --json > webpack-stats.json"
   },
   "bin": {

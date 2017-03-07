@@ -7,8 +7,8 @@ describe('actions/interaction', function() {
 
   describe('setPointsUnderBrush', function() {
     let did = false;
-    let dispatch = () => did = true;
-    let s = {
+    const dispatch = () => did = true;
+    const s = {
       interaction: {
         m: 1,
         n: 1,

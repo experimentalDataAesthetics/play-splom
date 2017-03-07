@@ -31,14 +31,14 @@ export default React.createClass({
     };
   },
 
-  _d3_scaleExtent: function _d3_scaleExtent(domain) {
-    var start = domain[0],
-        stop = domain[domain.length - 1];
+  _d3ScaleExtent: function d3ScaleExtent(domain) {
+    const start = domain[0];
+    const stop = domain[domain.length - 1];
     return start < stop ? [start, stop] : [stop, start];
   },
 
-  _d3_scaleRange: function _d3_scaleRange(scale) {
-    return scale.rangeExtent ? scale.rangeExtent() : this._d3_scaleExtent(scale.range());
+  _d3ScaleRange: function d3ScaleRange(scale) {
+    return scale.rangeExtent ? scale.rangeExtent() : this._d3ScaleExtent(scale.range());
   },
 
   render: function render() {
@@ -46,7 +46,7 @@ export default React.createClass({
     var props = this.props;
     var sign = props.orient === 'top' || props.orient === 'left' ? -1 : 1;
 
-    var range = this._d3_scaleRange(this.props.scale);
+    var range = this._d3ScaleRange(this.props.scale);
 
     var d;
 

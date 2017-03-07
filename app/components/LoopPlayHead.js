@@ -1,7 +1,7 @@
 import React from 'react';
+import { now } from 'lodash';
 import connect from '../utils/reduxers';
 import { getLoop, getLoopBox } from '../selectors';
-import { now } from 'lodash';
 
 import styles from './LoopPlayHead.css';
 

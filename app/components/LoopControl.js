@@ -1,13 +1,14 @@
 import React from 'react';
 import d3 from 'd3';
 import _ from 'lodash';
+import { Slider } from 'material-ui';
 import connect from '../utils/reduxers';
 import { getLoop } from '../selectors';
 import { toggleLoopMode, setLoopTime } from '../actions/interaction';
-import { Slider } from 'material-ui';
 import ToggleButton from './ToggleButton';
 import style from './XYParamTable.css';
 import styles from '../containers/Sidebar.css';
+
 const MIN = 0.05;
 const MAX = 60.0;
 const mapv = d3.scale.pow().exponent(2).range([MIN, MAX]);

@@ -1,3 +1,5 @@
+import u from 'updeep';
+import { xor, get, now } from 'lodash';
 import {
   SET_POINTS_UNDER_BRUSH,
   TOGGLE_LOOP_MODE,
@@ -7,8 +9,6 @@ import {
 import {
   calcPointsEntering
 } from '../selectors/index';
-import u from 'updeep';
-import { xor, get, now } from 'lodash';
 
 const DEFAULT_LOOP_TIME = 10;
 

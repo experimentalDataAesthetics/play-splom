@@ -5,8 +5,8 @@
  */
 
 import webpack from 'webpack';
-import baseConfig from './webpack.config.base';
 import CopyWebpackPlugin from 'copy-webpack-plugin';
+import baseConfig from './webpack.config.base';
 
 export default {
   ...baseConfig,

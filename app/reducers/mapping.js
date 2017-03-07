@@ -1,5 +1,5 @@
 import u from 'updeep';
-import * as _ from 'lodash';
+import _ from 'lodash';
 
 import {
   MAP_XY_TO_PARAM,

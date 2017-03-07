@@ -1,4 +1,4 @@
-
+import u from 'updeep';
 import {
   FOCUS_SCATTERPLOT,
   SET_HOVERING,
@@ -8,9 +8,7 @@ import {
   SET_WINDOW_SIZE,
   SET_NOTIFICATION
 } from '../actionTypes';
-import u from 'updeep';
 import defaultTheme from '../theme';
-
 
 const initial = {
   focused: null,
@@ -47,7 +45,7 @@ export default function ui(state = initial, action) {
         zoomed: action.payload
       }, state);
 
-    // in svg frame
+      // in svg frame
     case MOUSE_MOVE:
       return u({
         mouse: action.payload

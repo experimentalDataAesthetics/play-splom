@@ -1,12 +1,16 @@
-import {FOCUS_SCATTERPLOT, SET_HOVERING, ZOOM_SCATTERPLOT} from '../actionTypes';
 import u from 'updeep';
+import {
+  FOCUS_SCATTERPLOT,
+  SET_HOVERING,
+  ZOOM_SCATTERPLOT
+} from '../actionTypes';
 
 const initial = {
   playing: false,
   recording: false
 };
 
-export default function(state=initial, action) {
+export default function(state = initial, action) {
   switch (action.type) {
 
     case FOCUS_SCATTERPLOT:

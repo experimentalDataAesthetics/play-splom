@@ -1,6 +1,6 @@
 
 import { dryadic } from 'supercolliderjs/lib/dryads';
-import * as _ from 'lodash';
+import _ from 'lodash';
 import path from 'path';
 import fs from 'fs';
 import Bacon from 'baconjs';
@@ -31,7 +31,7 @@ const options = _.assign({}, config.supercolliderjs.options || {}, {
   sclang_conf: null
 });
 
-const TIMEOUT = 2000;
+const TIMEOUT = 20000;
 
 /**
  * Runs in the background.js process
@@ -150,7 +150,7 @@ export default class SoundApp {
 
         const die = (error) => {
           this.playing = false;
-          console.error('FAILED TO START');
+          console.error('SoundApp FAILED TO START');
           // this.log doesn't print ?
           // this.log.log
           console.error(error);

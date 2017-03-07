@@ -1,6 +1,6 @@
 import React from 'react';
 import h from 'react-hyperscript';
-import * as _ from 'lodash';
+import _ from 'lodash';
 import connect from '../utils/reduxers';
 
 import {
