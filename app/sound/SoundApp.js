@@ -86,7 +86,7 @@ export default class SoundApp {
           return ['scsynthdef', opts];
         }
 
-        let defs = () => {
+        const defs = () => {
           return files
             .filter((p) => path.extname(p) === '.scd')
             .map((p) => path.basename(p, '.scd'))
@@ -94,9 +94,9 @@ export default class SoundApp {
             .map(synthDef);
         };
 
-        let mixToMaster = () => ['synth', {def: synthDef('mixToMaster')}];
+        const mixToMaster = () => ['synth', {def: synthDef('mixToMaster')}];
 
-        let audiobus = (children) => {
+        const audiobus = (children) => {
           return [
             'audiobus',
             {
@@ -106,13 +106,13 @@ export default class SoundApp {
           ];
         };
 
-        let synthStream = () => {
+        const synthStream = () => {
           return ['synthstream', {
             stream: () => this.synthStream
           }];
         };
 
-        let busContents = () => {
+        const busContents = () => {
           return [
             synthStream(),
             ['syntheventlist', {
