@@ -30,7 +30,7 @@ const history = syncHistoryWithStore(hashHistory, store);
 injectTapEventPlugin();
 
 // Connect two-way calling of actions between renderer and main.
-// Tthe other half is in main.development.js
+// The other half is in main.development.js
 ipcRenderer.on('dispatch-action', (sender, action) => {
   handleActionOnRenderer(store.dispatch, sender, action);
 });

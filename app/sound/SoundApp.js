@@ -63,7 +63,9 @@ export default class SoundApp {
           return;
         }
 
-        const hasSclang = Boolean(config.supercolliderjs.options.sclang) && process.env.NODE_ENV === 'development';
+        this.log.info('SoundApp options', JSON.stringify(options, null, 2));
+
+        const hasSclang = Boolean(options.sclang) && process.env.NODE_ENV === 'development';
         // hasSclang = true;
 
         // dryadic document
@@ -150,16 +152,9 @@ export default class SoundApp {
 
         const die = (error) => {
           this.playing = false;
-          console.error('SoundApp FAILED TO START');
-          // this.log doesn't print ?
-          // this.log.log
-          console.error(error);
+          this.log.error('SoundApp FAILED TO START');
+          this.log.error(error);
           this.player.dump();
-          // console.log(JSON.stringify(this.player.getPlayGraph(), null, 2));
-          // circular structure
-          // console.log(JSON.stringify(this.player.getDebugState(), null, 2));
-          // console.log(this.player.getDebugState());
-          // which ones failed
           reject(error);
         };
 
