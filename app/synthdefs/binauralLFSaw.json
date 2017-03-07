@@ -21,22 +21,6 @@
       "index": 0
     },
     {
-      "name": "amp",
-      "defaultValue": 0.10000000149012,
-      "lag": 0,
-      "rate": "scalar",
-      "spec": {
-        "default": 0,
-        "maxval": 1,
-        "class": "ControlSpec",
-        "minval": 0,
-        "warp": "amp",
-        "step": 0,
-        "units": ""
-      },
-      "index": 1
-    },
-    {
       "name": "freqL",
       "defaultValue": 440,
       "lag": 0,
@@ -50,7 +34,7 @@
         "step": 0,
         "units": " Hz"
       },
-      "index": 2
+      "index": 1
     },
     {
       "name": "freqR",
@@ -66,7 +50,7 @@
         "step": 0,
         "units": " Hz"
       },
-      "index": 3
+      "index": 2
     },
     {
       "name": "sustain",
@@ -82,16 +66,32 @@
         "step": 0,
         "units": ""
       },
+      "index": 3
+    },
+    {
+      "name": "amp",
+      "defaultValue": 0.10000000149012,
+      "lag": 0,
+      "rate": "scalar",
+      "spec": {
+        "default": 0,
+        "maxval": 1,
+        "class": "ControlSpec",
+        "minval": 0,
+        "warp": "amp",
+        "step": 0,
+        "units": ""
+      },
       "index": 4
     }
   ],
   "canFreeSynth": true,
-  "sourceCode": "SynthDef('binauralLFSaw', { |out, amp=0.1, freqL=440, freqR=440, sustain=0.01|var snd = [LFSaw.ar(freqL), LFSaw.ar(freqR)];var amp2 = amp * AmpComp.ir(freqL.max(50)) * 0.5;var env = EnvGen.ar(Env.perc(1.0, 1.0), timeScale: sustain, levelScale: amp2, doneAction: 2);OffsetOut.ar(out, snd * env);})",
+  "sourceCode": "SynthDef('binauralLFSaw', { |out, freqL=440, freqR=440, sustain=0.01, amp=0.1|var snd = [LFSaw.ar(freqL), LFSaw.ar(freqR)];var amp2 = amp * AmpComp.ir(freqL.max(50)) * 0.5;var env = EnvGen.ar(Env.perc(1.0, 1.0), timeScale: sustain, levelScale: amp2, doneAction: 2);OffsetOut.ar(out, snd * env);})",
   "controlNames": [
     "out",
-    "amp",
     "freqL",
     "freqR",
-    "sustain"
+    "sustain",
+    "amp"
   ]
 }
