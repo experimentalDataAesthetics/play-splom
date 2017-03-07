@@ -54,10 +54,16 @@ body {
 }
 
 .notification--inner {
+  clear: both;
   height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.notification--close {
+  color: #000;
+  margin-bottom: 12px;
 }
 
 .inform {
@@ -70,6 +76,7 @@ body {
   max-width: 50rem;
   margin: auto auto;
   font-weight: bold;
+  color: #ddd;
   background: #e05e5e;
   padding: 4em;
   word-break: break-all;

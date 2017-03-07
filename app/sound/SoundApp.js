@@ -49,7 +49,7 @@ export default class SoundApp {
     this.log = log;
 
     this.masterArgs = {
-      amp: 0.5
+      amp: 0.3
     };
   }
 
