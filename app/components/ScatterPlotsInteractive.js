@@ -264,21 +264,23 @@ class ScatterPlotsInteractive extends React.Component {
 
     // pending should be erased once it becomes active
     const getClassName = (box) => {
-      if ((s.box.m === box.m) && (s.box.n === box.n)) {
-        return style.looping;
-      }
+      if (box && s.box) {
+        if ((s.box.m === box.m) && (s.box.n === box.n)) {
+          return style.looping;
+        }
 
-      if ((s.last.m === box.m) && (s.last.n === box.n)) {
-        return style.focused;
+        if ((s.last.m === box.m) && (s.last.n === box.n)) {
+          return style.focused;
+        }
       }
 
       return 'none';
     };
 
     // show one box at this.state.selectedBox
-    if (this.state.selectedBox) {
-      // find box by {m: n: }
-      const box = _.find(layout.boxes, this.state.selectedBox);
+    // find box by {m: n: }
+    const box = this.state.selectedBox && _.find(layout.boxes, this.state.selectedBox);
+    if (box) {
       const featx = this.props.features[box.m].values;
       const featy = this.props.features[box.n].values;
       const points = _.zip(featx, featy);
