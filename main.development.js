@@ -80,6 +80,11 @@ function loadSounds(window) {
  * Use this to quit so that soundApp is stopped correctly.
  */
 function quit() {
+  if (!(soundApp && soundApp.playing)) {
+    app.quit();
+    return;
+  }
+
   return soundApp.stop()
     .then(
       () => app.quit(),
