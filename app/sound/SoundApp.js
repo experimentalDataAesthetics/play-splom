@@ -17,16 +17,23 @@ import watch from 'watch';
  */
 import config from '../../config';
 
+function vendor(p) {
+  return path.join(config.appRoot, 'vendor', 'supercollider', p);
+}
 
 const options = _.assign({}, config.supercolliderjs.options || {}, {
-  // sclang: path.join(config.appRoot, 'vendor/supercollider/osx/sclang'),
   // This copy was still not portable due to Qt dylib errors:
+  // sclang: path.join(config.appRoot, 'vendor/supercollider/osx/sclang'),
   // so it requires that a path to an external SuperCollider.app is supplied
   // in config/development.json
-  scsynth: path.join(config.appRoot, 'vendor/supercollider/osx/scsynth'),
+  scsynth: vendor('osx/bin/scsynth'),
   serverPort: 58000,
-  echo: true,  // wonky. this means post osc messages to console
-  debug: false,  // post sclang traffic
+  env: {
+    SC_SYNTHDEF_PATH: vendor('osx/bin/synthdefs/'),
+    SC_PLUGIN_PATH: vendor('osx/bin/plugins/')
+  },
+  echo: true, // wonky. this means post osc messages to console
+  debug: false, // post sclang traffic
   includePaths: [],
   sclang_conf: null
 });
