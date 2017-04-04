@@ -9,7 +9,6 @@ import {
   AUTO_MAP
 } from '../actionTypes';
 
-
 /**
  * Set sounds (objects with synthdef descriptions) to store
  */

@@ -14,14 +14,12 @@ const MAX = 60.0;
 const mapv = d3.scale.pow().exponent(2).range([MIN, MAX]);
 const unmapv = mapv.invert;
 
-
 /**
  * A toggle button to turn looping on and off,
  * and a slider to adjust loopTime.
  *
  */
 class LoopControl extends React.Component {
-
   static propTypes = {
     loopMode: React.PropTypes.object.isRequired,
     setLoopTime: React.PropTypes.func.isRequired,
@@ -77,10 +75,12 @@ class LoopControl extends React.Component {
   }
 }
 
-
-export default connect({
-  loopMode: getLoop
-}, {
-  setLoopTime,
-  toggleLoopMode
-})(LoopControl);
+export default connect(
+  {
+    loopMode: getLoop
+  },
+  {
+    setLoopTime,
+    toggleLoopMode
+  }
+)(LoopControl);

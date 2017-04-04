@@ -1,15 +1,8 @@
-
-import {
-  expect
-} from 'chai';
+import { expect } from 'chai';
 import interaction from '../../app/reducers/interaction';
-import {
-  SET_LOOP_BOX,
-  SET_POINTS_UNDER_BRUSH
-} from '../../app/actionTypes';
+import { SET_LOOP_BOX, SET_POINTS_UNDER_BRUSH } from '../../app/actionTypes';
 
 describe('reducers/interaction', function() {
-
   describe('SET_LOOP_BOX', function() {
     const click1 = {
       type: SET_LOOP_BOX,

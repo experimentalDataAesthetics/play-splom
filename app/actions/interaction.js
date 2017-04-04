@@ -18,7 +18,6 @@ export function showBrush(show, x, y) {
   };
 }
 
-
 /**
  * setPointsUnderBrush - Called when moving the brush over points.
  *
@@ -33,7 +32,7 @@ export function showBrush(show, x, y) {
 export function setPointsUnderBrush(m, n, indices) {
   return (dispatch, getState) => {
     const s = getState().interaction;
-    const same = (_.isEqual(s.pointsUnderBrush, indices));
+    const same = _.isEqual(s.pointsUnderBrush, indices);
     if (!same) {
       dispatch({
         type: SET_POINTS_UNDER_BRUSH,
@@ -46,7 +45,6 @@ export function setPointsUnderBrush(m, n, indices) {
     }
   };
 }
-
 
 /**
  * setLoopBox - Start loop at box, or change loop to box, toggle loop off if already playing.
@@ -101,7 +99,6 @@ export function toggleLoopMode() {
     type: TOGGLE_LOOP_MODE
   };
 }
-
 
 /**
  * setLoopTime - Set time of loop in seconds.

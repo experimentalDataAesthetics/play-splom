@@ -29,42 +29,62 @@ const initial = {
  */
 export default function ui(state = initial, action) {
   switch (action.type) {
-
     case FOCUS_SCATTERPLOT:
-      return u({
-        focused: action.payload
-      }, state);
+      return u(
+        {
+          focused: action.payload
+        },
+        state
+      );
 
     case SET_HOVERING:
-      return u({
-        hovering: action.payload
-      }, state);
+      return u(
+        {
+          hovering: action.payload
+        },
+        state
+      );
 
     case ZOOM_SCATTERPLOT:
-      return u({
-        zoomed: action.payload
-      }, state);
+      return u(
+        {
+          zoomed: action.payload
+        },
+        state
+      );
 
-      // in svg frame
+    // in svg frame
     case MOUSE_MOVE:
-      return u({
-        mouse: action.payload
-      }, state);
+      return u(
+        {
+          mouse: action.payload
+        },
+        state
+      );
 
     case SHOW_BRUSH:
-      return u({
-        brush: action.payload
-      }, state);
+      return u(
+        {
+          brush: action.payload
+        },
+        state
+      );
 
     case SET_WINDOW_SIZE:
-      return u({
-        windowSize: action.payload
-      }, state);
+      return u(
+        {
+          windowSize: action.payload
+        },
+        state
+      );
 
     case SET_NOTIFICATION:
-      return u({
-        notification: action.payload
-      }, state);
+      return u(
+        {
+          notification: action.payload
+        },
+        state
+      );
 
     default:
       return state;

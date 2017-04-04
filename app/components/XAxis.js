@@ -1,4 +1,3 @@
-
 /**
  * https://github.com/esbullington/react-d3
  */
@@ -16,7 +15,6 @@ import Label from './Label';
  * https://github.com/esbullington/react-d3
  */
 export default React.createClass({
-
   displayName: 'XAxis',
 
   propTypes: {
@@ -95,12 +93,18 @@ export default React.createClass({
         transform: `translate(0 ,${props.xAxisOffset + props.height})`
       },
       ticks,
-      React.createElement(AxisLine, Object.assign({
-        scale: props.xScale,
-        stroke: props.stroke,
-        orient: props.xOrient,
-        outerTickSize: props.tickSize
-      }, props)),
+      React.createElement(
+        AxisLine,
+        Object.assign(
+          {
+            scale: props.xScale,
+            stroke: props.stroke,
+            orient: props.xOrient,
+            outerTickSize: props.tickSize
+          },
+          props
+        )
+      ),
       <Label
         horizontalChart={props.horizontalChart}
         label={props.xAxisLabel}

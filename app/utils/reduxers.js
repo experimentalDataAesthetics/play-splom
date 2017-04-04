@@ -1,4 +1,3 @@
-
 import { createSelector } from 'reselect';
 import { connect as reduxConnect } from 'react-redux';
 import _ from 'lodash';
@@ -23,10 +22,10 @@ export function selectState(selectors) {
 
   const names = _.keys(selectors);
   // if its a string then select from state
-  const getters = names.map((k) => {
+  const getters = names.map(k => {
     const getter = selectors[k];
     if (_.isString(getter)) {
-      return (state) => state[getter];
+      return state => state[getter];
     }
     if (!_.isFunction(getter)) {
       throw new Error(`${k} is not a selector Function: ${getter}`);
@@ -35,15 +34,13 @@ export function selectState(selectors) {
     return getter;
   });
 
-  return createSelector(
-    getters,
-    (...results) => {
-      const result = {};
-      _.each(names, (k, i) => {
-        result[k] = results[i];
-      });
-      return result;
+  return createSelector(getters, (...results) => {
+    const result = {};
+    _.each(names, (k, i) => {
+      result[k] = results[i];
     });
+    return result;
+  });
 }
 
 /**
@@ -62,8 +59,8 @@ export function mapActions(handlers) {
     return null;
   }
 
-  return (dispatch) => {
-    return _.mapValues(handlers, (fn) => {
+  return dispatch => {
+    return _.mapValues(handlers, fn => {
       return (...args) => {
         dispatch(fn(...args));
       };

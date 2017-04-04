@@ -6,7 +6,6 @@ import React from 'react';
  * https://github.com/esbullington/react-d3
  */
 export default React.createClass({
-
   displayName: 'AxisLine',
 
   propTypes: {
@@ -42,7 +41,6 @@ export default React.createClass({
   },
 
   render: function render() {
-
     var props = this.props;
     var sign = props.orient === 'top' || props.orient === 'left' ? -1 : 1;
 
@@ -50,15 +48,17 @@ export default React.createClass({
 
     var d;
 
+    const outerTickSize = sign * props.outerTickSize;
+
     if (props.orient === 'bottom' || props.orient === 'top') {
-      d = 'M' + range[0] + ',' + sign * props.outerTickSize + 'V0H' + range[1] + 'V' + sign * props.outerTickSize;
+      d = `M${range[0]},${outerTickSize}V0H${range[1]}V${outerTickSize}`;
     } else {
-      d = 'M' + sign * props.outerTickSize + ',' + range[0] + 'H0V' + range[1] + 'H' + sign * props.outerTickSize;
+      d = `M${outerTickSize},${range[0]}H0V${range[1]}H${outerTickSize}`;
     }
 
     return React.createElement('path', {
       className: 'domain',
-      d: d,
+      d,
       style: {
         shapeRendering: 'crispEdges'
       },

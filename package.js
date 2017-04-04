@@ -25,7 +25,6 @@ const appName = argv.name || argv.n || pkg.productName;
 const shouldUseAsar = argv.asar || argv.a || false;
 const shouldBuildAll = argv.all || false;
 
-
 const DEFAULT_OPTS = {
   dir: './',
   name: appName,
@@ -35,17 +34,19 @@ const DEFAULT_OPTS = {
     '^/tools($|/)',
     '^/release($|/)',
     '^/main.development.js',
-    '^/_org($|/)',
+    '^/_org($|/)'
     // '^/app($|/)',
     // '^/\.[a-z\.]+',
     // '^/package.js',
     // '^/server.js',
     // '^/webpack*'
-  ].concat(devDeps.map(name => `/node_modules/${name}($|/)`))
-  .concat(
-    deps.filter(name => !electronCfg.externals.includes(name))
-      .map(name => `/node_modules/${name}($|/)`)
-  )
+  ]
+    .concat(devDeps.map(name => `/node_modules/${name}($|/)`))
+    .concat(
+      deps
+        .filter(name => !electronCfg.externals.includes(name))
+        .map(name => `/node_modules/${name}($|/)`)
+    )
 };
 
 console.log(DEFAULT_OPTS);
@@ -73,7 +74,6 @@ if (version) {
     startPack();
   });
 }
-
 
 function build(cfg) {
   return new Promise((resolve, reject) => {
@@ -137,7 +137,6 @@ function pack(plat, arch, cb) {
 
   packager(opts, cb);
 }
-
 
 function log(plat, arch) {
   return (err, filepath) => {

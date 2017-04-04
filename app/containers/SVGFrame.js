@@ -8,10 +8,9 @@ import ScatterPlotsContainer from './ScatterPlotsContainer';
  * Renders the SVG element in which the scatterplots are placed.
  */
 export default class SVGFrame extends Component {
-
   static propTypes = {
     containerHeight: PropTypes.number.isRequired,
-    containerWidth: PropTypes.number.isRequired,
+    containerWidth: PropTypes.number.isRequired
   };
 
   render() {

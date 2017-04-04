@@ -6,12 +6,11 @@ import {
   AUTO_MAP,
   SET_FIXED_PARAM,
   SET_MAPPING,
-  SET_MAPPING_RANGE,
+  SET_MAPPING_RANGE
 } from '../actionTypes';
 
 export default function(state = {}, action) {
   switch (action.type) {
-
     case MAP_XY_TO_PARAM:
       return mapXYToParam(state, action.payload);
 
@@ -22,64 +21,77 @@ export default function(state = {}, action) {
       // sets unipolar values to unipolarMappingRanges
       // selector calculates natural mapped values for display
       // and sending synths
-      return u({
-        unipolarMappingRanges: {
-          [action.payload.param]: action.payload.values
-        }
-      }, state);
+      return u(
+        {
+          unipolarMappingRanges: {
+            [action.payload.param]: action.payload.values
+          }
+        },
+        state
+      );
 
     case SET_MAPPING:
-      return u({
-        [action.payload.feature]: {
-          param: action.payload.param
-        }
-      }, state);
+      return u(
+        {
+          [action.payload.feature]: {
+            param: action.payload.param
+          }
+        },
+        state
+      );
 
     case SET_MAPPING_RANGE:
-      return u({
-        [action.payload.feature]: {
-          range: action.payload.range
-        }
-      }, state);
+      return u(
+        {
+          [action.payload.feature]: {
+            range: action.payload.range
+          }
+        },
+        state
+      );
 
     default:
       return state;
   }
 }
 
-
 function mapXYToParam(state, payload) {
   // toggle: if already mapped to this then disconnect it
   if (_.get(state, `xy.${payload.xy}.params.${payload.param}`)) {
-    return u({
-      mode: 'xy',
-      xy: {
-        [payload.xy]: {
-          // updeep: filter this param out of params
-          params: u.omit(payload.param)
+    return u(
+      {
+        mode: 'xy',
+        xy: {
+          [payload.xy]: {
+            // updeep: filter this param out of params
+            params: u.omit(payload.param)
+          }
         }
-      }
-    }, state);
+      },
+      state
+    );
   }
 
   // connect it
-  return u({
-    mode: 'xy',
-    xy: {
-      [payload.xy]: {
-        params: {
-          [payload.param]: true
+  return u(
+    {
+      mode: 'xy',
+      xy: {
+        [payload.xy]: {
+          params: {
+            [payload.param]: true
+          }
+        },
+        // disconnect the obverse if it is connected
+        // you cannot map both x and y to the same param
+        [payload.xy === 'x' ? 'y' : 'x']: {
+          params: u.omit(payload.param)
         }
-      },
-      // disconnect the obverse if it is connected
-      // you cannot map both x and y to the same param
-      [payload.xy === 'x' ? 'y' : 'x']: {
-        params: u.omit(payload.param)
       }
-    }
-  }, state);
+    },
+    state
+  );
 }
-
 
 /**
  * Given state and the sound that is about to be selected,
@@ -94,9 +106,7 @@ function autoMap(state, sound) {
     // could map
     const controlNames = sound.controlNames;
     if (state.xy) {
-      const currentlyMapped = _.concat(
-        _.keys(state.xy.x.params),
-        _.keys(state.xy.y.params));
+      const currentlyMapped = _.concat(_.keys(state.xy.x.params), _.keys(state.xy.y.params));
 
       // state.xy
       //  .x.params keys
@@ -106,13 +116,13 @@ function autoMap(state, sound) {
 
       //  if < 2 then try the first two
       if (currentIndices.length < 2) {
-        const nextState = mapXYToParam(state, {xy: 'x', param: controlNames[1]});
-        return mapXYToParam(nextState, {xy: 'y', param: controlNames[2]});
+        const nextState = mapXYToParam(state, { xy: 'x', param: controlNames[1] });
+        return mapXYToParam(nextState, { xy: 'y', param: controlNames[2] });
       }
     } else {
       // just select the first two as long as their are that many
-      const nextState = mapXYToParam(state, {xy: 'x', param: controlNames[1]});
-      return mapXYToParam(nextState, {xy: 'y', param: controlNames[2]});
+      const nextState = mapXYToParam(state, { xy: 'x', param: controlNames[1] });
+      return mapXYToParam(nextState, { xy: 'y', param: controlNames[2] });
     }
   }
 

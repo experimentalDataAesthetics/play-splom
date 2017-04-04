@@ -1,4 +1,3 @@
-
 import React from 'react';
 
 /**
@@ -8,7 +7,6 @@ import React from 'react';
  * https://github.com/esbullington/react-d3
  */
 module.exports = React.createClass({
-
   displayName: 'Label',
 
   propTypes: {
@@ -36,14 +34,15 @@ module.exports = React.createClass({
   },
 
   render() {
-
     var props = this.props;
 
     if (!props.label) {
       return <text />;
     }
 
-    var transform, x, y;
+    var transform,
+      x,
+      y;
     if (props.orient === 'top' || props.orient === 'bottom') {
       transform = props.verticalTransform;
       x = props.width / 2;
@@ -52,7 +51,8 @@ module.exports = React.createClass({
       if (props.horizontalChart) {
         transform = `rotate(180 ${x} ${y}) ${transform}`;
       }
-    } else {  // left, right
+    } else {
+      // left, right
       transform = props.horizontalTransform;
       x = -props.height / 2;
       if (props.orient === 'left') {
@@ -81,5 +81,4 @@ module.exports = React.createClass({
       </text>
     );
   }
-
 });

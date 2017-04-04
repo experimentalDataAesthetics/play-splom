@@ -7,10 +7,7 @@ import Sidebar from './Sidebar';
 import SVGFrame from './SVGFrame';
 import Notification from '../components/Notification';
 
-import {
-  getLayout,
-  getMuiTheme
-} from '../selectors/index';
+import { getLayout, getMuiTheme } from '../selectors/index';
 
 /**
  * This is the layout of the application itself.
@@ -24,7 +21,6 @@ import {
  * number of boxes etc.
  */
 class MainLayout extends React.Component {
-
   static propTypes = {
     muiTheme: React.PropTypes.object.isRequired,
     layout: React.PropTypes.object.isRequired
@@ -42,18 +38,15 @@ class MainLayout extends React.Component {
 
     const svg = (
       <div style={svgStyle}>
-        <SVGFrame
-          containerWidth={layout.svgStyle.width}
-          containerHeight={layout.svgStyle.height}
-        />
+        <SVGFrame containerWidth={layout.svgStyle.width} containerHeight={layout.svgStyle.height} />
       </div>
     );
 
-    const sidebar = layout.showSidebar ? (
-      <div style={layout.sideBarStyle}>
+    const sidebar = layout.showSidebar
+      ? (<div style={layout.sideBarStyle}>
         <Sidebar />
-      </div>
-    ) : null;
+      </div>)
+      : null;
 
     return (
       <MuiThemeProvider muiTheme={this.props.muiTheme}>

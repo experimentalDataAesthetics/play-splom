@@ -1,11 +1,9 @@
-
 import React from 'react';
 import h from 'react-hyperscript';
 
 import FontIcon from 'material-ui/FontIcon';
 import IconButton from 'material-ui/IconButton';
 import muiThemeable from 'material-ui/styles/muiThemeable';
-
 
 /**
  * A toggle button using two icons
@@ -16,7 +14,6 @@ import muiThemeable from 'material-ui/styles/muiThemeable';
  * https://design.google.com/icons/
  */
 class ToggleButton extends React.Component {
-
   static propTypes = {
     action: React.PropTypes.func.isRequired,
     isActive: React.PropTypes.bool.isRequired,
@@ -27,11 +24,15 @@ class ToggleButton extends React.Component {
 
   render() {
     const palette = this.props.muiTheme.palette;
-    return h(IconButton, {onClick: this.props.action}, [
-      h(FontIcon, {
-        className: 'material-icons',
-        color: this.props.isActive ? palette.primary1Color : palette.disabledColor
-      }, this.props.isActive ? this.props.iconActive : this.props.iconInactive)
+    return h(IconButton, { onClick: this.props.action }, [
+      h(
+        FontIcon,
+        {
+          className: 'material-icons',
+          color: this.props.isActive ? palette.primary1Color : palette.disabledColor
+        },
+        this.props.isActive ? this.props.iconActive : this.props.iconInactive
+      )
     ]);
   }
 }

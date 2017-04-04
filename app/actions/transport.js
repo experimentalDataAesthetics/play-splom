@@ -1,4 +1,4 @@
-import {SET_PLAYING, SET_RECORDING} from '../actionTypes';
+import { SET_PLAYING, SET_RECORDING } from '../actionTypes';
 
 /**
  * @param {Boolean} playing

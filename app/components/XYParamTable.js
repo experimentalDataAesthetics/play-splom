@@ -1,4 +1,3 @@
-
 import React from 'react';
 import h from 'react-hyperscript';
 // single value slider:
@@ -16,7 +15,6 @@ import style from './XYParamTable.css';
  * the ranges of those mappings.
  */
 export default class XYParamTable extends React.Component {
-
   render() {
     if (!this.props.sound) {
       return h('div.empty');
@@ -44,34 +42,30 @@ export default class XYParamTable extends React.Component {
       marginBottom: 4
     };
 
-    const rows = this.props.xyMappingControls.map((control) => {
+    const rows = this.props.xyMappingControls.map(control => {
       let range;
       if (control.connected) {
         // get min max uni values
         // from mapping
         // get text values of actual from mapping
-        range = h(ReactSlider, {
-          min: 0.0,
-          max: 1.0,
-          step: 0.01,
-          minDistance: 0.1,
-          defaultValue: [
-            control.unipolar.minval,
-            control.unipolar.maxval
-          ],
-          pearling: true,
-          withBars: true,
-          className: style.rangeSlider,
-          onAfterChange: (v) => this.props.setParamRangeUnipolar(control.name, v[0], v[1])
-        }, [
-          h('div',
-            {className: style.rangeHandleMin},
-            [round(control.natural.minval)]),
-          h('div',
-            {className: style.rangeHandleMax},
-            [round(control.natural.maxval)])
-        ]);
-
+        range = h(
+          ReactSlider,
+          {
+            min: 0.0,
+            max: 1.0,
+            step: 0.01,
+            minDistance: 0.1,
+            defaultValue: [control.unipolar.minval, control.unipolar.maxval],
+            pearling: true,
+            withBars: true,
+            className: style.rangeSlider,
+            onAfterChange: v => this.props.setParamRangeUnipolar(control.name, v[0], v[1])
+          },
+          [
+            h('div', { className: style.rangeHandleMin }, [round(control.natural.minval)]),
+            h('div', { className: style.rangeHandleMax }, [round(control.natural.maxval)])
+          ]
+        );
       } else {
         const sliderAction = (e, v) => this.props.setFixedParamUnipolar(control.name, v);
         range = h(Slider, {
@@ -84,45 +78,30 @@ export default class XYParamTable extends React.Component {
         });
       }
 
-      return h('tr',
-        {className: control.connected ? style.connected : style.fixed},
-        [
-          h('th', control.name),
-          h('td',
-            {className: style.pa0},
-            [
-              h(ToggleButton, {
-                isActive: control.xConnected,
-                action: () => this.props.mapXYtoParam('x', control.name),
-                iconActive: 'radio_button_checked',
-                iconInactive: 'radio_button_unchecked'
-              })
-            ]),
-          h('td',
-            {className: style.pa0},
-            [
-              h(ToggleButton, {
-                isActive: control.yConnected,
-                action: () => this.props.mapXYtoParam('y', control.name),
-                iconActive: 'radio_button_checked',
-                iconInactive: 'radio_button_unchecked'
-              })
-            ]),
-          h('td',
-            {className: style.range},
-            [range])
-        ]);
+      return h('tr', { className: control.connected ? style.connected : style.fixed }, [
+        h('th', control.name),
+        h('td', { className: style.pa0 }, [
+          h(ToggleButton, {
+            isActive: control.xConnected,
+            action: () => this.props.mapXYtoParam('x', control.name),
+            iconActive: 'radio_button_checked',
+            iconInactive: 'radio_button_unchecked'
+          })
+        ]),
+        h('td', { className: style.pa0 }, [
+          h(ToggleButton, {
+            isActive: control.yConnected,
+            action: () => this.props.mapXYtoParam('y', control.name),
+            iconActive: 'radio_button_checked',
+            iconInactive: 'radio_button_unchecked'
+          })
+        ]),
+        h('td', { className: style.range }, [range])
+      ]);
     });
 
-    return h('table', {className: style.table}, [
-      h('thead', [
-        h('tr', [
-          h('th', ''),
-          h('th', 'X'),
-          h('th', 'Y'),
-          h('th', '')
-        ])
-      ]),
+    return h('table', { className: style.table }, [
+      h('thead', [h('tr', [h('th', ''), h('th', 'X'), h('th', 'Y'), h('th', '')])]),
       h('tbody', rows)
     ]);
   }

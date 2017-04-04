@@ -6,9 +6,7 @@ import {
   SET_LOOP_BOX,
   SET_LOOP_TIME
 } from '../actionTypes';
-import {
-  calcPointsEntering
-} from '../selectors/index';
+import { calcPointsEntering } from '../selectors/index';
 
 const DEFAULT_LOOP_TIME = 10;
 
@@ -40,7 +38,6 @@ export default function interaction(state = {}, action) {
   }
 }
 
-
 /**
  * setPointsUnderBrush - Action triggered by mouse move,
  *  sets the current points inside the brush rectangle.
@@ -50,25 +47,27 @@ export default function interaction(state = {}, action) {
  * @return {Object}           new state
  */
 function setPointsUnderBrush(state, action) {
-  const differentBox = (state.m !== action.payload.m) ||
-      (state.n !== action.payload.n);
+  const differentBox = state.m !== action.payload.m || state.n !== action.payload.n;
 
-  if (differentBox ||
-    xor(state.pointsUnderBrush || [], action.payload.indices || []).length !== 0) {
+  if (
+    differentBox || xor(state.pointsUnderBrush || [], action.payload.indices || []).length !== 0
+  ) {
     const prevPub = state.pointsUnderBrush || [];
     const pub = action.payload.indices || [];
-    return u({
-      previousPointsUnderBrush: prevPub,
-      pointsUnderBrush: pub,
-      m: action.payload.m,
-      n: action.payload.n,
-      pointsEntering: calcPointsEntering(pub, prevPub)
-    }, state);
+    return u(
+      {
+        previousPointsUnderBrush: prevPub,
+        pointsUnderBrush: pub,
+        m: action.payload.m,
+        n: action.payload.n,
+        pointsEntering: calcPointsEntering(pub, prevPub)
+      },
+      state
+    );
   }
 
   return state;
 }
-
 
 /**
  * _sameBox - is payload.m/n the same box as state.loopMode[key].m/n ?
@@ -82,10 +81,9 @@ function _sameBox(state, payload, key = 'box') {
   if (get(state, `loopMode.${key}`)) {
     const m = get(state, `loopMode.${key}.m`);
     const n = get(state, `loopMode.${key}.n`);
-    return m && n && (m === payload.m) && (n === payload.n);
+    return m && n && m === payload.m && n === payload.n;
   }
 }
-
 
 /**
  * setLoopBox - toggles the SoundApp's loop mode on or off
@@ -122,7 +120,6 @@ function setLoopBox(state, action) {
   return u({ loopMode }, state);
 }
 
-
 /**
  * toggleLoopMode - turn loop on or off
  *
@@ -132,7 +129,7 @@ function setLoopBox(state, action) {
  * @return {Object}         new state
  */
 function toggleLoopMode(state) {
-   /* , action */
+  /* , action */
   const loopMode = {};
   const box = get(state, 'loopMode.box');
 
@@ -142,13 +139,12 @@ function toggleLoopMode(state) {
     loopMode.epoch = null;
   } else {
     // or last hovered
-    const lastBox = get(state, 'loopMode.lastBox') || {m: 0, n: 0};
-    return setLoopBox(state, {payload: lastBox});
+    const lastBox = get(state, 'loopMode.lastBox') || { m: 0, n: 0 };
+    return setLoopBox(state, { payload: lastBox });
   }
 
   return u({ loopMode }, state);
 }
-
 
 /**
  * setLoopTime - set the loop time in seconds

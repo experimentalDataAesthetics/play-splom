@@ -4,9 +4,7 @@ import React from 'react';
  * Renders an SVG line
  */
 export default class Line extends React.Component {
-
   render() {
-
     return (
       <line
         x1={this.props.points[0][0]}
@@ -18,5 +16,4 @@ export default class Line extends React.Component {
       />
     );
   }
-
 }

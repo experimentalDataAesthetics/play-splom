@@ -1,4 +1,4 @@
-import {SET_SOUNDS} from '../actionTypes';
+import { SET_SOUNDS } from '../actionTypes';
 
 export default function sounds(state = [], action) {
   switch (action.type) {

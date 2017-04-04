@@ -1,4 +1,3 @@
-
 const path = require('path');
 
 module.exports = {
@@ -13,7 +12,8 @@ module.exports = {
         test: /\.jsx?$/,
         loaders: ['babel-loader'],
         exclude: /node_modules/
-      }, {
+      },
+      {
         test: /\.json$/,
         loader: 'json-loader'
       },
@@ -44,8 +44,7 @@ module.exports = {
   resolveLoader: {
     root: path.resolve('./node_modules')
   },
-  plugins: [
-  ],
+  plugins: [],
   externals: [
     // put your node 3rd party libraries which can't be built with webpack here
     // (mysql, mongodb, and so on..)

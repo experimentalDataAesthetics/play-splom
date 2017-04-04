@@ -14,7 +14,6 @@ const SPEED = 20;
  * There is one of these in the app, positioned over the currently playing loop box.
  */
 class LoopPlayHead extends React.Component {
-
   static propTypes = {
     loopBox: React.PropTypes.object,
     loopMode: React.PropTypes.object.isRequired
@@ -31,7 +30,7 @@ class LoopPlayHead extends React.Component {
   tick() {
     if (this.props.loopBox) {
       const delta = now() - this.props.loopMode.epoch;
-      const inLoop = (delta / 1000) % this.props.loopMode.loopTime;
+      const inLoop = delta / 1000 % this.props.loopMode.loopTime;
       const pos = inLoop / this.props.loopMode.loopTime;
       this.setState({
         pos
@@ -41,8 +40,8 @@ class LoopPlayHead extends React.Component {
 
   render() {
     if (this.props.loopBox) {
-      const x = (this.state && this.state.pos || 0) * this.props.loopBox.width
-        + this.props.loopBox.x;
+      const x = ((this.state && this.state.pos) || 0) * this.props.loopBox.width +
+        this.props.loopBox.x;
       const y = this.props.loopBox.y;
       return (
         <g
@@ -64,7 +63,6 @@ class LoopPlayHead extends React.Component {
     return null;
   }
 }
-
 
 export default connect({
   loopBox: getLoopBox,

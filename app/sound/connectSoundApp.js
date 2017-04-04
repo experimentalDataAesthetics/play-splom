@@ -6,16 +6,9 @@
  * to the SoundApp
  */
 
-import {
-  SPAWN_SYNTHS,
-  SET_LOOP
-} from '../actionTypes';
+import { SPAWN_SYNTHS, SET_LOOP } from '../actionTypes';
 
-import {
-  spawnEventsFromBrush,
-  getLoopModePayload
-} from '../selectors/index';
-
+import { spawnEventsFromBrush, getLoopModePayload } from '../selectors/index';
 
 /**
  * observeStore - Call onChange whenever the state changes
@@ -45,7 +38,7 @@ function observeStore(store, select, onChange) {
   return unsubscribe;
 }
 
-const getPointsEntering = (state) => state.interaction.pointsEntering;
+const getPointsEntering = state => state.interaction.pointsEntering;
 
 /**
  * connectSoundApp - connect redux store to the SoundApp on main thread
@@ -61,8 +54,7 @@ const getPointsEntering = (state) => state.interaction.pointsEntering;
  * @return {undefined}
  */
 export default function connectSoundApp(store, callActionOnMain) {
-
-  observeStore(store, getPointsEntering, (state) => {
+  observeStore(store, getPointsEntering, state => {
     const synthEvents = spawnEventsFromBrush(state);
     if (synthEvents.length) {
       callActionOnMain({

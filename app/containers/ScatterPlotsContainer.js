@@ -8,12 +8,7 @@ import ScatterPlotsInteractive from '../components/ScatterPlotsInteractive';
 import HoveringAxis from '../components/HoveringAxis';
 import LoopPlayHead from '../components/LoopPlayHead';
 
-import {
-  getPointsForPlot,
-  getLayout,
-  getDatasetMetadata
-} from '../selectors/index';
-
+import { getPointsForPlot, getLayout, getDatasetMetadata } from '../selectors/index';
 
 /**
  * This holds all of the plotting and interactive components for the Scatter Plots.
@@ -26,7 +21,6 @@ import {
  *
  */
 class ScatterPlotsContainer extends Component {
-
   static propTypes = {
     width: React.PropTypes.number.isRequired,
     height: React.PropTypes.number.isRequired,
@@ -37,14 +31,10 @@ class ScatterPlotsContainer extends Component {
 
   render() {
     const padding = this.props.layout.scatterPlotsMargin;
-    const props = _.pick(this.props, [
-      'dataset',
-      'features',
-      'layout'
-    ]);
+    const props = _.pick(this.props, ['dataset', 'features', 'layout']);
 
-    props.height = this.props.height - (padding * 2);
-    props.width = this.props.width - (padding * 2);
+    props.height = this.props.height - padding * 2;
+    props.width = this.props.width - padding * 2;
 
     const plots = h(ScatterPlots, props);
     const activePoints = h(ScatterPlotsActivePoints);
@@ -59,15 +49,8 @@ class ScatterPlotsContainer extends Component {
         width: props.width,
         transform: `translate(${padding}, ${padding})`
       },
-      [
-        plots,
-        activePoints,
-        loopPlayHead,
-        hoveringAxis,
-        surface
-      ]
+      [plots, activePoints, loopPlayHead, hoveringAxis, surface]
     );
-
   }
 }
 

@@ -31,7 +31,6 @@ export function autoMap() {
   };
 }
 
-
 /**
  * Set a non-mapped sound param to a fixed value.
  *

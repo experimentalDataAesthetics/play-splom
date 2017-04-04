@@ -1,4 +1,4 @@
-import {SELECT_DATASET} from '../actionTypes';
+import { SELECT_DATASET } from '../actionTypes';
 
 export default function(state = null, action) {
   switch (action.type) {

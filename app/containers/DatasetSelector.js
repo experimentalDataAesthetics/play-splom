@@ -4,20 +4,15 @@ import RaisedButton from 'material-ui/RaisedButton';
 import { List, ListItem, MakeSelectable } from 'material-ui/List';
 import connect from '../utils/reduxers';
 import styles from './Sidebar.css';
-import {
-  loadDataset,
-  openDatasetDialog
-} from '../actions/datasets';
+import { loadDataset, openDatasetDialog } from '../actions/datasets';
 
 const SelectableList = MakeSelectable(List);
-
 
 /**
  * Component in right sidebar to select from available
  * datasets or to click to open a dataset from the filesystem.
  */
 class DatasetSelector extends Component {
-
   static propTypes = {
     selected: React.PropTypes.string,
     datasets: React.PropTypes.array.isRequired,
@@ -28,13 +23,14 @@ class DatasetSelector extends Component {
   render() {
     return h(`div.${styles.datasetSelector}`, [
       h('h6', 'Datasets'),
-      h(SelectableList,
+      h(
+        SelectableList,
         {
           value: this.props.selected,
           onChange: this.props.onSelect,
           className: 'selectable-list'
         },
-        this.props.datasets.map((dataset) => {
+        this.props.datasets.map(dataset => {
           return h(ListItem, {
             primaryText: dataset.name,
             value: dataset.path,
@@ -50,7 +46,7 @@ class DatasetSelector extends Component {
       ),
       h(RaisedButton, {
         label: 'Open...',
-        style: {display: 'block', margin: '1rem 4rem'},
+        style: { display: 'block', margin: '1rem 4rem' },
         onClick: this.props.openDialog
       })
     ]);
@@ -60,9 +56,10 @@ class DatasetSelector extends Component {
 export default connect(
   {
     datasets: 'datasets',
-    selected: (state) => state.dataset && state.dataset.path
+    selected: state => state.dataset && state.dataset.path
   },
   {
     onSelect: (e, path) => loadDataset(path),
     openDialog: openDatasetDialog
-  })(DatasetSelector);
+  }
+)(DatasetSelector);

@@ -5,19 +5,12 @@ import connect from '../utils/reduxers';
 import XYParamTable from '../components/XYParamTable';
 import styles from './Sidebar.css';
 
-import {
-  getSound,
-  getXYMappingControls
-} from '../selectors/index';
-import {
-  mapXYtoParam,
-  setFixedParamUnipolar,
-  setParamRangeUnipolar
-} from '../actions/mapping';
+import { getSound, getXYMappingControls } from '../selectors/index';
+import { mapXYtoParam, setFixedParamUnipolar, setParamRangeUnipolar } from '../actions/mapping';
 
 const selectors = {
   sound: getSound,
-  mapping: (state) => state.mapping,
+  mapping: state => state.mapping,
   xyMappingControls: getXYMappingControls
 };
 
@@ -26,7 +19,6 @@ const handlers = {
   setFixedParamUnipolar,
   setParamRangeUnipolar
 };
-
 
 /**
  * Sidebar component for mapping dataset features to sound parameters.
@@ -42,19 +34,20 @@ const handlers = {
  */
 class ParamMapping extends React.Component {
   render() {
-    return h(`div.${styles.paramMapping}`,
-      [
-        h('h6', this.props.sound ? this.props.sound.name : ''),
-        h(XYParamTable,
-          _.pick(this.props, [
-            'sound',
-            'mapping',
-            'xyMappingControls',
-            'mapXYtoParam',
-            'setFixedParamUnipolar',
-            'setParamRangeUnipolar'
-          ]))
-      ]);
+    return h(`div.${styles.paramMapping}`, [
+      h('h6', this.props.sound ? this.props.sound.name : ''),
+      h(
+        XYParamTable,
+        _.pick(this.props, [
+          'sound',
+          'mapping',
+          'xyMappingControls',
+          'mapXYtoParam',
+          'setFixedParamUnipolar',
+          'setParamRangeUnipolar'
+        ])
+      )
+    ]);
   }
 }
 

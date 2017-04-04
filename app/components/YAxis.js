@@ -1,10 +1,8 @@
-
 import React from 'react';
 import d3 from 'd3';
 import AxisTicks from './AxisTicks';
 import AxisLine from './AxisLine';
 import Label from './Label';
-
 
 /**
  * YAxis with lines, ticks and string label
@@ -13,7 +11,6 @@ import Label from './Label';
  * https://github.com/esbullington/react-d3
  */
 export default React.createClass({
-
   displayName: 'YAxis',
 
   propTypes: {
@@ -52,14 +49,13 @@ export default React.createClass({
   },
 
   render: function render() {
-
     var props = this.props;
 
     var t;
     if (props.yOrient === 'right') {
-      t = 'translate(' + (props.yAxisOffset + props.width) + ', 0)';
+      t = `translate(${props.yAxisOffset + props.width}, 0)`;
     } else {
-      t = 'translate(' + props.yAxisOffset + ', 0)';
+      t = `translate(${props.yAxisOffset}, 0)`;
     }
 
     var tickArguments;
@@ -77,7 +73,7 @@ export default React.createClass({
         innerTickSize: props.tickSize,
         orient: props.yOrient,
         orient2nd: props.xOrient,
-        tickArguments: tickArguments,
+        tickArguments,
         tickFormatting: props.tickFormatting,
         tickStroke: props.tickStroke,
         tickTextStroke: props.tickTextStroke,
@@ -100,12 +96,18 @@ export default React.createClass({
         transform: t
       },
       ticks,
-      React.createElement(AxisLine, Object.assign({
-        orient: props.yOrient,
-        outerTickSize: props.tickSize,
-        scale: props.yScale,
-        stroke: props.stroke
-      }, props)),
+      React.createElement(
+        AxisLine,
+        Object.assign(
+          {
+            orient: props.yOrient,
+            outerTickSize: props.tickSize,
+            scale: props.yScale,
+            stroke: props.stroke
+          },
+          props
+        )
+      ),
       <Label
         horizontalChart={props.horizontalChart}
         label={props.yAxisLabel}

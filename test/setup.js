@@ -13,6 +13,6 @@ window.localStorage = {
   },
   removeItem(key) {
     this[key] = undefined;
-  },
+  }
 };
 window.sessionStorage = window.localStorage;

@@ -14,13 +14,14 @@ class SoundSelector extends React.Component {
   render() {
     return h(`div.${styles.soundSelector}`, [
       h('h6', 'Sounds'),
-      h(SelectableList,
+      h(
+        SelectableList,
         {
           value: this.props.selectedSound,
           onChange: this.props.onSelect,
           className: 'selectable-list'
         },
-        this.props.sounds.map((sound) => {
+        this.props.sounds.map(sound => {
           return h(ListItem, {
             primaryText: sound.name,
             selected: sound.name === this.props.selectedSound,
@@ -38,9 +39,12 @@ class SoundSelector extends React.Component {
   }
 }
 
-export default connect({
-  sounds: 'sounds',
-  selectedSound: 'sound'
-}, {
-  onSelect: (event, name) => selectSound(name)
-})(SoundSelector);
+export default connect(
+  {
+    sounds: 'sounds',
+    selectedSound: 'sound'
+  },
+  {
+    onSelect: (event, name) => selectSound(name)
+  }
+)(SoundSelector);

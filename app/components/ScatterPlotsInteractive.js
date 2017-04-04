@@ -3,14 +3,9 @@ import h from 'react-hyperscript';
 import _ from 'lodash';
 import connect from '../utils/reduxers';
 
-import {
-  setPointsUnderBrush,
-  setLoopBox
-} from '../actions/interaction';
+import { setPointsUnderBrush, setLoopBox } from '../actions/interaction';
 
-import {
-  setHovering
-} from '../actions/ui';
+import { setHovering } from '../actions/ui';
 
 import HoveringAxis from './HoveringAxis';
 import SelectArea from './SelectArea';
@@ -19,8 +14,8 @@ import style from './ScatterPlots.css';
 const unset = {};
 
 const selectors = {
-  loopMode: (state) => state.interaction.loopMode || unset,
-  hovering: (state) => state.ui.hovering
+  loopMode: state => state.interaction.loopMode || unset,
+  hovering: state => state.ui.hovering
 };
 
 const handlers = {
@@ -28,7 +23,6 @@ const handlers = {
   setHovering,
   setLoopBox
 };
-
 
 /**
  * A single component that goes on top of the plots and handles
@@ -41,7 +35,6 @@ const handlers = {
  * This adds a SelectArea on top of each ScatterPlot
  */
 class ScatterPlotsInteractive extends React.Component {
-
   static propTypes = {
     width: React.PropTypes.number.isRequired,
     height: React.PropTypes.number.isRequired,
@@ -97,15 +90,12 @@ class ScatterPlotsInteractive extends React.Component {
         const eventPoint = this.selectArea._eventPoint(event);
         const pointInBox = [eventPoint[0] - newBox.x, eventPoint[1] - newBox.y];
 
-        let newX = (newBox.x + pointInBox[0]) - (width / 2);
-        newX = _.clamp(newX, newBox.x, (newBox.x + this.props.layout.sideLength) - width);
-        let newY = (newBox.y + pointInBox[1]) - (height / 2);
-        newY = _.clamp(newY, newBox.y, (newBox.y + this.props.layout.sideLength) - height);
+        let newX = newBox.x + pointInBox[0] - width / 2;
+        newX = _.clamp(newX, newBox.x, newBox.x + this.props.layout.sideLength - width);
+        let newY = newBox.y + pointInBox[1] - height / 2;
+        newY = _.clamp(newY, newBox.y, newBox.y + this.props.layout.sideLength - height);
 
-        this.selectArea.setSelected(
-          [newX, newY],
-          [newX + width, newY + height]
-        );
+        this.selectArea.setSelected([newX, newY], [newX + width, newY + height]);
         // That sets the local state of the selectArea
         // but it does not set the redux state that would highlight the points
         // and does not make sound until you drag
@@ -164,10 +154,7 @@ class ScatterPlotsInteractive extends React.Component {
     // console.log({minx, maxx, miny, maxy});
     const pointsIn = [];
     points.forEach((xy, i) => {
-      if ((xy[0] >= minx)
-          && (xy[0] <= maxx)
-          && (xy[1] >= miny)
-          && (xy[1] <= maxy)) {
+      if (xy[0] >= minx && xy[0] <= maxx && xy[1] >= miny && xy[1] <= maxy) {
         pointsIn.push(i);
       }
     });
@@ -210,7 +197,7 @@ class ScatterPlotsInteractive extends React.Component {
     const ry = y - layout.svgStyle.top - layout.scatterPlotsMargin;
     const m = Math.floor(rx / layout.sideLength);
     const n = this.props['data-num-features'] - Math.floor(ry / layout.sideLength) - 1;
-    return {m, n};
+    return { m, n };
   }
 
   _shouldHandleEvent(event) {
@@ -233,9 +220,7 @@ class ScatterPlotsInteractive extends React.Component {
     const sideLength = this.props.layout.sideLength;
     const layout = this.props.layout;
     const innerSideLength = sideLength - layout.margin;
-    const children = [
-      <HoveringAxis />
-    ];
+    const children = [<HoveringAxis />];
 
     // To handle catch mouse actions
     // that don't hit the SelectArea
@@ -263,13 +248,13 @@ class ScatterPlotsInteractive extends React.Component {
     };
 
     // pending should be erased once it becomes active
-    const getClassName = (box) => {
+    const getClassName = box => {
       if (box && s.box) {
-        if ((s.box.m === box.m) && (s.box.n === box.n)) {
+        if (s.box.m === box.m && s.box.n === box.n) {
           return style.looping;
         }
 
-        if ((s.last.m === box.m) && (s.last.n === box.n)) {
+        if (s.last.m === box.m && s.last.n === box.n) {
           return style.focused;
         }
       }
@@ -304,7 +289,7 @@ class ScatterPlotsInteractive extends React.Component {
           height: innerSideLength
         },
         base: [box.baseClientX, box.baseClientY],
-        onChange: (area) => {
+        onChange: area => {
           this._selectedArea = area;
           this.setPointsIn(area, box, points);
         },
@@ -337,7 +322,8 @@ class ScatterPlotsInteractive extends React.Component {
         width: this.props.width,
         height: this.props.height,
         className: 'ScatterPlotsInteractive',
-        onMouseLeave: () => {  // event
+        onMouseLeave: () => {
+          // event
           // console.log('hovered off the grid', event, event.clientX, event.clientY);
           // this.setHoveringBox({});
         },

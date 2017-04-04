@@ -1,7 +1,5 @@
 /* eslint no-unused-expressions: 0 */
-import {
-  expect
-} from 'chai';
+import { expect } from 'chai';
 import _ from 'lodash';
 import * as selectors from '../../app/selectors/sound';
 
@@ -12,123 +10,129 @@ describe('selectors/sound', () => {
     hasGate: false,
     name: 'blip',
     hasVariants: false,
-    output: [{
-      rate: 'audio',
-      startingChannel: 'out',
-      numberOfChannels: 2,
-      type: 'Out'
-    }],
-    controls: [{
-      name: 'out',
-      defaultValue: 0,
-      lag: 0,
-      rate: 'control',
-      index: 0
-    }, {
-      name: 'freq',
-      defaultValue: 440,
-      lag: 0,
-      rate: 'control',
-      spec: {
-        default: 440,
-        maxval: 20000,
-        class: 'ControlSpec',
-        minval: 20,
-        warp: 'exp',
-        step: 0,
-        units: ' Hz'
-      },
-      index: 1
-    }, {
-      name: 'numharm',
-      defaultValue: 200,
-      lag: 0,
-      rate: 'control',
-      index: 2,
-      // note defaultValue > maxval
-      // should correct for this bad input
-      spec: {
-        minval: 1,
-        maxval: 128,
-        warp: 'lin'
+    output: [
+      {
+        rate: 'audio',
+        startingChannel: 'out',
+        numberOfChannels: 2,
+        type: 'Out'
       }
-    }, {
-      name: 'pan',
-      defaultValue: 0,
-      lag: 0,
-      rate: 'control',
-      spec: {
-        default: 0,
-        maxval: 1,
-        class: 'ControlSpec',
-        minval: -1,
-        warp: 'linear',
-        step: 0,
-        units: ''
+    ],
+    controls: [
+      {
+        name: 'out',
+        defaultValue: 0,
+        lag: 0,
+        rate: 'control',
+        index: 0
       },
-      index: 3
-    }, {
-      name: 'timeScale',
-      defaultValue: 1,
-      lag: 0,
-      rate: 'control',
-      spec: {
-        default: 1,
-        maxval: 10,
-        class: 'ControlSpec',
-        minval: 0.1,
-        warp: 'linear',
-        step: 0,
-        units: ''
+      {
+        name: 'freq',
+        defaultValue: 440,
+        lag: 0,
+        rate: 'control',
+        spec: {
+          default: 440,
+          maxval: 20000,
+          class: 'ControlSpec',
+          minval: 20,
+          warp: 'exp',
+          step: 0,
+          units: ' Hz'
+        },
+        index: 1
       },
-      index: 4
-    }, {
-      name: 'smooth',
-      defaultValue: 0.0099999997764826,
-      lag: 0,
-      rate: 'control',
-      index: 5
-    }, {
-      name: 'amp',
-      defaultValue: 1,
-      lag: 0,
-      rate: 'control',
-      spec: {
-        default: 0,
-        maxval: 1,
-        class: 'ControlSpec',
-        minval: 0,
-        warp: 'amp',
-        step: 0,
-        units: ''
+      {
+        name: 'numharm',
+        defaultValue: 200,
+        lag: 0,
+        rate: 'control',
+        index: 2,
+        // note defaultValue > maxval
+        // should correct for this bad input
+        spec: {
+          minval: 1,
+          maxval: 128,
+          warp: 'lin'
+        }
       },
-      index: 6
-    }],
+      {
+        name: 'pan',
+        defaultValue: 0,
+        lag: 0,
+        rate: 'control',
+        spec: {
+          default: 0,
+          maxval: 1,
+          class: 'ControlSpec',
+          minval: -1,
+          warp: 'linear',
+          step: 0,
+          units: ''
+        },
+        index: 3
+      },
+      {
+        name: 'timeScale',
+        defaultValue: 1,
+        lag: 0,
+        rate: 'control',
+        spec: {
+          default: 1,
+          maxval: 10,
+          class: 'ControlSpec',
+          minval: 0.1,
+          warp: 'linear',
+          step: 0,
+          units: ''
+        },
+        index: 4
+      },
+      {
+        name: 'smooth',
+        defaultValue: 0.0099999997764826,
+        lag: 0,
+        rate: 'control',
+        index: 5
+      },
+      {
+        name: 'amp',
+        defaultValue: 1,
+        lag: 0,
+        rate: 'control',
+        spec: {
+          default: 0,
+          maxval: 1,
+          class: 'ControlSpec',
+          minval: 0,
+          warp: 'amp',
+          step: 0,
+          units: ''
+        },
+        index: 6
+      }
+    ],
     canFreeSynth: true,
-    controlNames: [
-      'out',
-      'freq',
-      'numharm',
-      'pan',
-      'timeScale',
-      'smooth',
-      'amp'
-    ]
+    controlNames: ['out', 'freq', 'numharm', 'pan', 'timeScale', 'smooth', 'amp']
   };
 
-  const npoints = [{
-    name: 'a',
-    index: 0,
-    values: [0, 0.25, 0.5, 1.0]
-  }, {
-    name: 'b',
-    index: 1,
-    values: [0, 0.25, 0.5, 1.0]
-  }, {
-    name: 'c',
-    index: 2,
-    values: [0, 0.25, 0.5, 1.0]
-  }];
+  const npoints = [
+    {
+      name: 'a',
+      index: 0,
+      values: [0, 0.25, 0.5, 1.0]
+    },
+    {
+      name: 'b',
+      index: 1,
+      values: [0, 0.25, 0.5, 1.0]
+    },
+    {
+      name: 'c',
+      index: 2,
+      values: [0, 0.25, 0.5, 1.0]
+    }
+  ];
 
   const mapping = {
     xy: {
@@ -154,13 +158,15 @@ describe('selectors/sound', () => {
   const mappingControls = selectors.xyMappingControls(mapping, sound);
 
   describe('xyPointsEnteringToSynthEvents', () => {
-    const synths = selectors.xyPointsEnteringToSynthEvents([1, 3],
+    const synths = selectors.xyPointsEnteringToSynthEvents(
+      [1, 3],
       0,
       1,
       sound,
       mapping,
       mappingControls,
-      npoints);
+      npoints
+    );
     it('should return 2 synth events', () => {
       expect(synths.length).to.equal(2);
     });
@@ -174,7 +180,7 @@ describe('selectors/sound', () => {
   describe('xyMappingControls', function() {
     it('should make given no prior mapping', function() {
       const xym = selectors.xyMappingControls(mapping, sound);
-      expect(xym.length).to.equal(5);  // 5 modulateable controls
+      expect(xym.length).to.equal(5); // 5 modulateable controls
       const timeScale = xym[3];
       expect(timeScale.natural.value).to.equal(1);
     });
@@ -272,8 +278,15 @@ describe('selectors/sound', () => {
 
     // loopModeEvents(m, n, npoints, mapping, mappingControls, sound, loopTime)
     it('should return an array of objects', function() {
-      const events = selectors.loopModeEvents(0, 1,
-        npoints, mapping, mappingControls, sound, loopMode.loopTime);
+      const events = selectors.loopModeEvents(
+        0,
+        1,
+        npoints,
+        mapping,
+        mappingControls,
+        sound,
+        loopMode.loopTime
+      );
 
       // expect(events).to.be.a('array');
       expect(events.length).to.equal(npoints[0].values.length);
@@ -284,8 +297,15 @@ describe('selectors/sound', () => {
     });
 
     it('should return a list of events for SynthEventList updateStream', function() {
-      const sel = selectors.loopModeEvents(loopMode.m, loopMode.n,
-        npoints, mapping, mappingControls, sound, loopMode.loopTime);
+      const sel = selectors.loopModeEvents(
+        loopMode.m,
+        loopMode.n,
+        npoints,
+        mapping,
+        mappingControls,
+        sound,
+        loopMode.loopTime
+      );
 
       expect(sel.length).to.equal(npoints[0].values.length);
       const first = sel[0];
@@ -314,7 +334,5 @@ describe('selectors/sound', () => {
     it('should be a function', function() {
       expect(fn).to.be.a('function');
     });
-
   });
-
 });

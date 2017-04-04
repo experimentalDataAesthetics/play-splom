@@ -1,7 +1,7 @@
 /* eslint import/no-extraneous-dependencies: 0 */
 /* eslint import/no-unresolved: 0 */
 /* eslint import/extensions: 0 */
-import {dialog} from 'electron';
+import { dialog } from 'electron';
 import {
   OPEN_DATASET_DIALOG,
   LOAD_DATASET,
@@ -18,7 +18,7 @@ import {
 export default function handleActionOnMain(event, action, soundApp) {
   switch (action.type) {
     case OPEN_DATASET_DIALOG:
-      dialog.showOpenDialog((fileNames) => {
+      dialog.showOpenDialog(fileNames => {
         if (fileNames && fileNames.length) {
           reply(event, {
             type: LOAD_DATASET,

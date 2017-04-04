@@ -1,4 +1,3 @@
-
 import React from 'react';
 import h from 'react-hyperscript';
 import XAxis from './XAxis';
@@ -10,7 +9,6 @@ import YAxis from './YAxis';
  * This combines the X and Y into one component.
  */
 export default class Axis extends React.Component {
-
   static propTypes = {
     xOffset: React.PropTypes.number.isRequired,
     yOffset: React.PropTypes.number.isRequired,
@@ -52,10 +50,14 @@ export default class Axis extends React.Component {
       })
     ];
 
-    return h('g', {
-      transform: `translate(${this.props.xOffset}, ${this.props.yOffset})`,
-      width: sideLength,
-      height: sideLength
-    }, children);
+    return h(
+      'g',
+      {
+        transform: `translate(${this.props.xOffset}, ${this.props.yOffset})`,
+        width: sideLength,
+        height: sideLength
+      },
+      children
+    );
   }
 }

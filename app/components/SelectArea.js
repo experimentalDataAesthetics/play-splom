@@ -19,21 +19,21 @@ const X = {
   name: 'x',
   handles: ['e', 'w'].map(makeHandle),
   input: (x, e) => x && [[x[0], e[0][1]], [x[1], e[1][1]]],
-  output: (xy) => xy && [xy[0][0], xy[1][0]]
+  output: xy => xy && [xy[0][0], xy[1][0]]
 };
 
 const Y = {
   name: 'y',
   handles: ['n', 's'].map(makeHandle),
   input: (y, e) => y && [[e[0][0], y[0]], [e[1][0], y[1]]],
-  output: (xy) => xy && [xy[0][1], xy[1][1]]
+  output: xy => xy && [xy[0][1], xy[1][1]]
 };
 
 const XY = {
   name: 'xy',
   handles: ['n', 'e', 's', 'w', 'nw', 'ne', 'se', 'sw'].map(makeHandle),
-  input: (xy) => xy,
-  output: (xy) => xy
+  input: xy => xy,
+  output: xy => xy
 };
 
 const cursors = {
@@ -94,28 +94,21 @@ const signsY = {
 };
 
 function makeHandle(t) {
-
   return {
     type: t,
-    x: (selection) => {
-      return t[t.length - 1] === 'e' ?
-        selection[1][0] - (handleSize / 2)
-        : selection[0][0] - (handleSize / 2);
+    x: selection => {
+      return t[t.length - 1] === 'e'
+        ? selection[1][0] - handleSize / 2
+        : selection[0][0] - handleSize / 2;
     },
-    y: (selection) => {
-      return t[0] === 's' ?
-        selection[1][1] - (handleSize / 2)
-        : selection[0][1] - (handleSize / 2);
+    y: selection => {
+      return t[0] === 's' ? selection[1][1] - handleSize / 2 : selection[0][1] - handleSize / 2;
     },
-    width: (selection) => {
-      return t === 'n' || t === 's' ?
-        (selection[1][0] - selection[0][0]) + handleSize
-        : handleSize;
+    width: selection => {
+      return t === 'n' || t === 's' ? selection[1][0] - selection[0][0] + handleSize : handleSize;
     },
-    height: (selection) => {
-      return t === 'e' || t === 'w' ?
-        (selection[1][1] - selection[0][1]) + handleSize
-        : handleSize;
+    height: selection => {
+      return t === 'e' || t === 'w' ? selection[1][1] - selection[0][1] + handleSize : handleSize;
     }
   };
 }
@@ -154,7 +147,6 @@ function clip(v, min, max) {
  * here ported to a simple reusable React component
  */
 export default class SelectArea extends React.Component {
-
   static propTypes = {
     domain: React.PropTypes.object.isRequired,
     base: React.PropTypes.array.isRequired,
@@ -194,10 +186,7 @@ export default class SelectArea extends React.Component {
       const x = selected.x + this.props.domain.x;
       const y = selected.y + this.props.domain.y;
       this.state = {
-        selected: [
-          [x, y],
-          [x + selected.width, y + selected.height]
-        ]
+        selected: [[x, y], [x + selected.width, y + selected.height]]
       };
     } else {
       this.state = {
@@ -208,8 +197,8 @@ export default class SelectArea extends React.Component {
       };
     }
 
-    const overlayTap = (event) => this.started(event, {type: 'overlay'});
-    const selectionTap = (event) => this.started(event, {type: 'selection'});
+    const overlayTap = event => this.started(event, { type: 'overlay' });
+    const selectionTap = event => this.started(event, { type: 'selection' });
     this.handlers = {
       overlay: {
         onMouseDown: overlayTap,
@@ -282,7 +271,7 @@ export default class SelectArea extends React.Component {
     if (this.mouseMoveType === 'selection') {
       this.mouseMode = MODE_DRAG;
     } else {
-      this.mouseMode = (event.altKey ? MODE_CENTER : MODE_HANDLE);
+      this.mouseMode = event.altKey ? MODE_CENTER : MODE_HANDLE;
     }
 
     this.setMouseDownPoint(this._eventPoint(event));
@@ -395,13 +384,13 @@ export default class SelectArea extends React.Component {
       }
       case MODE_CENTER: {
         if (signX) {
-          w1 = Math.max(W, Math.min(E, this.w0 - (dx * signX)));
-          e1 = Math.max(W, Math.min(E, this.e0 + (dx * signX)));
+          w1 = Math.max(W, Math.min(E, this.w0 - dx * signX));
+          e1 = Math.max(W, Math.min(E, this.e0 + dx * signX));
         }
 
         if (signY) {
-          n1 = Math.max(N, Math.min(S, this.n0 - (dy * signY)));
-          s1 = Math.max(N, Math.min(S, this.s0 + (dy * signY)));
+          n1 = Math.max(N, Math.min(S, this.n0 - dy * signY));
+          s1 = Math.max(N, Math.min(S, this.s0 + dy * signY));
         }
 
         break;
@@ -442,10 +431,12 @@ export default class SelectArea extends React.Component {
       s1 = this.state.selected[1][1];
     }
 
-    if (this.state.selected[0][0] !== w1
-        || this.state.selected[0][1] !== n1
-        || this.state.selected[1][0] !== e1
-        || this.state.selected[1][1] !== s1) {
+    if (
+      this.state.selected[0][0] !== w1 ||
+      this.state.selected[0][1] !== n1 ||
+      this.state.selected[1][0] !== e1 ||
+      this.state.selected[1][1] !== s1
+    ) {
       this._setSelected([[w1, n1], [e1, s1]]);
     }
   }
@@ -461,10 +452,13 @@ export default class SelectArea extends React.Component {
       }
 
       // Ghost clicks are delayed!
-      this.touchending = setTimeout(() => {
-        this.touchending = null;
-        this.mouseMode = null;
-      }, 500);
+      this.touchending = setTimeout(
+        () => {
+          this.touchending = null;
+          this.mouseMode = null;
+        },
+        500
+      );
     } else {
       this.mouseMode = null;
     }
@@ -472,13 +466,13 @@ export default class SelectArea extends React.Component {
 
   _mouseEnter(e) {
     // onHover enter
-    if (this.props.onMouseEnter && (!e.buttons)) {
+    if (this.props.onMouseEnter && !e.buttons) {
       this.props.onMouseEnter(e);
     }
   }
 
   _setSelected(selected) {
-    this.setState({selected});
+    this.setState({ selected });
     if (this.props.onChange) {
       // w n e s
       this.props.onChange({
@@ -497,8 +491,8 @@ export default class SelectArea extends React.Component {
    */
   _eventPoint(event) {
     return [
-      (event.clientX - this.props.base[0]) + this.props.domain.x,
-      (event.clientY - this.props.base[1]) + this.props.domain.y
+      event.clientX - this.props.base[0] + this.props.domain.x,
+      event.clientY - this.props.base[1] + this.props.domain.y
     ];
   }
 
@@ -544,8 +538,8 @@ export default class SelectArea extends React.Component {
       />
     );
 
-    const handles = this.dim.handles.map((h) => {
-      const tapHandler = (event) => this.started(event, h);
+    const handles = this.dim.handles.map(h => {
+      const tapHandler = event => this.started(event, h);
       return (
         <rect
           key={h.type}

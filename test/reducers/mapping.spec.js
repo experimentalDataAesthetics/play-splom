@@ -5,7 +5,6 @@ import mapping from '../../app/reducers/mapping';
 import * as types from '../../app/actionTypes';
 
 describe('mapping', function() {
-
   describe('SET_FIXED_PARAM', function() {
     const setRange = {
       type: types.SET_FIXED_PARAM,
@@ -35,7 +34,7 @@ describe('mapping', function() {
     it('should still have range set after doing setRange ... setValue', function() {
       const state = mapping({}, setRange);
       const state2 = mapping(state, setValue);
-      const should = {minval: 0.25, maxval: 0.75, value: 0.5};
+      const should = { minval: 0.25, maxval: 0.75, value: 0.5 };
       expect(state2.unipolarMappingRanges.freq).to.eql(should);
     });
   });
@@ -77,7 +76,5 @@ describe('mapping', function() {
       const state2 = mapping(state, payload);
       expect(state2).to.eql(should);
     });
-
   });
-
 });

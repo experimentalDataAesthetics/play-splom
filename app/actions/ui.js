@@ -20,7 +20,7 @@ export function focusScatterplot(id) {
 }
 
 export function setHovering(m, n) {
-  const newState = {m, n};
+  const newState = { m, n };
   return (dispatch, getState) => {
     const same = isEqual(newState, getState().ui.hovering);
     if (!same) {

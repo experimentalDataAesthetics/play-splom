@@ -1,4 +1,3 @@
-
 import { dryadic } from 'supercolliderjs/lib/dryads';
 import _ from 'lodash';
 import path from 'path';
@@ -47,7 +46,6 @@ const TIMEOUT = 20000;
  * and has streams that can be pushed to.
  */
 export default class SoundApp {
-
   constructor(log) {
     this.synthStream = new Bacon.Bus();
     this.masterControlStream = new Bacon.Bus();
@@ -70,7 +68,7 @@ export default class SoundApp {
           return;
         }
 
-        this.log.info('SoundApp options', JSON.stringify(options, null, 2));
+        this.log.info('Server options', JSON.stringify(options, null, 2));
 
         const hasSclang = Boolean(options.sclang) && process.env.NODE_ENV === 'development';
         // hasSclang = true;
@@ -95,15 +93,15 @@ export default class SoundApp {
 
         const defs = () => {
           return files
-            .filter((p) => path.extname(p) === '.scd')
-            .map((p) => path.basename(p, '.scd'))
-            .filter((name) => !(_.includes(['master', 'mixToMaster'], name)))
+            .filter(p => path.extname(p) === '.scd')
+            .map(p => path.basename(p, '.scd'))
+            .filter(name => !_.includes(['master', 'mixToMaster'], name))
             .map(synthDef);
         };
 
-        const mixToMaster = () => ['synth', {def: synthDef('mixToMaster')}];
+        const mixToMaster = () => ['synth', { def: synthDef('mixToMaster') }];
 
-        const audiobus = (children) => {
+        const audiobus = children => {
           return [
             'audiobus',
             {
@@ -114,17 +112,23 @@ export default class SoundApp {
         };
 
         const synthStream = () => {
-          return ['synthstream', {
-            stream: () => this.synthStream
-          }];
+          return [
+            'synthstream',
+            {
+              stream: () => this.synthStream
+            }
+          ];
         };
 
         const busContents = () => {
           return [
             synthStream(),
-            ['syntheventlist', {
-              updateStream: () => this.loopModeEventStream
-            }],
+            [
+              'syntheventlist',
+              {
+                updateStream: () => this.loopModeEventStream
+              }
+            ],
             [
               'synth',
               {
@@ -155,9 +159,9 @@ export default class SoundApp {
 
         this.root = sclang(server(audiobus(busContents())));
 
-        this.player = dryadic(this.root, [], {log: this.log});
+        this.player = dryadic(this.root, [], { log: this.log });
 
-        const die = (error) => {
+        const die = error => {
           this.playing = false;
           this.log.error('SoundApp FAILED TO START');
           this.log.error(error);
@@ -165,7 +169,9 @@ export default class SoundApp {
           reject(error);
         };
 
-        this.player.play().timeout(TIMEOUT)
+        this.player
+          .play()
+          .timeout(TIMEOUT)
           .then(() => {
             this.playing = true;
             resolve();
@@ -190,11 +196,12 @@ export default class SoundApp {
 
   spawnSynths(synthEvents) {
     // this.log.log(synthEvents);
-    synthEvents.forEach((synthEvent) => this.synthStream.push(synthEvent));
+    synthEvents.forEach(synthEvent => this.synthStream.push(synthEvent));
   }
 
   /**
-   * Push the object to the BaconJS loopModeEventStream which is connected to the SynthEventList.
+   * Push the object to the BaconJS loopModeEventStream which is connected
+   * to the SynthEventList.
    *
    * @param {Object} payload -
    *        events:
@@ -223,8 +230,8 @@ export default class SoundApp {
 
         // reject on any error ?
         // or dispatch the error
-        files.forEach((p) => {
-          if (path.extname(p) === '.json' && (p !== 'master.json') && (p !== 'mixToMaster.json')) {
+        files.forEach(p => {
+          if (path.extname(p) === '.json' && p !== 'master.json' && p !== 'mixToMaster.json') {
             const fullpath = path.join(synthDefsDir, p);
             const data = jetpack.read(fullpath, 'json');
             data.path = fullpath;
@@ -242,8 +249,8 @@ export default class SoundApp {
   }
 
   watchDir(synthDefsDir, dispatch) {
-    watch.watchTree(synthDefsDir, {interval: 1}, () => {
-      this.loadSounds(synthDefsDir, dispatch).catch((error) => {
+    watch.watchTree(synthDefsDir, { interval: 1 }, () => {
+      this.loadSounds(synthDefsDir, dispatch).catch(error => {
         console.error(error);
       });
     });

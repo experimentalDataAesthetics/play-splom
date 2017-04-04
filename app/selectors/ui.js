@@ -3,21 +3,18 @@ import { centeredSquareWithMargin } from '../utils/layout';
 import { getDatasetMetadata, getFeatures } from './dataset';
 import { getLoop } from './sound';
 
-export const getWindowSize = (state) => state.ui.windowSize;
+export const getWindowSize = state => state.ui.windowSize;
 
-export const getMuiTheme = (state) => state.ui.muiTheme;
+export const getMuiTheme = state => state.ui.muiTheme;
 
 // deprec
-export const getNumFeatures = createSelector(
-  [getDatasetMetadata],
-  (dataset) => {
-    if (dataset) {
-      return dataset.numFeatures;
-    }
-
-    return 0;
+export const getNumFeatures = createSelector([getDatasetMetadata], dataset => {
+  if (dataset) {
+    return dataset.numFeatures;
   }
-);
+
+  return 0;
+});
 
 const OUTSIDE_MARGIN = 48;
 const MARGIN_BETWEEN_PLOTS = 24;
@@ -48,11 +45,15 @@ export const getLayout = createSelector(
     }
 
     // console.log(muiTheme);
-    layout.svgStyle = centeredSquareWithMargin(layout.svgWidth, windowSize.height,
-      muiTheme.spacing.desktopGutter);
+    layout.svgStyle = centeredSquareWithMargin(
+      layout.svgWidth,
+      windowSize.height,
+      muiTheme.spacing.desktopGutter
+    );
     layout.scatterPlotsMargin = OUTSIDE_MARGIN;
-    layout.plotsWidth = (layout.svgStyle.right - layout.svgStyle.left)
-      - (2 * layout.scatterPlotsMargin);
+    layout.plotsWidth = layout.svgStyle.right -
+      layout.svgStyle.left -
+      2 * layout.scatterPlotsMargin;
 
     layout.sideLength = layout.plotsWidth / (numFeatures || 1);
     layout.margin = layout.sideLength > 150 ? MARGIN_BETWEEN_PLOTS : 8;
@@ -98,7 +99,7 @@ export const getFeatureSideLengthScale = createSelector(
     const range = [0, layout.sideLength - layout.margin];
     // invertedRange for the SVG y axis
     const invertedRange = [layout.sideLength - layout.margin, 0];
-    return features.map((feature) => {
+    return features.map(feature => {
       const mappedScale = feature.scale.copy().range(range);
       const invertedMappedScale = feature.scale.copy().range(invertedRange);
       return {
@@ -117,20 +118,16 @@ export const getFeatureSideLengthScale = createSelector(
  * For plotting y you need to invert it:
  * sideLength - y
  */
-export const getPointsForPlot = createSelector(
-  [getFeatureSideLengthScale],
-  (features) => {
-    return features.map((fs) => {
-      return {
-        name: fs.feature.name,
-        index: fs.feature.index,
-        values: fs.feature.values.map(fs.mappedScale),
-        yValues: fs.feature.values.map(fs.mappedScale)
-      };
-    });
-  }
-);
-
+export const getPointsForPlot = createSelector([getFeatureSideLengthScale], features => {
+  return features.map(fs => {
+    return {
+      name: fs.feature.name,
+      index: fs.feature.index,
+      values: fs.feature.values.map(fs.mappedScale),
+      yValues: fs.feature.values.map(fs.mappedScale)
+    };
+  });
+});
 
 /**
  * Selector that returns the rect of the box that is currently set to play loop.
@@ -141,7 +138,7 @@ export const getLoopBox = createSelector(
   [getLayout, getNumFeatures, getLoop],
   (layout, numFeatures, loopMode) => {
     if (loopMode.box) {
-      const box = layout.boxes[(loopMode.box.m * numFeatures) + loopMode.box.n];
+      const box = layout.boxes[loopMode.box.m * numFeatures + loopMode.box.n];
       if (box) {
         return {
           x: box.x,
