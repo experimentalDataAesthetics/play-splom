@@ -240,7 +240,7 @@ export default class SoundApp {
         });
 
         dispatch({
-          type: 'SET_SOUNDS',
+          type: 'setSounds',
           payload: sounds
         });
         resolve();

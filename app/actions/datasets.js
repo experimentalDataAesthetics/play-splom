@@ -3,11 +3,6 @@ import { extname, basename, join } from 'path';
 import Miso from 'miso.dataset';
 import jetpack from 'fs-jetpack';
 
-import {
-  SELECT_DATASET,
-  ADD_DATASET_PATHS,
-  OPEN_DATASET_DIALOG
-} from '../actionTypes';
 import callActionOnMain from '../ipc/callActionOnMain';
 import { notify } from './ui';
 import { clipLoopBox } from './interaction';
@@ -22,7 +17,7 @@ import { clipLoopBox } from './interaction';
 export function setDataset(path, data, metadata) {
   const name = basename(path, extname(path));
   return {
-    type: SELECT_DATASET,
+    type: 'selectDataset',
     payload: {
       name,
       path,
@@ -36,11 +31,7 @@ export function setDataset(path, data, metadata) {
  * Call the main process to open a select file dialog
  */
 export function openDatasetDialog() {
-  return () => {
-    callActionOnMain({
-      type: OPEN_DATASET_DIALOG
-    });
-  };
+  return () => callActionOnMain({ type: 'openDatasetDialog' });
 }
 
 const parsers = {
@@ -128,12 +119,9 @@ export function readDefaultDatasets(datasetsDir, thenLoadPath) {
         dispatch(addDatasetPaths(dp));
 
         if (thenLoadPath) {
-          setTimeout(
-            () => {
-              dispatch(loadDataset(thenLoadPath));
-            },
-            500
-          );
+          setTimeout(() => {
+            dispatch(loadDataset(thenLoadPath));
+          }, 500);
         }
       } else {
         dispatch(notify('error', `No paths found at: ${datasetsDir}`));
@@ -144,9 +132,7 @@ export function readDefaultDatasets(datasetsDir, thenLoadPath) {
 
 export function addDatasetPaths(paths) {
   return {
-    type: ADD_DATASET_PATHS,
-    payload: {
-      paths
-    }
+    type: 'addDatasetPaths',
+    payload: { paths }
   };
 }

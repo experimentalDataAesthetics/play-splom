@@ -16,7 +16,6 @@ import { BrowserWindow, app, powerSaveBlocker, Menu, shell, ipcMain } from 'elec
 import path from 'path';
 import log from 'electron-log';
 import SoundApp from './app/sound/SoundApp';
-import { ERROR_ON_MAIN } from './app/actionTypes';
 import handleActionOnMain from './app/ipc/handleActionOnMain';
 
 const pkg = require('./package.json');
@@ -47,7 +46,7 @@ function errorOnMain(error) {
 
   if (mainWindow) {
     mainWindow.webContents.send('dispatch-action', {
-      type: ERROR_ON_MAIN,
+      type: 'errorOnMain',
       payload: {
         message: error.message,
         stack: error.stack,

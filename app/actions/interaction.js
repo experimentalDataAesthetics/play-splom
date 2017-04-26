@@ -1,15 +1,8 @@
 import _ from 'lodash';
-import {
-  SHOW_BRUSH,
-  SET_POINTS_UNDER_BRUSH,
-  TOGGLE_LOOP_MODE,
-  SET_LOOP_BOX,
-  SET_LOOP_TIME
-} from '../actionTypes';
 
 export function showBrush(show, x, y) {
   return {
-    type: SHOW_BRUSH,
+    type: 'showBrush',
     payload: {
       show,
       x,
@@ -35,7 +28,7 @@ export function setPointsUnderBrush(m, n, indices) {
     const same = _.isEqual(s.pointsUnderBrush, indices);
     if (!same) {
       dispatch({
-        type: SET_POINTS_UNDER_BRUSH,
+        type: 'setPointsUnderBrush',
         payload: {
           indices,
           m,
@@ -55,7 +48,7 @@ export function setPointsUnderBrush(m, n, indices) {
  */
 export function setLoopBox(m, n) {
   return {
-    type: SET_LOOP_BOX,
+    type: 'setLoopBox',
     payload: {
       m,
       n
@@ -82,7 +75,7 @@ export function clipLoopBox() {
 
     const maxDim = dataset.data.columnNames().length - 1;
     dispatch({
-      type: SET_LOOP_BOX,
+      type: 'setLoopBox',
       payload: {
         m: Math.min(loopBox.m, maxDim),
         n: Math.min(loopBox.n, maxDim)
@@ -96,7 +89,7 @@ export function clipLoopBox() {
  */
 export function toggleLoopMode() {
   return {
-    type: TOGGLE_LOOP_MODE
+    type: 'toggleLoopMode'
   };
 }
 
@@ -108,7 +101,7 @@ export function toggleLoopMode() {
  */
 export function setLoopTime(loopTime) {
   return {
-    type: SET_LOOP_TIME,
+    type: 'setLoopTime',
     payload: {
       loopTime
     }

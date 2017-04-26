@@ -1,42 +1,10 @@
 import u from 'updeep';
 import { xor, get, now } from 'lodash';
-import {
-  SET_POINTS_UNDER_BRUSH,
-  TOGGLE_LOOP_MODE,
-  SET_LOOP_BOX,
-  SET_LOOP_TIME
-} from '../actionTypes';
 import { calcPointsEntering } from '../selectors/index';
 
 const DEFAULT_LOOP_TIME = 10;
 
-/**
- * Top level reducer that takes handles actions and calls
- * the appropriate reducer.
- *
- * A reducer take state and action and returns a new transformed state.
- *
- * This reducer only gets state.interaction so state and new state here
- * refer just to that part of the whole state object.
- *
- * @param  {Object} state     current state
- * @param  {Object} action    with .type and .payload
- * @return {Object}           new state
- */
-export default function interaction(state = {}, action) {
-  switch (action.type) {
-    case SET_POINTS_UNDER_BRUSH:
-      return setPointsUnderBrush(state, action);
-    case TOGGLE_LOOP_MODE:
-      return toggleLoopMode(state, action);
-    case SET_LOOP_BOX:
-      return setLoopBox(state, action);
-    case SET_LOOP_TIME:
-      return setLoopTime(state, action);
-    default:
-      return state;
-  }
-}
+export default {};
 
 /**
  * setPointsUnderBrush - Action triggered by mouse move,
@@ -46,11 +14,12 @@ export default function interaction(state = {}, action) {
  * @param  {Object} action    payload is {m n indices}
  * @return {Object}           new state
  */
-function setPointsUnderBrush(state, action) {
+export function setPointsUnderBrush(state, action) {
   const differentBox = state.m !== action.payload.m || state.n !== action.payload.n;
 
   if (
-    differentBox || xor(state.pointsUnderBrush || [], action.payload.indices || []).length !== 0
+    differentBox ||
+    xor(state.pointsUnderBrush || [], action.payload.indices || []).length !== 0
   ) {
     const prevPub = state.pointsUnderBrush || [];
     const pub = action.payload.indices || [];
@@ -98,7 +67,7 @@ function _sameBox(state, payload, key = 'box') {
  * @param  {Object} action  .payload is {m n}
  * @return {Object}         new state
  */
-function setLoopBox(state, action) {
+export function setLoopBox(state, action) {
   const loopMode = {
     loopTime: get(state, 'loopMode.loopTime') || DEFAULT_LOOP_TIME
   };
@@ -128,8 +97,7 @@ function setLoopBox(state, action) {
  * @param  {Object} state   current state
  * @return {Object}         new state
  */
-function toggleLoopMode(state) {
-  /* , action */
+export function toggleLoopMode(state /* , action*/) {
   const loopMode = {};
   const box = get(state, 'loopMode.box');
 
@@ -153,7 +121,7 @@ function toggleLoopMode(state) {
  * @param  {Object} action  .payload is {loopTime: int}
  * @return {Object}         new state
  */
-function setLoopTime(state, action) {
+export function setLoopTime(state, action) {
   const loopMode = {
     loopTime: action.payload.loopTime || DEFAULT_LOOP_TIME
   };
