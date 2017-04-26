@@ -3,6 +3,23 @@ import { connect as reduxConnect } from 'react-redux';
 import _ from 'lodash';
 
 /**
+ * Call any function in the module with the same name as the action.type
+ * eg. {type: 'setLoop' }  -> setLoop(state, action)
+ *
+ * @param  {Object} module  Module with exported functions.
+ *                          default export should be initial state.
+ * @return {Function}       (state, action) => state
+ */
+export function autoReducer(module) {
+  return (state, action) => {
+    // console.log('handler', { module, state, default: module.default, action });
+    const h = module[action.type];
+    const s = state || module.default;
+    return h ? h(s, action) : s;
+  };
+}
+
+/**
  * Create a reselect selector from an object of selector definitions.
  *
  *   {
