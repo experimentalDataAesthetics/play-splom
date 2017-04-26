@@ -1,7 +1,7 @@
 import u from 'updeep';
 import defaultTheme from '../theme';
 
-const initial = {
+export default {
   focused: null,
   hovering: null,
   zoomed: null,
@@ -18,65 +18,66 @@ const initial = {
 /**
  * To unfocus, set focused to null. same with hovering and zoomed
  */
-export default function ui(state = initial, action) {
-  switch (action.type) {
-    case 'focusScatterplot':
-      return u(
-        {
-          focused: action.payload
-        },
-        state
-      );
+export function focusScatterplot(state, action) {
+  return u(
+    {
+      focused: action.payload
+    },
+    state
+  );
+}
 
-    case 'setHovering':
-      return u(
-        {
-          hovering: action.payload
-        },
-        state
-      );
+export function setHovering(state, action) {
+  return u(
+    {
+      hovering: action.payload
+    },
+    state
+  );
+}
 
-    case 'zoomScatterplot':
-      return u(
-        {
-          zoomed: action.payload
-        },
-        state
-      );
-    // in svg frame
-    case 'mouseMove':
-      return u(
-        {
-          mouse: action.payload
-        },
-        state
-      );
+export function zoomScatterplot(state, action) {
+  return u(
+    {
+      zoomed: action.payload
+    },
+    state
+  );
+}
 
-    case 'showBrush':
-      return u(
-        {
-          brush: action.payload
-        },
-        state
-      );
+// in svg frame
+export function mouseMove(state, action) {
+  return u(
+    {
+      mouse: action.payload
+    },
+    state
+  );
+}
 
-    case 'setWindowSize':
-      return u(
-        {
-          windowSize: action.payload
-        },
-        state
-      );
+export function showBrush(state, action) {
+  return u(
+    {
+      brush: action.payload
+    },
+    state
+  );
+}
 
-    case 'setNotification':
-      return u(
-        {
-          notification: action.payload
-        },
-        state
-      );
+export function setWindowSize(state, action) {
+  return u(
+    {
+      windowSize: action.payload
+    },
+    state
+  );
+}
 
-    default:
-      return state;
-  }
+export function setNotification(state, action) {
+  return u(
+    {
+      notification: action.payload
+    },
+    state
+  );
 }

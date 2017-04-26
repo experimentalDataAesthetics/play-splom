@@ -1,8 +1,5 @@
-export default function sounds(state = [], action) {
-  switch (action.type) {
-    case 'setSounds':
-      return action.payload;
-    default:
-      return state;
-  }
+export default [];
+
+export function setSounds(state, action) {
+  return action.payload;
 }

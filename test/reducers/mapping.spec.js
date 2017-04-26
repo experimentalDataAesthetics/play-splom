@@ -1,7 +1,10 @@
 /* eslint import/no-extraneous-dependencies: 0 */
 /* eslint global-require: 0 */
 import { expect } from 'chai';
-import mapping from '../../app/reducers/mapping';
+import * as mappingModule from '../../app/reducers/mapping';
+import { autoReducer } from '../../app/utils/reduxers';
+
+const mapping = autoReducer(mappingModule);
 
 describe('mapping', function() {
   describe('setFixedParam', function() {

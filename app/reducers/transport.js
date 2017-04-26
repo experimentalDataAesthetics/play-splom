@@ -1,37 +1,33 @@
 import u from 'updeep';
 
-const initial = {
+export default {
   playing: false,
   recording: false
 };
 
-export default function(state = initial, action) {
-  switch (action.type) {
-    case 'focusScatterplot':
-      return u(
-        {
-          focused: action.payload
-        },
-        state
-      );
+export function focusScatterplot(state, action) {
+  return u(
+    {
+      focused: action.payload
+    },
+    state
+  );
+}
 
-    case 'setHovering':
-      return u(
-        {
-          hovering: action.payload
-        },
-        state
-      );
+export function setHovering(state, action) {
+  return u(
+    {
+      hovering: action.payload
+    },
+    state
+  );
+}
 
-    case 'zoomScatterplot':
-      return u(
-        {
-          zoomed: action.payload
-        },
-        state
-      );
-
-    default:
-      return state;
-  }
+export function zoomScatterplot(state, action) {
+  return u(
+    {
+      zoomed: action.payload
+    },
+    state
+  );
 }

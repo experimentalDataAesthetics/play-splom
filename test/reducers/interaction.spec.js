@@ -1,5 +1,8 @@
 import { expect } from 'chai';
-import interaction from '../../app/reducers/interaction';
+import * as interactionModule from '../../app/reducers/interaction';
+import { autoReducer } from '../../app/utils/reduxers';
+
+const interaction = autoReducer(interactionModule);
 
 describe('reducers/interaction', function() {
   describe('setLoopBox', function() {

@@ -1,53 +1,10 @@
 import u from 'updeep';
 import _ from 'lodash';
 
-export default function(state = {}, action) {
-  switch (action.type) {
-    case 'mapXYtoParam':
-      return mapXYToParam(state, action.payload);
+export default {};
 
-    case 'autoMap':
-      return autoMap(state, action.payload.sound);
-
-    case 'setFixedParam':
-      // sets unipolar values to unipolarMappingRanges
-      // selector calculates natural mapped values for display
-      // and sending synths
-      return u(
-        {
-          unipolarMappingRanges: {
-            [action.payload.param]: action.payload.values
-          }
-        },
-        state
-      );
-
-    case 'setMapping':
-      return u(
-        {
-          [action.payload.feature]: {
-            param: action.payload.param
-          }
-        },
-        state
-      );
-
-    case 'setMappingRange':
-      return u(
-        {
-          [action.payload.feature]: {
-            range: action.payload.range
-          }
-        },
-        state
-      );
-
-    default:
-      return state;
-  }
-}
-
-function mapXYToParam(state, payload) {
+export function mapXYtoParam(state, action) {
+  const payload = action.payload;
   // toggle: if already mapped to this then disconnect it
   if (_.get(state, `xy.${payload.xy}.params.${payload.param}`)) {
     return u(
@@ -93,7 +50,8 @@ function mapXYToParam(state, payload) {
  * @param  {[type]} sound - the sound to be selected and mapped to
  * @return {Object}       new state
  */
-function autoMap(state, sound) {
+export function autoMap(state, action) {
+  const sound = action.payload.sound;
   if (sound) {
     // could map
     const controlNames = sound.controlNames;
@@ -108,15 +66,51 @@ function autoMap(state, sound) {
 
       //  if < 2 then try the first two
       if (currentIndices.length < 2) {
-        const nextState = mapXYToParam(state, { xy: 'x', param: controlNames[1] });
-        return mapXYToParam(nextState, { xy: 'y', param: controlNames[2] });
+        const nextState = mapXYtoParam(state, { payload: { xy: 'x', param: controlNames[1] } });
+        return mapXYtoParam(nextState, { payload: { xy: 'y', param: controlNames[2] } });
       }
     } else {
       // just select the first two as long as their are that many
-      const nextState = mapXYToParam(state, { xy: 'x', param: controlNames[1] });
-      return mapXYToParam(nextState, { xy: 'y', param: controlNames[2] });
+      const nextState = mapXYtoParam(state, { payload: { xy: 'x', param: controlNames[1] } });
+      return mapXYtoParam(nextState, { payload: { xy: 'y', param: controlNames[2] } });
     }
   }
 
   return state;
+}
+
+export function setFixedParam(state, action) {
+  // sets unipolar values to unipolarMappingRanges
+  // selector calculates natural mapped values for display
+  // and sending synths
+  return u(
+    {
+      unipolarMappingRanges: {
+        [action.payload.param]: action.payload.values
+      }
+    },
+    state
+  );
+}
+
+export function setMapping(state, action) {
+  return u(
+    {
+      [action.payload.feature]: {
+        param: action.payload.param
+      }
+    },
+    state
+  );
+}
+
+export function setMappingRange(state, action) {
+  return u(
+    {
+      [action.payload.feature]: {
+        range: action.payload.range
+      }
+    },
+    state
+  );
 }

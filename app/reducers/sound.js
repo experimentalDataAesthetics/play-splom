@@ -1,8 +1,5 @@
-export default function(state = null, action) {
-  switch (action.type) {
-    case 'selectSound':
-      return action.payload;
-    default:
-      return state;
-  }
+export default null;
+
+export function selectSound(state, action) {
+  return action.payload;
 }
