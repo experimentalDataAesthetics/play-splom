@@ -1,13 +1,4 @@
 import u from 'updeep';
-import {
-  FOCUS_SCATTERPLOT,
-  SET_HOVERING,
-  ZOOM_SCATTERPLOT,
-  MOUSE_MOVE,
-  SHOW_BRUSH,
-  SET_WINDOW_SIZE,
-  SET_NOTIFICATION
-} from '../actionTypes';
 import defaultTheme from '../theme';
 
 const initial = {
@@ -29,7 +20,7 @@ const initial = {
  */
 export default function ui(state = initial, action) {
   switch (action.type) {
-    case FOCUS_SCATTERPLOT:
+    case 'focusScatterplot':
       return u(
         {
           focused: action.payload
@@ -37,7 +28,7 @@ export default function ui(state = initial, action) {
         state
       );
 
-    case SET_HOVERING:
+    case 'setHovering':
       return u(
         {
           hovering: action.payload
@@ -45,16 +36,15 @@ export default function ui(state = initial, action) {
         state
       );
 
-    case ZOOM_SCATTERPLOT:
+    case 'zoomScatterplot':
       return u(
         {
           zoomed: action.payload
         },
         state
       );
-
     // in svg frame
-    case MOUSE_MOVE:
+    case 'mouseMove':
       return u(
         {
           mouse: action.payload
@@ -62,7 +52,7 @@ export default function ui(state = initial, action) {
         state
       );
 
-    case SHOW_BRUSH:
+    case 'showBrush':
       return u(
         {
           brush: action.payload
@@ -70,7 +60,7 @@ export default function ui(state = initial, action) {
         state
       );
 
-    case SET_WINDOW_SIZE:
+    case 'setWindowSize':
       return u(
         {
           windowSize: action.payload
@@ -78,7 +68,7 @@ export default function ui(state = initial, action) {
         state
       );
 
-    case SET_NOTIFICATION:
+    case 'setNotification':
       return u(
         {
           notification: action.payload

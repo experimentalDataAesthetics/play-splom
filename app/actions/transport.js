@@ -1,5 +1,3 @@
-import { SET_PLAYING, SET_RECORDING } from '../actionTypes';
-
 /**
  * @param {Boolean} playing
  */
@@ -7,7 +5,7 @@ export function setPlaying(playing) {
   // calls to the engine to start
   // dispatches to set playing
   return {
-    type: SET_PLAYING,
+    type: 'setPlaying',
     payload: {
       playing
     }
@@ -21,7 +19,7 @@ export function setRecording(recording) {
   // calls to the engine to start/stop recording
   // dispatches to set recording state
   return {
-    type: SET_RECORDING,
+    type: 'setRecording',
     payload: {
       recording
     }

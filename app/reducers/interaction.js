@@ -1,11 +1,5 @@
 import u from 'updeep';
 import { xor, get, now } from 'lodash';
-import {
-  SET_POINTS_UNDER_BRUSH,
-  TOGGLE_LOOP_MODE,
-  SET_LOOP_BOX,
-  SET_LOOP_TIME
-} from '../actionTypes';
 import { calcPointsEntering } from '../selectors/index';
 
 const DEFAULT_LOOP_TIME = 10;
@@ -25,13 +19,13 @@ const DEFAULT_LOOP_TIME = 10;
  */
 export default function interaction(state = {}, action) {
   switch (action.type) {
-    case SET_POINTS_UNDER_BRUSH:
+    case 'setPointsUnderBrush':
       return setPointsUnderBrush(state, action);
-    case TOGGLE_LOOP_MODE:
+    case 'toggleLoopMode':
       return toggleLoopMode(state, action);
-    case SET_LOOP_BOX:
+    case 'setLoopBox':
       return setLoopBox(state, action);
-    case SET_LOOP_TIME:
+    case 'setLoopTime':
       return setLoopTime(state, action);
     default:
       return state;
@@ -50,7 +44,8 @@ function setPointsUnderBrush(state, action) {
   const differentBox = state.m !== action.payload.m || state.n !== action.payload.n;
 
   if (
-    differentBox || xor(state.pointsUnderBrush || [], action.payload.indices || []).length !== 0
+    differentBox ||
+    xor(state.pointsUnderBrush || [], action.payload.indices || []).length !== 0
   ) {
     const prevPub = state.pointsUnderBrush || [];
     const pub = action.payload.indices || [];

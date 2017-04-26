@@ -1,5 +1,4 @@
 import u from 'updeep';
-import { FOCUS_SCATTERPLOT, SET_HOVERING, ZOOM_SCATTERPLOT } from '../actionTypes';
 
 const initial = {
   playing: false,
@@ -8,7 +7,7 @@ const initial = {
 
 export default function(state = initial, action) {
   switch (action.type) {
-    case FOCUS_SCATTERPLOT:
+    case 'focusScatterplot':
       return u(
         {
           focused: action.payload
@@ -16,7 +15,7 @@ export default function(state = initial, action) {
         state
       );
 
-    case SET_HOVERING:
+    case 'setHovering':
       return u(
         {
           hovering: action.payload
@@ -24,7 +23,7 @@ export default function(state = initial, action) {
         state
       );
 
-    case ZOOM_SCATTERPLOT:
+    case 'zoomScatterplot':
       return u(
         {
           zoomed: action.payload

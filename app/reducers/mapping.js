@@ -1,23 +1,15 @@
 import u from 'updeep';
 import _ from 'lodash';
 
-import {
-  MAP_XY_TO_PARAM,
-  AUTO_MAP,
-  SET_FIXED_PARAM,
-  SET_MAPPING,
-  SET_MAPPING_RANGE
-} from '../actionTypes';
-
 export default function(state = {}, action) {
   switch (action.type) {
-    case MAP_XY_TO_PARAM:
+    case 'mapXYtoParam':
       return mapXYToParam(state, action.payload);
 
-    case AUTO_MAP:
+    case 'autoMap':
       return autoMap(state, action.payload.sound);
 
-    case SET_FIXED_PARAM:
+    case 'setFixedParam':
       // sets unipolar values to unipolarMappingRanges
       // selector calculates natural mapped values for display
       // and sending synths
@@ -30,7 +22,7 @@ export default function(state = {}, action) {
         state
       );
 
-    case SET_MAPPING:
+    case 'setMapping':
       return u(
         {
           [action.payload.feature]: {
@@ -40,7 +32,7 @@ export default function(state = {}, action) {
         state
       );
 
-    case SET_MAPPING_RANGE:
+    case 'setMappingRange':
       return u(
         {
           [action.payload.feature]: {

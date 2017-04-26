@@ -2,12 +2,11 @@
 /* eslint global-require: 0 */
 import { expect } from 'chai';
 import mapping from '../../app/reducers/mapping';
-import * as types from '../../app/actionTypes';
 
 describe('mapping', function() {
-  describe('SET_FIXED_PARAM', function() {
+  describe('setFixedParam', function() {
     const setRange = {
-      type: types.SET_FIXED_PARAM,
+      type: 'setFixedParam',
       payload: {
         param: 'freq',
         values: {
@@ -17,7 +16,7 @@ describe('mapping', function() {
       }
     };
     const setValue = {
-      type: types.SET_FIXED_PARAM,
+      type: 'setFixedParam',
       payload: {
         param: 'freq',
         values: {
@@ -58,7 +57,7 @@ describe('mapping', function() {
     };
 
     const payload = {
-      type: types.AUTO_MAP,
+      type: 'autoMap',
       payload: {
         sound
       }
