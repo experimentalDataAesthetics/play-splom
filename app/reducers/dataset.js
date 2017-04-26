@@ -1,5 +1,5 @@
 export default null;
 
-export function selectDataset(state, action) {
+export function setDataset(state, action) {
   return action.payload;
 }

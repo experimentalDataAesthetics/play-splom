@@ -10,8 +10,8 @@ export function addDatasetPaths(state, action) {
   return _.unionBy(state, action.payload.paths, 'path');
 }
 
-export function selectDataset(state, action) {
-  // reducers/dataset also handles 'selectDataset'
+export function setDataset(state, action) {
+  // reducers/dataset also handles 'setDataset'
   // Add to datasets if its not already there
   if (!_.find(state, ds => ds.path === action.payload.path)) {
     return [action.payload].concat(state);

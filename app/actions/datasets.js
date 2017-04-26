@@ -17,7 +17,7 @@ import { clipLoopBox } from './interaction';
 export function setDataset(path, data, metadata) {
   const name = basename(path, extname(path));
   return {
-    type: 'selectDataset',
+    type: 'setDataset',
     payload: {
       name,
       path,

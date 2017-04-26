@@ -75,7 +75,8 @@ export const getFeatures = createSelector([getDataset], dataset => {
  * Transform points in each feature to normalized unipolar points
  */
 export const getNormalizedPoints = createSelector([getFeatures], features =>
-  (features || []).map(normalizePoints));
+  (features || []).map(normalizePoints)
+);
 
 /**
  * normalize each feature to 0..1
