@@ -5,7 +5,8 @@ const config = Object.create(baseConfig);
 
 config.debug = true;
 
-config.devtool = 'cheap-module-eval-source-map';
+// config.devtool = 'cheap-module-eval-source-map';
+config.devtool = 'source-map';
 
 // appends both to same bundle
 // https://medium.com/@rajaraodv/webpack-the-confusing-parts-58712f8fcad9#.iz6c8joc9
