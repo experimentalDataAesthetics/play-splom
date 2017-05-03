@@ -13,8 +13,9 @@ export function addDatasetPaths(state, action) {
 export function setDataset(state, action) {
   // reducers/dataset also handles 'setDataset'
   // Add to datasets if its not already there
-  if (!_.find(state, ds => ds.path === action.payload.path)) {
-    return [action.payload].concat(state);
+  const dataset = action.payload;
+  if (!_.find(state, ds => ds.path === dataset.path)) {
+    return [dataset].concat(state);
   }
   return state;
 }

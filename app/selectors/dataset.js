@@ -1,23 +1,23 @@
 import d3 from 'd3';
 import _ from 'lodash';
 import { createSelector } from 'reselect';
+import { basename } from 'path';
+import { getColumn } from 'data-projector';
 
 export const getDataset = state => state.dataset;
 
 export const getDatasetMetadata = createSelector([getDataset], dataset => {
   if (dataset) {
-    const columnNames = dataset.data.columnNames();
     return {
-      name: dataset.name,
-      numFeatures: columnNames.length,
-      columnNames
+      name: basename(dataset.name),
+      numFeatures: dataset.fields.length,
+      columnNames: dataset.fields
     };
   }
 });
 
 /**
  * Extract each column as values with min, max, mean, std calculated
- * from a Miso dataset.
  *
  * Each feature is an object:
  *  .name
@@ -35,39 +35,52 @@ export const getFeatures = createSelector([getDataset], dataset => {
     return [];
   }
 
-  return dataset.data.columnNames().map((name, i) => {
-    const data = dataset.data.column(name).data;
-    const first = data[0];
-    const isDate = _.isDate(first);
-    const isString = _.isString(first);
+  return dataset.fields.map((name, i) => {
+    const data = getColumn(dataset, name);
+    const fieldStats = dataset.stats.fields[name];
+    const fieldType = fieldStats.type;
 
     const params = {
       name: name.trim(),
       index: i,
-      values: data
+      values: data,
+      typ: fieldType.type
     };
-    if (isString) {
-      params.typ = 'string';
-      params.domain = Array.from(new Set(data));
-      params.scale = d3.scale.ordinal().domain(params.domain);
-      return params;
+
+    function minMaxScale(scale) {
+      return {
+        min: fieldStats.minval,
+        max: fieldStats.maxval,
+        scale: scale.domain([fieldStats.minval, fieldStats.maxval]).nice()
+      };
     }
 
-    const extent = d3.extent(data);
-    params.min = extent[0];
-    params.max = extent[1];
-
-    if (isDate) {
-      params.typ = 'date';
-      params.scale = d3.time.scale().domain(extent).nice();
-      return params;
+    switch (fieldType.type) {
+      case 'string': {
+        const domain = Array.from(new Set(data));
+        return _.assign(params, {
+          domain,
+          scale: d3.scale.ordinal().domain(domain)
+        });
+      }
+      case 'enum': {
+        const domain = fieldType.enum;
+        return _.assign(params, {
+          domain,
+          scale: d3.scale.ordinal().domain(domain)
+        });
+      }
+      case 'date':
+        return _.assign(params, minMaxScale(d3.time.scale()));
+      case 'number':
+        return _.assign(params, minMaxScale(d3.scale.linear()), {
+          mean: d3.mean(data),
+          std: d3.deviation(data)
+        });
+      default:
+        console.error(`Unmatched type: ${fieldType.type} for ${name}`);
+        return params;
     }
-
-    params.typ = 'number';
-    params.mean = d3.mean(data);
-    params.std = d3.deviation(data);
-    params.scale = d3.scale.linear().domain(extent).nice();
-    return params;
   });
 });
 

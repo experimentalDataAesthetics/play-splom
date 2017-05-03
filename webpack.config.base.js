@@ -51,11 +51,8 @@ module.exports = {
     // cannot compile these.
     // Critical dependencies:
     // the request of a dependency is an expression
-    // cannot find miso.events
     'winston',
     'colors',
-    'miso.dataset',
-    'miso.events',
     // doesnt get the submodules
     // better to import just the ones you need anyway
     'lodash',
