@@ -3,9 +3,6 @@ const baseConfig = require('./webpack.config.base');
 
 const config = Object.create(baseConfig);
 
-config.debug = true;
-
-// config.devtool = 'cheap-module-eval-source-map';
 config.devtool = 'source-map';
 
 // appends both to same bundle
@@ -17,23 +14,43 @@ config.entry = [
 
 config.output.publicPath = 'http://localhost:3000/dist/';
 
-config.module.loaders.push(
+config.module.rules.push(
   {
     test: /\.global\.css$/,
-    loaders: ['style-loader', 'css-loader?sourceMap']
+    use: [
+      {
+        loader: 'style-loader'
+      },
+      {
+        loader: 'css-loader',
+        options: {
+          sourceMap: true
+        }
+      }
+    ]
   },
   {
     test: /^((?!\.global).)*\.css$/,
-    loaders: [
-      'style-loader',
-      'css-loader?modules&sourceMap&importLoaders=1&localIdentName=[name]__[local]___[hash:base64:5]'
+    use: [
+      {
+        loader: 'style-loader'
+      },
+      {
+        loader: 'css-loader',
+        options: {
+          modules: true,
+          sourceMap: true,
+          importLoader: 1,
+          localIdentName: '[name]__[local]___[hash:base64:5]'
+        }
+      }
     ]
   }
 );
 
 config.plugins.push(
   new webpack.HotModuleReplacementPlugin(),
-  new webpack.NoErrorsPlugin(),
+  new webpack.NoEmitOnErrorsPlugin(),
   new webpack.DefinePlugin({
     __DEV__: true,
     'process.env.NODE_ENV': JSON.stringify('development')

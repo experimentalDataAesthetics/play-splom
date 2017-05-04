@@ -3,7 +3,7 @@
  *
  * Config for the main process for electron
  */
-
+import path from 'path';
 import webpack from 'webpack';
 import CopyWebpackPlugin from 'copy-webpack-plugin';
 import baseConfig from './webpack.config.base';
@@ -22,27 +22,28 @@ export default {
   },
 
   plugins: [
-    // now I'm getting everything anyway
     new CopyWebpackPlugin([
       {
-        // context: path.join(__dirname, 'app'),
-        from: 'synthdefs',
+        from: path.join(__dirname, 'app', 'synthdefs'),
         to: 'synthdefs'
-        // to: path.join(__dirname, 'dist', 'app', 'synthdefs')
-        // to: '/Users/crucial/Desktop/synthdefs'
       },
       {
-        from: 'vendor',
+        from: path.join(__dirname, 'app', 'vendor'),
         to: 'vendor'
       }
     ]),
 
     new webpack.optimize.UglifyJsPlugin({
-      compressor: {
+      compress: {
         warnings: false
+      },
+      output: {
+        comments: false
       }
     }),
-    new webpack.BannerPlugin('require("source-map-support").install();', {
+
+    new webpack.BannerPlugin({
+      banner: 'require("source-map-support").install();',
       raw: true,
       entryOnly: false
     }),

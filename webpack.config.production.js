@@ -10,33 +10,51 @@ config.entry = './app/index';
 
 config.output.publicPath = '../dist/';
 
-config.module.loaders.push(
+config.module.rules.push(
   {
     test: /\.global\.css$/,
-    loader: ExtractTextPlugin.extract('style-loader', 'css-loader')
+    loader: ExtractTextPlugin.extract({
+      fallback: 'style-loader',
+      use: [
+        {
+          loader: 'css-loader'
+        }
+      ]
+    })
   },
   {
     test: /^((?!\.global).)*\.css$/,
-    loader: ExtractTextPlugin.extract(
-      'style-loader',
-      'css-loader?modules&importLoaders=1&localIdentName=[name]__[local]___[hash:base64:5]'
-    )
+    loader: ExtractTextPlugin.extract({
+      fallback: 'style-loader',
+      use: [
+        {
+          loader: 'css-loader',
+          options: {
+            modules: true,
+            // importLoaders: 1,
+            localIdentName: '[name]__[local]___[hash:base64:5]'
+          }
+        }
+      ]
+    })
   }
 );
 
 config.plugins.push(
-  new webpack.optimize.OccurenceOrderPlugin(),
+  new webpack.optimize.OccurrenceOrderPlugin(),
   new webpack.DefinePlugin({
     __DEV__: false,
     'process.env.NODE_ENV': JSON.stringify('production')
   }),
   new webpack.optimize.UglifyJsPlugin({
-    compressor: {
-      screw_ie8: true,
+    compress: {
       warnings: false
+    },
+    output: {
+      comments: false
     }
   }),
-  new ExtractTextPlugin('style.css', { allChunks: true })
+  new ExtractTextPlugin({ filename: 'style.css', disable: false, allChunks: true })
 );
 
 module.exports = config;
