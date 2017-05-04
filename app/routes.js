@@ -14,8 +14,7 @@ import Main from './containers/Main';
  *
  * This only has one scene (for now) which is Main.
  *
- * App is the parent top level component which just wraps
- * the route and inserts DevTools.
+ * App is the parent top level component which just wraps the route
  */
 export default h(Route, { path: '/', component: App }, [
   h(IndexRoute, { component: Main }),
