@@ -57,6 +57,15 @@
       "defaultValue": 1,
       "lag": 0,
       "rate": "control",
+      "spec": {
+        "default": 0,
+        "maxval": 1,
+        "class": "ControlSpec",
+        "minval": 0.05,
+        "warp": "exp",
+        "step": 0,
+        "units": ""
+      },
       "index": 3
     },
     {
