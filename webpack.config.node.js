@@ -1,4 +1,5 @@
 // for babel-plugin-webpack-loaders
+// Used just by testing on the commandline
 require('babel-register');
 const devConfigs = require('./webpack.config.development');
 

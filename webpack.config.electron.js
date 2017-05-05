@@ -22,25 +22,17 @@ export default {
   },
 
   plugins: [
-    new CopyWebpackPlugin([
-      {
-        from: path.join(__dirname, 'app', 'synthdefs'),
-        to: 'synthdefs'
-      },
-      {
-        from: path.join(__dirname, 'app', 'vendor'),
-        to: 'vendor'
-      }
-    ]),
+    ...baseConfig.plugins,
 
-    new webpack.optimize.UglifyJsPlugin({
-      compress: {
-        warnings: false
-      },
-      output: {
-        comments: false
-      }
-    }),
+    // new webpack.optimize.UglifyJsPlugin({
+    //   compress: false,
+    //   // compress: {
+    //   //   warnings: false
+    //   // },
+    //   output: {
+    //     comments: false
+    //   }
+    // }),
 
     new webpack.BannerPlugin({
       banner: 'require("source-map-support").install();',

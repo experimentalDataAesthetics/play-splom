@@ -46,14 +46,15 @@ config.plugins.push(
     __DEV__: false,
     'process.env.NODE_ENV': JSON.stringify('production')
   }),
-  new webpack.optimize.UglifyJsPlugin({
-    compress: {
-      warnings: false
-    },
-    output: {
-      comments: false
-    }
-  }),
+  // new webpack.optimize.UglifyJsPlugin({
+  //   compress: false,
+  //   // compress: {
+  //   //   warnings: false
+  //   // },
+  //   output: {
+  //     comments: false
+  //   }
+  // }),
   new ExtractTextPlugin({ filename: 'style.css', disable: false, allChunks: true })
 );
 

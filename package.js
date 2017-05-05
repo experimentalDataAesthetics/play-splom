@@ -30,16 +30,15 @@ const DEFAULT_OPTS = {
   name: appName,
   asar: shouldUseAsar,
   ignore: [
+    '^/_org($|/)',
+    '^/(open-app|rebuild)',
+    '^/main.development.js',
+    '^/release($|/)',
+    '^/resources($|/)',
     '^/test($|/)',
     '^/tools($|/)',
-    '^/release($|/)',
-    '^/main.development.js',
-    '^/_org($|/)'
-    // '^/app($|/)',
-    // '^/\.[a-z\.]+',
-    // '^/package.js',
-    // '^/server.js',
-    // '^/webpack*'
+    '^/webpack($|/)',
+    '^/yarn($|/)'
   ]
     .concat(devDeps.map(name => `/node_modules/${name}($|/)`))
     .concat(

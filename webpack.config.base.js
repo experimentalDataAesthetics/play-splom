@@ -1,4 +1,5 @@
 const path = require('path');
+const webpack = require('webpack');
 
 module.exports = {
   node: {
@@ -35,7 +36,7 @@ module.exports = {
     filename: 'bundle.js',
     libraryTarget: 'commonjs2'
   },
-  plugins: [],
+  plugins: [new webpack.NamedModulesPlugin()],
   externals: [
     // Put your node 3rd party libraries which can't be built with webpack here
     // (mysql, mongodb, and so on..)
@@ -44,14 +45,15 @@ module.exports = {
     'colors',
     'cuid',
     'data-projector',
+    'd3',
     'electron-debug',
     'table',
     'temp',
     'untildify',
     'winston',
-    // 'underscore',
-    // 'lodash',
+    'lodash',
     // for osc-min and binpack
-    'supercolliderjs'
+    'supercolliderjs',
+    'dryadic'
   ]
 };
