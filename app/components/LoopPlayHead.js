@@ -5,9 +5,6 @@ import { getLoop, getLoopBox } from '../selectors';
 
 import styles from './LoopPlayHead.css';
 
-// animation frame rate is 16
-const SPEED = 20;
-
 /**
  * Animates a vertical line to show where the loop is playing.
  *
@@ -20,15 +17,20 @@ class LoopPlayHead extends React.Component {
   };
 
   componentDidMount() {
-    this._interval = window.setInterval(() => this.tick(), SPEED);
+    this.sched();
+  }
+
+  sched() {
+    this._interval = window.requestAnimationFrame(timestamp => this.tick(timestamp));
   }
 
   componentWillUnmount() {
-    window.clearInterval(this._interval);
+    window.cancelAnimationFrame(this._interval);
   }
 
-  tick() {
+  tick(timestamp) {
     if (this.props.loopBox) {
+      // console.log(timestamp, now());
       const delta = now() - this.props.loopMode.epoch;
       const inLoop = delta / 1000 % this.props.loopMode.loopTime;
       const pos = inLoop / this.props.loopMode.loopTime;
@@ -36,12 +38,13 @@ class LoopPlayHead extends React.Component {
         pos
       });
     }
+    this.sched();
   }
 
   render() {
     if (this.props.loopBox) {
-      const x = ((this.state && this.state.pos) || 0) * this.props.loopBox.width +
-        this.props.loopBox.x;
+      const x =
+        ((this.state && this.state.pos) || 0) * this.props.loopBox.width + this.props.loopBox.x;
       const y = this.props.loopBox.y;
       return (
         <g
