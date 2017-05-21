@@ -1,12 +1,30 @@
 import React from 'react';
-import { now } from 'lodash';
 import connect from '../utils/reduxers';
-import { getLoop, getLoopBox } from '../selectors';
+import { getLoop, getLoopBox, getLoopModePayload } from '../selectors';
+import { setPointsUnderBrush } from '../actions/interaction';
 
 import styles from './LoopPlayHead.css';
 
+const sustain = 0.1;
+
+function findActiveEvents(events, now, startAt) {
+  const activeMin = now;
+  const activeMax = now + sustain;
+  const activeEvents = [];
+  for (let i = startAt; i < events.length; i += 1) {
+    const event = events[i];
+    if (event.time >= activeMin && event.time <= activeMax) {
+      activeEvents.push(i);
+    }
+  }
+  return activeEvents;
+}
+
 /**
  * Animates a vertical line to show where the loop is playing.
+ *
+ * Sets pointsUnderBrush (redux action) so that ScatterPlotsActivePoints
+ * highlights which points are sounding.
  *
  * There is one of these in the app, positioned over the currently playing loop box.
  */
@@ -20,29 +38,37 @@ class LoopPlayHead extends React.Component {
     this.sched();
   }
 
-  sched() {
-    this._interval = window.requestAnimationFrame(timestamp => this.tick(timestamp));
-  }
-
   componentWillUnmount() {
     window.cancelAnimationFrame(this._interval);
   }
 
+  sched() {
+    this._interval = window.requestAnimationFrame(timestamp => this.tick(timestamp));
+  }
+
   tick(timestamp) {
     if (this.props.loopBox) {
-      // console.log(timestamp, now());
-      const delta = now() - this.props.loopMode.epoch;
+      const delta = timestamp - this.props.loopMode.epoch;
       const inLoop = delta / 1000 % this.props.loopMode.loopTime;
       const pos = inLoop / this.props.loopMode.loopTime;
       this.setState({
         pos
       });
+
+      const activeEvents = findActiveEvents(this.props.loop.events, inLoop, 0);
+
+      this.props.setPointsUnderBrush(
+        this.props.loopMode.box.m,
+        this.props.loopMode.box.n,
+        activeEvents
+      );
     }
     this.sched();
   }
 
   render() {
     if (this.props.loopBox) {
+      // and if loop is doing it along the x
       const x =
         ((this.state && this.state.pos) || 0) * this.props.loopBox.width + this.props.loopBox.x;
       const y = this.props.loopBox.y;
@@ -67,7 +93,15 @@ class LoopPlayHead extends React.Component {
   }
 }
 
-export default connect({
-  loopBox: getLoopBox,
-  loopMode: getLoop
-})(LoopPlayHead);
+const handlers = {
+  setPointsUnderBrush
+};
+
+export default connect(
+  {
+    loopBox: getLoopBox,
+    loopMode: getLoop,
+    loop: getLoopModePayload
+  },
+  handlers
+)(LoopPlayHead);
