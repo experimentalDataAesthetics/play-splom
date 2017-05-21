@@ -136,7 +136,9 @@ class ScatterPlotsInteractive extends React.Component {
       const box = this._boxForEvent(event);
       const changed = !_.isEqual(box, this.state.selectedBox);
       if (changed) {
-        this.selectArea.ended(event);
+        if (this.selectArea) {
+          this.selectArea.ended(event);
+        }
         this.setHoveringBox(box);
       }
     }
