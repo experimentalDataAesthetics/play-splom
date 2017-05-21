@@ -1,5 +1,5 @@
 import u from 'updeep';
-import { xor, get, now } from 'lodash';
+import { xor, get } from 'lodash';
 import { calcPointsEntering } from '../selectors/index';
 
 const DEFAULT_LOOP_TIME = 10;
@@ -81,7 +81,7 @@ export function setLoopBox(state, action) {
     loopMode.box = action.payload;
     // if not already playing then start the loop in 50ms
     if (!get(state, 'loopMode.epoch')) {
-      loopMode.epoch = now() + 50;
+      loopMode.epoch = performance.now() + 0.05;
     }
     loopMode.lastBox = get(state, 'loopMode.box');
   }
@@ -124,6 +124,21 @@ export function toggleLoopMode(state /* , action*/) {
 export function setLoopTime(state, action) {
   const loopMode = {
     loopTime: action.payload.loopTime || DEFAULT_LOOP_TIME
+  };
+
+  return u({ loopMode }, state);
+}
+
+/**
+ * setLoopTimeDimension - set the dimension to use for time in the loop
+ *
+ * @param  {Object} state   current state
+ * @param  {Object} action  .payload is {index: int}
+ * @return {Object}         new state
+ */
+export function setLoopTimeDimension(state, action) {
+  const loopMode = {
+    timeDimension: action.payload.index
   };
 
   return u({ loopMode }, state);

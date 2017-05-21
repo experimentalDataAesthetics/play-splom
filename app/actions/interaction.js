@@ -107,3 +107,18 @@ export function setLoopTime(loopTime) {
     }
   };
 }
+
+/**
+ * setLoopTimeDimension - Set the feature/dimension to be used for loop mode.
+ *
+ * @param  {number|null} index
+ * @return {Object} action
+ */
+export function setLoopTimeDimension(index) {
+  return {
+    type: 'setLoopTimeDimension',
+    payload: {
+      index
+    }
+  };
+}

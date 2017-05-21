@@ -1,10 +1,12 @@
 import React from 'react';
 import d3 from 'd3';
 import _ from 'lodash';
-import { Slider } from 'material-ui';
+import Slider from 'material-ui/Slider';
+import SelectField from 'material-ui/SelectField';
+import MenuItem from 'material-ui/MenuItem';
 import connect from '../utils/reduxers';
-import { getLoop } from '../selectors';
-import { toggleLoopMode, setLoopTime } from '../actions/interaction';
+import { getLoop, getDatasetMetadata } from '../selectors';
+import { toggleLoopMode, setLoopTime, setLoopTimeDimension } from '../actions/interaction';
 import ToggleButton from './ToggleButton';
 import style from './XYParamTable.css';
 import styles from '../containers/Sidebar.css';
@@ -52,12 +54,34 @@ class LoopControl extends React.Component {
     // or make a different action
     const button = (
       <ToggleButton
-        isActive={Boolean(this.props.loopMode.box)}
+        isActive={!!this.props.loopMode.box}
         action={() => this.props.toggleLoopMode()}
         iconActive="repeat"
         iconInactive="repeat"
       />
     );
+
+    const timeColumns = this.props.dataSetMetadata
+      ? this.props.dataSetMetadata.columnNames.map((name, i) => {
+        return {
+          value: i,
+          label: name
+        };
+      })
+      : [];
+
+    const timeOptions = [
+      {
+        value: null,
+        label: 'Index'
+      },
+      {
+        value: 'x',
+        label: 'x'
+      }
+    ].concat(timeColumns);
+
+    const timeValue = this.props.loopMode.timeDimension;
 
     return (
       <div className={styles.loopControl}>
@@ -66,7 +90,20 @@ class LoopControl extends React.Component {
             <tr>
               <th>Loop</th>
               <td>{button}</td>
+            </tr>
+            <tr>
+              <th>Speed</th>
               <td className={style.range}>{slider}</td>
+            </tr>
+            <tr>
+              <th>Time Dimension</th>
+              <td>
+                <Select
+                  value={timeValue}
+                  set={value => this.props.setLoopTimeDimension(value)}
+                  options={timeOptions}
+                />
+              </td>
             </tr>
           </tbody>
         </table>
@@ -75,12 +112,49 @@ class LoopControl extends React.Component {
   }
 }
 
+function Select({ value, set, options }) {
+  const onChange = (e, i, v) => set(selectToValue(v));
+  return (
+    <SelectField value={valueToSelect(value)} onChange={onChange}>
+      {options.map(vl => (
+        <MenuItem value={valueToSelect(vl.value)} primaryText={vl.label} key={vl.label} />
+      ))}
+    </SelectField>
+  );
+}
+
+const X = 200;
+const INDEX = 100;
+
+function valueToSelect(v) {
+  if (_.isNumber) {
+    return v;
+  }
+  if (v === 'x') {
+    return X;
+  }
+  return INDEX;
+}
+
+function selectToValue(s) {
+  switch (s) {
+    case X:
+      return 'x';
+    case INDEX:
+      return null;
+    default:
+      return s;
+  }
+}
+
 export default connect(
   {
-    loopMode: getLoop
+    loopMode: getLoop,
+    dataSetMetadata: getDatasetMetadata
   },
   {
     setLoopTime,
-    toggleLoopMode
+    toggleLoopMode,
+    setLoopTimeDimension
   }
 )(LoopControl);

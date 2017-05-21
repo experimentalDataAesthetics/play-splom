@@ -155,9 +155,12 @@ export function spawnEventsFromBrush(state) {
  * Given the current mapping assignments and the mappingControls,
  * return a function that maps x and y to synth args.
  *
- * @param  {Object} mapping         [description]
- * @param  {Object} mappingControls [description]
- * @return {Object}                 [description]
+ * Mapping may specify to map x (or y) to multiple synth params,
+ * it isn't just mapped to a single value.
+ *
+ * @param  {Object}     mapping
+ * @param  {Object}     mappingControls
+ * @return {Function}   (x, y) -> {param: value, ... paramN: valueN}
  */
 function makeXYMappingFn(mapping, mappingControls) {
   const paramsX = _.get(mapping, 'xy.x.params', {});
@@ -166,7 +169,7 @@ function makeXYMappingFn(mapping, mappingControls) {
   // {paramName: mappingFunction, ...}
   // If there is no available mapper (because mode is switching etc)
   // then map to null and then in the mapping function omit those nulls
-  const alwaysNull = () => null;
+  const alwaysNull = _.constant(null);
   const mappersX = _.mapValues(
     paramsX,
     (v, paramX) => makeXYMapper(mappingControls, paramX) || alwaysNull
@@ -264,6 +267,7 @@ export const getLoopModePayload = createSelector(
     const events = loopModeEvents(
       loopMode.box.m,
       loopMode.box.n,
+      _.isUndefined(loopMode.timeDimension) ? null : loopMode.timeDimension,
       npoints,
       mapping,
       mappingControls,
@@ -282,18 +286,27 @@ export const getLoopModePayload = createSelector(
 /**
  * Generate synth events for each point in the loop
  *
- * @param  {[type]} m               [description]
- * @param  {[type]} n               [description]
- * @param  {[type]} npoints         [description]
- * @param  {[type]} mapping         [description]
- * @param  {[type]} mappingControls [description]
- * @param  {[type]} sound           [description]
- * @param  {[type]} loopTime        [description]
- * @return {[type]}                 [description]
+ * @param  {int} m                  Feature to map to x
+ * @param  {int} n                  Feature to map to y
+ * @param  {int} t                  Feature to map to use for time axis.
+ *                                    null: means to use index, spacing events
+ *                                      evenly over the loop time.
+ *                                    'x': use the same feature as the x
+ * @param  {Array<Object>} npoints  Normalized points
+ * @param  {Object} mapping         Mapping specification
+ * @param  {Object} mappingControls Spec for mapping of two inputs (x y) to sound params
+ * @param  {Object} sound           Sound with defName = .name
+ * @param  {float} loopTime         Loop time in seconds.
+ * @return {Array<Object>}          Array of synth events
  */
-export function loopModeEvents(m, n, npoints, mapping, mappingControls, sound, loopTime) {
-  // Now you have both time and x mapped to the same parameters.
-  // It will accentuate it I guess
+export function loopModeEvents(m, n, t, npoints, mapping, mappingControls, sound, loopTime) {
+  // If size is wrong eg. after loading a new dataset and loopMode is set from
+  // previous one
+  if (!(npoints[m] && npoints[n])) {
+    // just return an empty list
+    return [];
+  }
+
   const mapXY = makeXYMappingFn(mapping, mappingControls);
 
   const timeSpec = {
@@ -301,7 +314,19 @@ export function loopModeEvents(m, n, npoints, mapping, mappingControls, sound, l
     minval: 0.0,
     maxval: loopTime
   };
-  const timeMapper = makeMapper(timeSpec);
+
+  let mapTime;
+  if (_.isNull(t)) {
+    // Evenly step through the points in index order
+    const timeStep = loopTime / npoints[m].values.length;
+    mapTime = i => timeStep * i;
+  } else {
+    // Use dimension t as the time value
+    // letter 'x' means use feature for x dim
+    const autoT = t === 'x' ? m : t;
+    const timeMapper = makeMapper(timeSpec);
+    mapTime = i => timeMapper(npoints[autoT].values[i]);
+  }
 
   const fixedArgs = {};
   mappingControls.forEach(mc => {
@@ -310,18 +335,12 @@ export function loopModeEvents(m, n, npoints, mapping, mappingControls, sound, l
     }
   });
 
-  // if size is wrong eg. after loading a new dataset and loopMode is set from previous one
-  if (!(npoints[m] && npoints[n])) {
-    // just return an empty list
-    return [];
-  }
-
   return npoints[m].values.map((x, i) => {
     const y = npoints[n].values[i];
     const args = mapXY(x, y);
 
     return {
-      time: timeMapper(x),
+      time: mapTime(i),
       defName: sound.name,
       args: _.assign(args, fixedArgs)
     };

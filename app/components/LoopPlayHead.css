@@ -3,3 +3,9 @@
   fill: #5EB1BF;
   opacity: 0.5;
 }
+
+.loopBox {
+  fill: transparent;
+  stroke: #5EB1BF;
+  stroke-width: 1px;
+}
