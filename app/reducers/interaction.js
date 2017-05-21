@@ -128,3 +128,18 @@ export function setLoopTime(state, action) {
 
   return u({ loopMode }, state);
 }
+
+/**
+ * setLoopTimeDimension - set the dimension to use for time in the loop
+ *
+ * @param  {Object} state   current state
+ * @param  {Object} action  .payload is {index: int}
+ * @return {Object}         new state
+ */
+export function setLoopTimeDimension(state, action) {
+  const loopMode = {
+    timeDimension: action.payload.index
+  };
+
+  return u({ loopMode }, state);
+}

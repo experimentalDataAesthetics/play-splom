@@ -267,7 +267,7 @@ export const getLoopModePayload = createSelector(
     const events = loopModeEvents(
       loopMode.box.m,
       loopMode.box.n,
-      loopMode.box.m,
+      _.isNumber(loopMode.timeDimension) ? loopMode.timeDimension : null,
       npoints,
       mapping,
       mappingControls,
