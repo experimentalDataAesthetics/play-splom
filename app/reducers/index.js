@@ -56,7 +56,7 @@ export default function(state = {}, action) {
   const nextState = reducers(state, action);
   if (process.env.NODE_ENV !== 'production') {
     if (state === nextState) {
-      console.error('ACTION NOT HANDLED:', action);
+      console.warn('ACTION did not change state:', action, state);
     }
   }
   return nextState;
