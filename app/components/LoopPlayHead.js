@@ -47,6 +47,7 @@ class LoopPlayHead extends React.Component {
   }
 
   tick(timestamp) {
+    // timestamp is performance.now() : milliseconds since the initial page load
     if (this.props.loopBox) {
       const delta = timestamp - this.props.loopMode.epoch;
       const inLoop = delta / 1000 % this.props.loopMode.loopTime;

@@ -6,7 +6,6 @@
  * to the SoundApp
  */
 
-
 import { spawnEventsFromBrush, getLoopModePayload } from '../selectors/index';
 
 /**
@@ -66,7 +65,10 @@ export default function connectSoundApp(store, callActionOnMain) {
   observeStore(store, getLoopModePayload, (state, payload) => {
     callActionOnMain({
       type: 'setLoop',
-      payload
+      payload: {
+        ...payload,
+        epoch: performance.timing.navigationStart + payload.epoch
+      }
     });
   });
 }
