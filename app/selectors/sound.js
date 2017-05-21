@@ -267,7 +267,7 @@ export const getLoopModePayload = createSelector(
     const events = loopModeEvents(
       loopMode.box.m,
       loopMode.box.n,
-      _.isNumber(loopMode.timeDimension) ? loopMode.timeDimension : null,
+      _.isUndefined(loopMode.timeDimension) ? null : loopMode.timeDimension,
       npoints,
       mapping,
       mappingControls,
@@ -289,8 +289,9 @@ export const getLoopModePayload = createSelector(
  * @param  {int} m                  Feature to map to x
  * @param  {int} n                  Feature to map to y
  * @param  {int} t                  Feature to map to use for time axis.
- *                                    null means to use index, spacing events evenly
- *                                    over the loop time.
+ *                                    null: means to use index, spacing events
+ *                                      evenly over the loop time.
+ *                                    'x': use the same feature as the x
  * @param  {Array<Object>} npoints  Normalized points
  * @param  {Object} mapping         Mapping specification
  * @param  {Object} mappingControls Spec for mapping of two inputs (x y) to sound params
@@ -321,8 +322,10 @@ export function loopModeEvents(m, n, t, npoints, mapping, mappingControls, sound
     mapTime = i => timeStep * i;
   } else {
     // Use dimension t as the time value
+    // letter 'x' means use feature for x dim
+    const autoT = t === 'x' ? m : t;
     const timeMapper = makeMapper(timeSpec);
-    mapTime = i => timeMapper(npoints[t].values[i]);
+    mapTime = i => timeMapper(npoints[autoT].values[i]);
   }
 
   const fixedArgs = {};

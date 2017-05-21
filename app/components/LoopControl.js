@@ -61,19 +61,26 @@ class LoopControl extends React.Component {
       />
     );
 
-    const timeOptions = [
-      {
-        value: -1,
-        label: 'Index'
-      }
-    ].concat(
-      this.props.dataSetMetadata.columnNames.map((name, i) => {
+    const timeColumns = this.props.dataSetMetadata
+      ? this.props.dataSetMetadata.columnNames.map((name, i) => {
         return {
           value: i,
           label: name
         };
       })
-    );
+      : [];
+
+    const timeOptions = [
+      {
+        value: null,
+        label: 'Index'
+      },
+      {
+        value: 'x',
+        label: 'x'
+      }
+    ].concat(timeColumns);
+
     const timeValue = this.props.loopMode.timeDimension;
 
     return (
@@ -89,10 +96,8 @@ class LoopControl extends React.Component {
               <th />
               <td>
                 <Select
-                  value={_.isNumber(timeValue) ? timeValue : -1}
-                  set={value => {
-                    this.props.setLoopTimeDimension(value === -1 ? null : value);
-                  }}
+                  value={timeValue}
+                  set={value => this.props.setLoopTimeDimension(value)}
                   options={timeOptions}
                 />
               </td>
@@ -105,12 +110,38 @@ class LoopControl extends React.Component {
 }
 
 function Select({ value, set, options }) {
-  const onChange = (e, i, v) => set(v);
+  const onChange = (e, i, v) => set(selectToValue(v));
   return (
-    <SelectField floatingLabelText="Time Axis" value={value} onChange={onChange}>
-      {options.map(vl => <MenuItem value={vl.value} primaryText={vl.label} key={vl.label} />)}
+    <SelectField floatingLabelText="Time Axis" value={valueToSelect(value)} onChange={onChange}>
+      {options.map(vl => (
+        <MenuItem value={valueToSelect(vl.value)} primaryText={vl.label} key={vl.label} />
+      ))}
     </SelectField>
   );
+}
+
+const X = 200;
+const INDEX = 100;
+
+function valueToSelect(v) {
+  if (_.isNumber) {
+    return v;
+  }
+  if (v === 'x') {
+    return X;
+  }
+  return INDEX;
+}
+
+function selectToValue(s) {
+  switch (s) {
+    case X:
+      return 'x';
+    case INDEX:
+      return null;
+    default:
+      return s;
+  }
 }
 
 export default connect(
