@@ -67,24 +67,33 @@ class LoopPlayHead extends React.Component {
   }
 
   render() {
+    // If we are looping
     if (this.props.loopBox) {
-      // and if loop is doing it along the x
-      const x =
-        ((this.state && this.state.pos) || 0) * this.props.loopBox.width + this.props.loopBox.x;
-      const y = this.props.loopBox.y;
+      const x = ((this.state && this.state.pos) || 0) * this.props.loopBox.width;
       return (
         <g
-          transform={`translate(${x}, ${y})`}
           width={this.props.loopBox.width}
           height={this.props.loopBox.height}
+          transform={`translate(${this.props.loopBox.x}, ${this.props.loopBox.y})`}
         >
           <rect
             x={0}
             y={0}
-            width={4}
+            width={this.props.loopBox.width}
             height={this.props.loopBox.height}
-            className={styles.playHead}
+            className={styles.loopBox}
           />
+          {this.props.loopMode.timeDimension === 'x'
+            ? <rect
+              x={0}
+              y={0}
+              transform={`translate(${x}, 0)`}
+              width={4}
+              height={this.props.loopBox.height}
+              className={styles.playHead}
+            />
+            : null}
+
         </g>
       );
     }

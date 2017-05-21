@@ -90,10 +90,13 @@ class LoopControl extends React.Component {
             <tr>
               <th>Loop</th>
               <td>{button}</td>
+            </tr>
+            <tr>
+              <th>Speed</th>
               <td className={style.range}>{slider}</td>
             </tr>
             <tr>
-              <th />
+              <th>Time Dimension</th>
               <td>
                 <Select
                   value={timeValue}
@@ -112,7 +115,7 @@ class LoopControl extends React.Component {
 function Select({ value, set, options }) {
   const onChange = (e, i, v) => set(selectToValue(v));
   return (
-    <SelectField floatingLabelText="Time Axis" value={valueToSelect(value)} onChange={onChange}>
+    <SelectField value={valueToSelect(value)} onChange={onChange}>
       {options.map(vl => (
         <MenuItem value={valueToSelect(vl.value)} primaryText={vl.label} key={vl.label} />
       ))}
