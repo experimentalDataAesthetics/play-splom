@@ -4,7 +4,11 @@ import { calcPointsEntering } from '../selectors/index';
 
 const DEFAULT_LOOP_TIME = 10;
 
-export default {};
+export default {
+  loopMode: {
+    timeDimension: null
+  }
+};
 
 /**
  * setPointsUnderBrush - Action triggered by mouse move,
@@ -142,4 +146,14 @@ export function setLoopTimeDimension(state, action) {
   };
 
   return u({ loopMode }, state);
+}
+
+/**
+ * Set timeDimension to 'x' any time the dataset is loaded.
+ *
+ * This prevents it from going out of bounds if dataset fields are less than the
+ * previously loaded one
+ */
+export function setDataset(state /* , action*/) {
+  return u({ loopMode: { timeDimension: null } }, state);
 }
