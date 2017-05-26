@@ -25,7 +25,7 @@ import {
  * (eg. 30) and not all points for the dataset (eg. 500) -- multiplied
  * by the number of boxes (eg. 25)
  */
-class ScatterPlotsActivePoints extends React.Component {
+class ScatterPlotsActivePoints extends React.PureComponent {
   render() {
     const children = [];
 

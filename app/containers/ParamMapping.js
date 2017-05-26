@@ -32,7 +32,7 @@ const handlers = {
  * the amount of thought you have to do to find out what is doing what.
  * But it is a recommended coding style.
  */
-class ParamMapping extends React.Component {
+class ParamMapping extends React.PureComponent {
   render() {
     return h(`div.${styles.paramMapping}`, [
       h('h6', this.props.sound ? this.props.sound.name : ''),

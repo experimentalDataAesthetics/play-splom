@@ -24,7 +24,7 @@ const unset = {};
  *
  * This adds a SelectArea on top of each ScatterPlot
  */
-class ScatterPlotsInteractive extends React.Component {
+class ScatterPlotsInteractive extends React.PureComponent {
   static propTypes = {
     width: PropTypes.number.isRequired,
     height: PropTypes.number.isRequired,

@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import connect from '../utils/reduxers';
 import ScatterPlots from '../components/ScatterPlots';
@@ -19,7 +19,7 @@ import { getPointsForPlot, getLayout, getDatasetMetadata } from '../selectors/in
  * - ScatterPlotsInteractive
  *
  */
-class ScatterPlotsContainer extends Component {
+class ScatterPlotsContainer extends React.PureComponent {
   static propTypes = {
     width: PropTypes.number.isRequired,
     height: PropTypes.number.isRequired,

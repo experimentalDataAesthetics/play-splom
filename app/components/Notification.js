@@ -8,7 +8,7 @@ import { notify } from '../actions/ui';
  *
  * This connects to state.ui.notification and displays that message.
  */
-class Notification extends React.Component {
+class Notification extends React.PureComponent {
   render() {
     const n = this.props.notification;
     let dismiss;

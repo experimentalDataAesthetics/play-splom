@@ -21,7 +21,7 @@ import { getLayout, getMuiTheme } from '../selectors/index';
  * when the window size changes, also on change of number of dataset features,
  * number of boxes etc.
  */
-class MainLayout extends React.Component {
+class MainLayout extends React.PureComponent {
   static propTypes = {
     muiTheme: PropTypes.object.isRequired,
     layout: PropTypes.object.isRequired

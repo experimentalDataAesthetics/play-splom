@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import h from 'react-hyperscript';
 import RaisedButton from 'material-ui/RaisedButton';
@@ -13,7 +13,7 @@ const SelectableList = MakeSelectable(List);
  * Component in right sidebar to select from available
  * datasets or to click to open a dataset from the filesystem.
  */
-class DatasetSelector extends Component {
+class DatasetSelector extends React.PureComponent {
   static propTypes = {
     selected: PropTypes.string,
     datasets: PropTypes.array.isRequired,

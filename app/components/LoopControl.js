@@ -22,7 +22,7 @@ const unmapv = mapv.invert;
  * and a slider to adjust loopTime.
  *
  */
-class LoopControl extends React.Component {
+class LoopControl extends React.PureComponent {
   static propTypes = {
     loopMode: PropTypes.object.isRequired,
     setLoopTime: PropTypes.func.isRequired,

@@ -16,7 +16,7 @@ import Axis from './Axis';
 /**
  * Shows the Axis on top of the plot that you are hovering over
  */
-class HoveringAxis extends React.Component {
+class HoveringAxis extends React.PureComponent {
   static propTypes = {
     muiTheme: PropTypes.object.isRequired,
     layout: PropTypes.object.isRequired,

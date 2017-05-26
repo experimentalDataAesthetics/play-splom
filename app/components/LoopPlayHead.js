@@ -29,7 +29,7 @@ function findActiveEvents(events, now, startAt) {
  *
  * There is one of these in the app, positioned over the currently playing loop box.
  */
-class LoopPlayHead extends React.Component {
+class LoopPlayHead extends React.PureComponent {
   static propTypes = {
     loopBox: PropTypes.object,
     loopMode: PropTypes.object.isRequired
