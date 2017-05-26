@@ -41,7 +41,7 @@ class ScatterPlotsInteractive extends React.PureComponent {
     this.state = {};
   }
 
-  onMouseDown(event) {
+  onMouseDown = event => {
     // console.log({type: 'down', x: event.clientX, y: event.clientY});
     const box = this._boxForEvent(event);
 
@@ -99,9 +99,9 @@ class ScatterPlotsInteractive extends React.PureComponent {
         }
       });
     }
-  }
+  };
 
-  onMouseMove(event) {
+  onMouseMove = event => {
     const box = this._boxForEvent(event);
     const changed = !_.isEqual(box, this.state.selectedBox);
     if (event.buttons) {
@@ -116,9 +116,9 @@ class ScatterPlotsInteractive extends React.PureComponent {
     } else if (changed) {
       this.setHoveringBox(box);
     }
-  }
+  };
 
-  onMouseUp(event) {
+  onMouseUp = event => {
     // moused up in a different box then you mouse down in
     // so fire the selectArea mouseUp since it will not otherwise
     // capture that event as it is outside of it's DOM element.
@@ -132,7 +132,7 @@ class ScatterPlotsInteractive extends React.PureComponent {
         this.setHoveringBox(box);
       }
     }
-  }
+  };
 
   setPointsIn(area, box, points) {
     // area is inverted y
@@ -181,6 +181,10 @@ class ScatterPlotsInteractive extends React.PureComponent {
     this.props.setHovering(box.m, box.n);
   }
 
+  setSelectArea = sa => {
+    this.selectArea = sa;
+  };
+
   _boxForEvent(event) {
     const layout = this.props.layout;
     const x = event.clientX;
@@ -212,12 +216,13 @@ class ScatterPlotsInteractive extends React.PureComponent {
     const sideLength = this.props.layout.sideLength;
     const layout = this.props.layout;
     const innerSideLength = sideLength - layout.margin;
-    const children = [<HoveringAxis />];
+    const children = [<HoveringAxis key="h" />];
 
     // To handle catch mouse actions
     // that don't hit the SelectArea
     children.push(
       <rect
+        key="r"
         x={0}
         y={0}
         width={this.props.width}
@@ -263,11 +268,10 @@ class ScatterPlotsInteractive extends React.PureComponent {
       const points = _.zip(featx, featy);
 
       const selectedArea = h(SelectArea, {
+        key: 'box',
         // Store a reference to this child element
         // so we can call initimate methods on it directly.
-        ref: sa => {
-          this.selectArea = sa;
-        },
+        ref: this.setSelectArea,
         selected: {
           x: 0,
           y: 0,
@@ -308,25 +312,20 @@ class ScatterPlotsInteractive extends React.PureComponent {
       children.push(selectedArea);
     }
 
-    return h(
-      'g',
-      {
-        width: this.props.width,
-        height: this.props.height,
-        className: 'ScatterPlotsInteractive',
-        onMouseLeave: () => {
-          // event
-          // console.log('hovered off the grid', event, event.clientX, event.clientY);
-          // this.setHoveringBox({});
-        },
-        onMouseDown: this.onMouseDown.bind(this),
-        onTouchStart: this.onMouseDown.bind(this),
-        onMouseMove: this.onMouseMove.bind(this),
-        onTouchMove: this.onMouseMove.bind(this),
-        onMouseUp: this.onMouseUp.bind(this),
-        onTouchEnd: this.onMouseUp.bind(this)
-      },
-      children
+    return (
+      <g
+        width={this.props.width}
+        height={this.props.height}
+        className="ScatterPlotsInteractive"
+        onMouseDown={this.onMouseDown}
+        onTouchStart={this.onMouseDown}
+        onMouseMove={this.onMouseMove}
+        onTouchMove={this.onMouseMove}
+        onMouseUp={this.onMouseUp}
+        onTouchEnd={this.onMouseUp}
+      >
+        {children}
+      </g>
     );
   }
 }

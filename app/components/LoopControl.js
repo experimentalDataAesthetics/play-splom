@@ -29,11 +29,11 @@ class LoopControl extends React.PureComponent {
     toggleLoopMode: PropTypes.func.isRequired
   };
 
-  render() {
-    const sliderAction = (e, v) => {
-      this.props.setLoopTime(mapv(1 - v));
-    };
+  setLoopTime = _.debounce((e, v) => {
+    this.props.setLoopTime(mapv(1 - v));
+  }, 100);
 
+  render() {
     const sliderStyle = {
       marginTop: 4,
       marginBottom: 4
@@ -45,7 +45,7 @@ class LoopControl extends React.PureComponent {
         min={0}
         max={1}
         step={0.01}
-        onChange={_.debounce(sliderAction, 100)}
+        onChange={this.setLoopTime}
         sliderStyle={sliderStyle}
       />
     );
