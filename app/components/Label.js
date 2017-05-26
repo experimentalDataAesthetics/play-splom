@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 /**
  * A string label used by the XAxis and YAxis.
@@ -10,16 +11,16 @@ module.exports = React.createClass({
   displayName: 'Label',
 
   propTypes: {
-    label: React.PropTypes.string.isRequired,
-    height: React.PropTypes.number,
-    offset: React.PropTypes.number,
-    horizontalChart: React.PropTypes.bool,
-    horizontalTransform: React.PropTypes.string,
-    textColor: React.PropTypes.string,
-    width: React.PropTypes.number,
-    strokeWidth: React.PropTypes.number,
-    textAnchor: React.PropTypes.string,
-    verticalTransform: React.PropTypes.string
+    label: PropTypes.string.isRequired,
+    height: PropTypes.number,
+    offset: PropTypes.number,
+    horizontalChart: PropTypes.bool,
+    horizontalTransform: PropTypes.string,
+    textColor: PropTypes.string,
+    width: PropTypes.number,
+    strokeWidth: PropTypes.number,
+    textAnchor: PropTypes.string,
+    verticalTransform: PropTypes.string
   },
 
   getDefaultProps() {
@@ -34,13 +35,13 @@ module.exports = React.createClass({
   },
 
   render() {
-    var props = this.props;
+    const props = this.props;
 
     if (!props.label) {
       return <text />;
     }
 
-    var transform,
+    let transform,
       x,
       y;
     if (props.orient === 'top' || props.orient === 'bottom') {

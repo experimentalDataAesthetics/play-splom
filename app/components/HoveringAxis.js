@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import h from 'react-hyperscript';
 import _ from 'lodash';
 import connect from '../utils/reduxers';
@@ -17,11 +18,11 @@ import Axis from './Axis';
  */
 class HoveringAxis extends React.Component {
   static propTypes = {
-    muiTheme: React.PropTypes.object.isRequired,
-    layout: React.PropTypes.object.isRequired,
-    numFeatures: React.PropTypes.number.isRequired,
-    featureSideLengthScale: React.PropTypes.array.isRequired,
-    hovering: React.PropTypes.object.isRequired
+    muiTheme: PropTypes.object.isRequired,
+    layout: PropTypes.object.isRequired,
+    numFeatures: PropTypes.number.isRequired,
+    featureSideLengthScale: PropTypes.array.isRequired,
+    hovering: PropTypes.object.isRequired
   };
 
   render() {

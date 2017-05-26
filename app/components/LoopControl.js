@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import d3 from 'd3';
 import _ from 'lodash';
 import Slider from 'material-ui/Slider';
@@ -23,9 +24,9 @@ const unmapv = mapv.invert;
  */
 class LoopControl extends React.Component {
   static propTypes = {
-    loopMode: React.PropTypes.object.isRequired,
-    setLoopTime: React.PropTypes.func.isRequired,
-    toggleLoopMode: React.PropTypes.func.isRequired
+    loopMode: PropTypes.object.isRequired,
+    setLoopTime: PropTypes.func.isRequired,
+    toggleLoopMode: PropTypes.func.isRequired
   };
 
   render() {

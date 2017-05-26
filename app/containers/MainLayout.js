@@ -1,5 +1,6 @@
 import _ from 'lodash';
 import React from 'react';
+import PropTypes from 'prop-types';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import connect from '../utils/reduxers';
 
@@ -22,8 +23,8 @@ import { getLayout, getMuiTheme } from '../selectors/index';
  */
 class MainLayout extends React.Component {
   static propTypes = {
-    muiTheme: React.PropTypes.object.isRequired,
-    layout: React.PropTypes.object.isRequired
+    muiTheme: PropTypes.object.isRequired,
+    layout: PropTypes.object.isRequired
   };
 
   render() {

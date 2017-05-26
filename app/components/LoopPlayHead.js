@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import connect from '../utils/reduxers';
 import { getLoop, getLoopBox, getLoopModePayload } from '../selectors';
 import { setPointsUnderBrush } from '../actions/interaction';
@@ -30,8 +31,8 @@ function findActiveEvents(events, now, startAt) {
  */
 class LoopPlayHead extends React.Component {
   static propTypes = {
-    loopBox: React.PropTypes.object,
-    loopMode: React.PropTypes.object.isRequired
+    loopBox: PropTypes.object,
+    loopMode: PropTypes.object.isRequired
   };
 
   componentDidMount() {

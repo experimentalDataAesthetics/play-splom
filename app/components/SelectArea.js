@@ -6,6 +6,7 @@
  */
 import _ from 'lodash';
 import React from 'react';
+import PropTypes from 'prop-types';
 import style from './SelectArea.css';
 
 const handleSize = 6;
@@ -148,14 +149,14 @@ function clip(v, min, max) {
  */
 export default class SelectArea extends React.Component {
   static propTypes = {
-    domain: React.PropTypes.object.isRequired,
-    base: React.PropTypes.array.isRequired,
-    selected: React.PropTypes.object,
-    onChange: React.PropTypes.func,
-    onMouseEnter: React.PropTypes.func,
-    onClick: React.PropTypes.func,
-    onMetaClick: React.PropTypes.func,
-    show: React.PropTypes.bool
+    domain: PropTypes.object.isRequired,
+    base: PropTypes.array.isRequired,
+    selected: PropTypes.object,
+    onChange: PropTypes.func,
+    onMouseEnter: PropTypes.func,
+    onClick: PropTypes.func,
+    onMetaClick: PropTypes.func,
+    show: PropTypes.bool
   };
 
   constructor(props, context) {
@@ -452,13 +453,10 @@ export default class SelectArea extends React.Component {
       }
 
       // Ghost clicks are delayed!
-      this.touchending = setTimeout(
-        () => {
-          this.touchending = null;
-          this.mouseMode = null;
-        },
-        500
-      );
+      this.touchending = setTimeout(() => {
+        this.touchending = null;
+        this.mouseMode = null;
+      }, 500);
     } else {
       this.mouseMode = null;
     }
@@ -498,7 +496,7 @@ export default class SelectArea extends React.Component {
 
   // TODO willsetProps copy extent
   shouldComponentUpdate(nextProps, nextState) {
-    for (let prop of ['base', 'domain', 'overlayClassName', 'selected', 'show']) {
+    for (const prop of ['base', 'domain', 'overlayClassName', 'selected', 'show']) {
       if (!_.isEqual(this.props[prop], nextProps[prop])) {
         return true;
       }
@@ -515,7 +513,7 @@ export default class SelectArea extends React.Component {
     const domain = this.props.domain;
     const selected = this.state.selected;
 
-    let overlay = (
+    const overlay = (
       <rect
         className={this.props.overlayClassName || style.overlay}
         key="overlay"
@@ -527,7 +525,7 @@ export default class SelectArea extends React.Component {
       />
     );
 
-    let selection = (
+    const selection = (
       <rect
         className={this.props.selectionClassName || style.selection}
         key="selection"

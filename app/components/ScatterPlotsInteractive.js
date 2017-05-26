@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import h from 'react-hyperscript';
 import _ from 'lodash';
 import connect from '../utils/reduxers';
@@ -13,17 +14,6 @@ import style from './ScatterPlots.css';
 
 const unset = {};
 
-const selectors = {
-  loopMode: state => state.interaction.loopMode || unset,
-  hovering: state => state.ui.hovering
-};
-
-const handlers = {
-  setPointsUnderBrush,
-  setHovering,
-  setLoopBox
-};
-
 /**
  * A single component that goes on top of the plots and handles
  * mouse events and interactive UI.
@@ -36,14 +26,14 @@ const handlers = {
  */
 class ScatterPlotsInteractive extends React.Component {
   static propTypes = {
-    width: React.PropTypes.number.isRequired,
-    height: React.PropTypes.number.isRequired,
-    loopMode: React.PropTypes.object.isRequired,
-    layout: React.PropTypes.object.isRequired,
-    features: React.PropTypes.array.isRequired,
-    setPointsUnderBrush: React.PropTypes.func.isRequired,
-    setHovering: React.PropTypes.func.isRequired,
-    setLoopBox: React.PropTypes.func.isRequired
+    width: PropTypes.number.isRequired,
+    height: PropTypes.number.isRequired,
+    loopMode: PropTypes.object.isRequired,
+    layout: PropTypes.object.isRequired,
+    features: PropTypes.array.isRequired,
+    setPointsUnderBrush: PropTypes.func.isRequired,
+    setHovering: PropTypes.func.isRequired,
+    setLoopBox: PropTypes.func.isRequired
   };
 
   constructor(props) {
@@ -198,7 +188,7 @@ class ScatterPlotsInteractive extends React.Component {
     const rx = x - layout.svgStyle.left - layout.scatterPlotsMargin;
     const ry = y - layout.svgStyle.top - layout.scatterPlotsMargin;
     const m = Math.floor(rx / layout.sideLength);
-    const n = this.props['data-num-features'] - Math.floor(ry / layout.sideLength) - 1;
+    const n = this.props.features.length - Math.floor(ry / layout.sideLength) - 1;
     return { m, n };
   }
 
@@ -341,4 +331,14 @@ class ScatterPlotsInteractive extends React.Component {
   }
 }
 
-export default connect(selectors, handlers)(ScatterPlotsInteractive);
+export default connect(
+  {
+    loopMode: state => state.interaction.loopMode || unset,
+    hovering: state => state.ui.hovering
+  },
+  {
+    setPointsUnderBrush,
+    setHovering,
+    setLoopBox
+  }
+)(ScatterPlotsInteractive);

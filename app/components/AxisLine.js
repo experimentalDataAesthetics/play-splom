@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 /**
  * Draws a line along an axis - used by XAxis and YAxis
@@ -9,13 +10,12 @@ export default React.createClass({
   displayName: 'AxisLine',
 
   propTypes: {
-    scale: React.PropTypes.func.isRequired,
-    innerTickSize: React.PropTypes.number,
-    outerTickSize: React.PropTypes.number,
-    tickPadding: React.PropTypes.number,
-    tickArguments: React.PropTypes.array,
-    fill: React.PropTypes.string,
-    stroke: React.PropTypes.string
+    fill: PropTypes.string,
+    orient: PropTypes.string,
+    outerTickSize: PropTypes.number,
+    scale: PropTypes.func.isRequired,
+    stroke: PropTypes.string,
+    strokeWidth: PropTypes.string
   },
 
   getDefaultProps: function getDefaultProps() {
@@ -41,16 +41,16 @@ export default React.createClass({
   },
 
   render: function render() {
-    var props = this.props;
-    var sign = props.orient === 'top' || props.orient === 'left' ? -1 : 1;
+    const { orient, scale, fill, stroke, strokeWidth } = this.props;
+    const sign = orient === 'top' || orient === 'left' ? -1 : 1;
 
-    var range = this._d3ScaleRange(this.props.scale);
+    const range = this._d3ScaleRange(scale);
 
-    var d;
+    let d;
 
-    const outerTickSize = sign * props.outerTickSize;
+    const outerTickSize = sign * this.props.outerTickSize;
 
-    if (props.orient === 'bottom' || props.orient === 'top') {
+    if (orient === 'bottom' || orient === 'top') {
       d = `M${range[0]},${outerTickSize}V0H${range[1]}V${outerTickSize}`;
     } else {
       d = `M${outerTickSize},${range[0]}H0V${range[1]}H${outerTickSize}`;
@@ -62,9 +62,9 @@ export default React.createClass({
       style: {
         shapeRendering: 'crispEdges'
       },
-      fill: props.fill,
-      stroke: props.stroke,
-      strokeWidth: props.strokeWidth
+      fill,
+      stroke,
+      strokeWidth
     });
   }
 });

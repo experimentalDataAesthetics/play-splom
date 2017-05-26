@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import h from 'react-hyperscript';
 import RaisedButton from 'material-ui/RaisedButton';
 import { List, ListItem, MakeSelectable } from 'material-ui/List';
@@ -14,10 +15,10 @@ const SelectableList = MakeSelectable(List);
  */
 class DatasetSelector extends Component {
   static propTypes = {
-    selected: React.PropTypes.string,
-    datasets: React.PropTypes.array.isRequired,
-    openDialog: React.PropTypes.func.isRequired,
-    onSelect: React.PropTypes.func.isRequired
+    selected: PropTypes.string,
+    datasets: PropTypes.array.isRequired,
+    openDialog: PropTypes.func.isRequired,
+    onSelect: PropTypes.func.isRequired
   };
 
   render() {

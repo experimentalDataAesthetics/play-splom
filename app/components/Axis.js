@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import h from 'react-hyperscript';
 import XAxis from './XAxis';
 import YAxis from './YAxis';
@@ -10,14 +11,14 @@ import YAxis from './YAxis';
  */
 export default class Axis extends React.Component {
   static propTypes = {
-    xOffset: React.PropTypes.number.isRequired,
-    yOffset: React.PropTypes.number.isRequired,
-    sideLength: React.PropTypes.number.isRequired,
-    muiTheme: React.PropTypes.object.isRequired,
-    xScale: React.PropTypes.func.isRequired,
-    yScale: React.PropTypes.func.isRequired,
-    xLabel: React.PropTypes.string,
-    yLabel: React.PropTypes.string
+    xOffset: PropTypes.number.isRequired,
+    yOffset: PropTypes.number.isRequired,
+    sideLength: PropTypes.number.isRequired,
+    muiTheme: PropTypes.object.isRequired,
+    xScale: PropTypes.func.isRequired,
+    yScale: PropTypes.func.isRequired,
+    xLabel: PropTypes.string,
+    yLabel: PropTypes.string
   };
 
   render() {

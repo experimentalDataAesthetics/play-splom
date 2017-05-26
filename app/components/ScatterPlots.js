@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import h from 'react-hyperscript';
 import _ from 'lodash';
 
@@ -13,12 +14,12 @@ import style from './ScatterPlots.css';
  */
 class ScatterPlots extends React.Component {
   static propTypes = {
-    height: React.PropTypes.number.isRequired,
-    width: React.PropTypes.number.isRequired,
-    dataset: React.PropTypes.object,
-    features: React.PropTypes.array.isRequired,
-    layout: React.PropTypes.object.isRequired,
-    muiTheme: React.PropTypes.object
+    height: PropTypes.number.isRequired,
+    width: PropTypes.number.isRequired,
+    dataset: PropTypes.object,
+    features: PropTypes.array.isRequired,
+    layout: PropTypes.object.isRequired,
+    muiTheme: PropTypes.object
   };
 
   render() {

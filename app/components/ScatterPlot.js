@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import h from 'react-hyperscript';
 import LAxis from '../components/LAxis';
 import Points from '../components/Points';
@@ -8,11 +9,11 @@ import Points from '../components/Points';
  */
 export default class ScatterPlot extends React.Component {
   static propTypes = {
-    xOffset: React.PropTypes.number.isRequired,
-    yOffset: React.PropTypes.number.isRequired,
-    sideLength: React.PropTypes.number.isRequired,
-    points: React.PropTypes.array.isRequired,
-    muiTheme: React.PropTypes.object.isRequired
+    xOffset: PropTypes.number.isRequired,
+    yOffset: PropTypes.number.isRequired,
+    sideLength: PropTypes.number.isRequired,
+    points: PropTypes.array.isRequired,
+    muiTheme: PropTypes.object.isRequired
   };
 
   render() {
