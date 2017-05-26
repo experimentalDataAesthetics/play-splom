@@ -26,7 +26,6 @@
  */
 
 import { combineReducers } from 'redux';
-import { routerReducer as routing } from 'react-router-redux';
 import { autoReducer } from '../utils/reduxers';
 import * as dataset from './dataset';
 import * as datasets from './datasets';
@@ -48,8 +47,7 @@ const reducers = combineReducers({
   mapping: autoReducer(mapping),
   ui: autoReducer(ui),
   interaction: autoReducer(interaction),
-  transport: autoReducer(transport),
-  routing
+  transport: autoReducer(transport)
 });
 
 export default function(state = {}, action) {

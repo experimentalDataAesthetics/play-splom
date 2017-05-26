@@ -10,11 +10,8 @@ import React from 'react';
 import injectTapEventPlugin from 'react-tap-event-plugin';
 import { render } from 'react-dom';
 import { Provider } from 'react-redux';
-import { Router, hashHistory } from 'react-router';
-import { syncHistoryWithStore } from 'react-router-redux';
 import { join } from 'path';
 import { ipcRenderer } from 'electron';
-import routes from './routes';
 import configureStore from './store/configureStore';
 import { readDefaultDatasets } from './actions/datasets';
 import { selectSound } from './actions/sounds';
@@ -22,10 +19,11 @@ import { mapXYtoParam } from './actions/mapping';
 import handleActionOnRenderer from './ipc/handleActionOnRenderer';
 import connectSoundApp from './sound/connectSoundApp';
 import callActionOnMain from './ipc/callActionOnMain';
+import App from './containers/App';
+import Main from './containers/Main';
 import './app.global.css';
 
 const store = configureStore();
-const history = syncHistoryWithStore(hashHistory, store);
 
 injectTapEventPlugin();
 
@@ -45,7 +43,9 @@ if (process.env.NODE_ENV !== 'production') {
 
 render(
   <Provider store={store}>
-    <Router history={history} routes={routes} />
+    <App>
+      <Main />
+    </App>
   </Provider>,
   document.getElementById('root')
 );
