@@ -1,8 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import h from 'react-hyperscript';
-import XAxis from './XAxis';
-import YAxis from './YAxis';
+import XYAxis from './XYAxis';
+import Box from './Box';
 
 /**
  * Standard pair of X and Y axis with ticks and labelling.
@@ -26,39 +25,35 @@ export default class Axis extends React.Component {
     const textColor = this.props.muiTheme.palette.textColor;
     const numTicks = Math.floor(Math.max(sideLength / 75));
 
-    const children = [
-      h(XAxis, {
-        xAxisLabel: this.props.xLabel,
-        xScale: this.props.xScale,
-        height: sideLength,
-        width: sideLength,
-        stroke: textColor,
-        tickStroke: textColor,
-        tickTextStroke: textColor,
-        xAxisTickCount: numTicks,
-        xAxisLabelOffset: 40
-      }),
-      h(YAxis, {
-        yAxisLabel: this.props.yLabel,
-        yScale: this.props.yScale,
-        height: sideLength,
-        width: sideLength,
-        stroke: textColor,
-        tickStroke: textColor,
-        tickTextStroke: textColor,
-        yAxisTickCount: numTicks,
-        yAxisLabelOffset: 40
-      })
-    ];
-
-    return h(
-      'g',
-      {
-        transform: `translate(${this.props.xOffset}, ${this.props.yOffset})`,
-        width: sideLength,
-        height: sideLength
-      },
-      children
+    return (
+      <Box x={this.props.xOffset} y={this.props.yOffset} sideLength={sideLength}>
+        <XYAxis
+          key="x"
+          orient="bottom"
+          label={this.props.xLabel}
+          scale={this.props.xScale}
+          width={sideLength}
+          height={sideLength}
+          stroke={textColor}
+          tickStroke={textColor}
+          tickTextStroke={textColor}
+          tickCount={numTicks}
+          labelOffset={40}
+        />
+        <XYAxis
+          key="y"
+          orient="left"
+          label={this.props.yLabel}
+          scale={this.props.yScale}
+          width={sideLength}
+          height={sideLength}
+          stroke={textColor}
+          tickStroke={textColor}
+          tickTextStroke={textColor}
+          tickCount={numTicks}
+          labelOffset={40}
+        />
+      </Box>
     );
   }
 }

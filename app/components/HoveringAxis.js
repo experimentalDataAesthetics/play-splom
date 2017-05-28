@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import h from 'react-hyperscript';
 import _ from 'lodash';
 import connect from '../utils/reduxers';
 
@@ -41,16 +40,16 @@ class HoveringAxis extends React.PureComponent {
         if (featx && featy) {
           const box = getBox(hovx, hovy);
           if (box) {
-            return h(Axis, {
-              xOffset: box.x,
-              yOffset: box.y,
-              sideLength: innerSideLength,
-              muiTheme: this.props.muiTheme,
-              xScale: featx.mappedScale,
-              yScale: featy.mappedScale,
-              xLabel: featx.feature.name,
-              yLabel: featy.feature.name
-            });
+            return (
+              <Axis
+                xOffset={box.x}
+                yOffset={box.y}
+                sideLength={innerSideLength}
+                muiTheme={this.props.muiTheme}
+                xScale={featx.mappedScale}
+                yScale={featy.mappedScale}
+              />
+            );
           }
         }
       }

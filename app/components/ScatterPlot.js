@@ -1,8 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import h from 'react-hyperscript';
 import LAxis from '../components/LAxis';
 import Points from '../components/Points';
+import Box from './Box';
 
 /**
  * Renders a single scatter plot on a parent svg g
@@ -17,34 +17,19 @@ export default class ScatterPlot extends React.Component {
   };
 
   render() {
-    let children;
-    const { muiTheme, sideLength } = this.props;
-    const points = Points({
-      sideLength,
-      points: this.props.points,
-      // active or fill
-      color: muiTheme.palette[this.props.className] || muiTheme.palette.point
-    });
+    const { muiTheme, sideLength, className } = this.props;
 
-    // draw a minimal L-shaped axis
-    if (!this.props.hideAxis) {
-      const axis = LAxis({
-        sideLength,
-        color: muiTheme.tableRow.borderColor
-      });
-      children = [axis].concat(points);
-    } else {
-      children = points;
-    }
-
-    return h(
-      'g',
-      {
-        transform: `translate(${this.props.xOffset}, ${this.props.yOffset})`,
-        width: sideLength,
-        height: sideLength
-      },
-      children
+    return (
+      <Box x={this.props.xOffset} y={this.props.yOffset} sideLength={sideLength}>
+        {this.props.hideAxis
+          ? null
+          : <LAxis sideLength={sideLength} color={muiTheme.tableRow.borderColor} />}
+        <Points
+          sideLength={sideLength}
+          points={this.props.points}
+          color={muiTheme.palette[className] || muiTheme.palette.point}
+        />
+      </Box>
     );
   }
 }
