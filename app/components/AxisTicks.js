@@ -1,5 +1,5 @@
 import React from 'react';
-
+import PropTypes from 'prop-types';
 
 /**
  * Draws ticks along an axis - used by XAxis and YAxis
@@ -7,31 +7,30 @@ import React from 'react';
  * https://github.com/esbullington/react-d3
  */
 export default React.createClass({
-
   displayName: 'AxisTicks',
 
   propTypes: {
-    scale: React.PropTypes.func.isRequired,
-    orient: React.PropTypes.oneOf(['top', 'bottom', 'left', 'right']).isRequired,
-    orient2nd: React.PropTypes.oneOf(['top', 'bottom', 'left', 'right']),
-    height: React.PropTypes.number.isRequired,
-    width: React.PropTypes.number.isRequired,
-    horizontal: React.PropTypes.bool,
-    tickArguments: React.PropTypes.array,
-    tickValues: React.PropTypes.array,
-    innerTickSize: React.PropTypes.number,
-    outerTickSize: React.PropTypes.number,
-    tickPadding: React.PropTypes.number,
-    tickFormat: React.PropTypes.func,
-    tickStroke: React.PropTypes.string,
-    gridHorizontal: React.PropTypes.bool,
-    gridVertical: React.PropTypes.bool,
-    gridHorizontalStroke: React.PropTypes.string,
-    gridVerticalStroke: React.PropTypes.string,
-    gridHorizontalStrokeWidth: React.PropTypes.number,
-    gridVerticalStrokeWidth: React.PropTypes.number,
-    gridHorizontalStrokeDash: React.PropTypes.string,
-    gridVerticalStrokeDash: React.PropTypes.string
+    scale: PropTypes.func.isRequired,
+    orient: PropTypes.oneOf(['top', 'bottom', 'left', 'right']).isRequired,
+    orient2nd: PropTypes.oneOf(['top', 'bottom', 'left', 'right']),
+    height: PropTypes.number.isRequired,
+    width: PropTypes.number.isRequired,
+    horizontal: PropTypes.bool,
+    tickArguments: PropTypes.array,
+    tickValues: PropTypes.array,
+    innerTickSize: PropTypes.number,
+    outerTickSize: PropTypes.number,
+    tickPadding: PropTypes.number,
+    tickFormat: PropTypes.func,
+    tickStroke: PropTypes.string,
+    gridHorizontal: PropTypes.bool,
+    gridVertical: PropTypes.bool,
+    gridHorizontalStroke: PropTypes.string,
+    gridVerticalStroke: PropTypes.string,
+    gridHorizontalStrokeWidth: PropTypes.number,
+    gridVerticalStrokeWidth: PropTypes.number,
+    gridHorizontalStrokeDash: PropTypes.string,
+    gridVerticalStrokeDash: PropTypes.string
   },
   getDefaultProps: function getDefaultProps() {
     return {
@@ -81,7 +80,7 @@ export default React.createClass({
     if (props.tickValues) {
       ticks = props.tickValues;
     } else if (scale.ticks) {
-      ticks = scale.ticks.apply(scale, props.tickArguments);
+      ticks = scale.ticks(...props.tickArguments);
     } else {
       ticks = scale.domain();
     }
@@ -89,9 +88,9 @@ export default React.createClass({
     if (props.tickFormat) {
       tickFormat = props.tickFormat;
     } else if (scale.tickFormat) {
-      tickFormat = scale.tickFormat.apply(scale, props.tickArguments);
+      tickFormat = scale.tickFormat(...props.tickArguments);
     } else {
-      tickFormat = (d) => d;
+      tickFormat = d => d;
     }
 
     const adjustedScale = scale.rangeBand ? d => (scale(d) + scale.rangeBand()) / 2 : scale;
@@ -101,7 +100,7 @@ export default React.createClass({
     // in some orientations
     switch (props.orient) {
       case 'top':
-        tr = (tick) => `translate(${adjustedScale(tick)},0)`;
+        tr = tick => `translate(${adjustedScale(tick)},0)`;
         textAnchor = 'middle';
         y2 = props.innerTickSize * sign;
         y1 = tickSpacing * sign;
@@ -110,7 +109,7 @@ export default React.createClass({
         y2grid = -props.height;
         break;
       case 'bottom':
-        tr = (tick) => `translate(${adjustedScale(tick)},0)`;
+        tr = tick => `translate(${adjustedScale(tick)},0)`;
         textAnchor = 'middle';
         y2 = props.innerTickSize * sign;
         y1 = tickSpacing * sign;
@@ -120,7 +119,7 @@ export default React.createClass({
         break;
       case 'left':
         // translates each tick line to the correct vertical position
-        tr = (tick) => `translate(0,${props.height - adjustedScale(tick)})`;
+        tr = tick => `translate(0,${props.height - adjustedScale(tick)})`;
         textAnchor = 'end';
         // tick line from, to
         x2 = props.innerTickSize * -sign;
@@ -130,7 +129,7 @@ export default React.createClass({
         y2grid = 0;
         break;
       case 'right':
-        tr = (tick) => `translate(0,${props.height - adjustedScale(tick)})`;
+        tr = tick => `translate(0,${props.height - adjustedScale(tick)})`;
         textAnchor = 'start';
         x2 = props.innerTickSize * -sign;
         x1 = tickSpacing * -sign;
@@ -142,7 +141,7 @@ export default React.createClass({
         break;
     }
 
-    if (props.horizontalChart) {
+    if (props.horizontal) {
       textTransform = 'rotate(-90)';
       [y1, x1] = [x1, -y1 || 0];
 
@@ -181,11 +180,12 @@ export default React.createClass({
     }
 
     // return grid line if grid is enabled and grid line is not on at same position as other axis.
-    const gridLine = (pos) => {
-      if (gridOn
-        && !(props.orient2nd === 'left' && pos === 0)
-        && !(props.orient2nd === 'right' && pos === props.width)
-        && !((props.orient === 'left' || props.orient === 'right') && pos === props.height)
+    const gridLine = pos => {
+      if (
+        gridOn &&
+        !(props.orient2nd === 'left' && pos === 0) &&
+        !(props.orient2nd === 'right' && pos === props.width) &&
+        !((props.orient === 'left' || props.orient === 'right') && pos === props.height)
       ) {
         return (
           <line
@@ -204,9 +204,11 @@ export default React.createClass({
       return null;
     };
 
-    const optionalTextProps = textTransform ? {
-      transform: textTransform
-    } : {};
+    const optionalTextProps = textTransform
+      ? {
+        transform: textTransform
+      }
+      : {};
 
     return React.createElement(
       'g',
@@ -214,7 +216,7 @@ export default React.createClass({
       ticks.map((tick, idx) => {
         return React.createElement(
           'g',
-          {key: idx, className: 'tick', transform: tr(tick)},
+          { key: `idx${idx}`, className: 'tick', transform: tr(tick) },
           gridLine(adjustedScale(tick)),
           React.createElement('line', {
             style: {
@@ -225,15 +227,19 @@ export default React.createClass({
             x2,
             y2
           }),
-          React.createElement('text',
-            Object.assign({
-              strokeWidth: '0.01',
-              dy,
-              x: x1 || 0,
-              y: y1 || 0,
-              style: {fontSize: 9, stroke: props.tickTextStroke, fill: props.tickTextStroke},
-              textAnchor
-            }, optionalTextProps),
+          React.createElement(
+            'text',
+            Object.assign(
+              {
+                strokeWidth: '0.01',
+                dy,
+                x: x1 || 0,
+                y: y1 || 0,
+                style: { fontSize: 9, stroke: props.tickTextStroke, fill: props.tickTextStroke },
+                textAnchor
+              },
+              optionalTextProps
+            ),
             tickFormat(tick)
           )
         );

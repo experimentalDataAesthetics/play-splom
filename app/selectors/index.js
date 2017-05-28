@@ -1,4 +1,3 @@
-
 /**
  *
  * Selectors can compute derived data, allowing Redux to store the minimal possible state.

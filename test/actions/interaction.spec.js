@@ -1,10 +1,7 @@
-import {
-  expect
-} from 'chai';
+import { expect } from 'chai';
 import * as interaction from '../../app/actions/interaction';
 
 describe('actions/interaction', function() {
-
   describe('setPointsUnderBrush', function() {
     let did = false;
     const dispatch = () => did = true;
@@ -22,5 +19,4 @@ describe('actions/interaction', function() {
       expect(did).to.be.false;
     });
   });
-
 });

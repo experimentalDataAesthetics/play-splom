@@ -1,4 +1,3 @@
-
 export function centeredSquareMargin(width, height) {
   const innerLength = Math.min(width, height);
   let widthMargin = width - innerLength;

@@ -1,25 +1,20 @@
+import { expect } from 'chai';
+import * as interactionModule from '../../app/reducers/interaction';
+import { autoReducer } from '../../app/utils/reduxers';
 
-import {
-  expect
-} from 'chai';
-import interaction from '../../app/reducers/interaction';
-import {
-  SET_LOOP_BOX,
-  SET_POINTS_UNDER_BRUSH
-} from '../../app/actionTypes';
+const interaction = autoReducer(interactionModule);
 
 describe('reducers/interaction', function() {
-
-  describe('SET_LOOP_BOX', function() {
+  describe('setLoopBox', function() {
     const click1 = {
-      type: SET_LOOP_BOX,
+      type: 'setLoopBox',
       payload: {
         m: 1,
         n: 1
       }
     };
     const click2 = {
-      type: SET_LOOP_BOX,
+      type: 'setLoopBox',
       payload: {
         m: 2,
         n: 2
@@ -44,9 +39,9 @@ describe('reducers/interaction', function() {
     });
   });
 
-  describe('SET_POINTS_UNDER_BRUSH', function() {
+  describe('setPointsUnderBrush', function() {
     const click1 = {
-      type: SET_POINTS_UNDER_BRUSH,
+      type: 'setPointsUnderBrush',
       payload: {
         indices: [1, 3],
         m: 1,
@@ -54,7 +49,7 @@ describe('reducers/interaction', function() {
       }
     };
     const newPoints = {
-      type: SET_POINTS_UNDER_BRUSH,
+      type: 'setPointsUnderBrush',
       payload: {
         indices: [4, 6],
         m: 1,
@@ -62,7 +57,7 @@ describe('reducers/interaction', function() {
       }
     };
     const differentBox = {
-      type: SET_POINTS_UNDER_BRUSH,
+      type: 'setPointsUnderBrush',
       payload: {
         indices: [1, 3],
         m: 2,
@@ -70,7 +65,7 @@ describe('reducers/interaction', function() {
       }
     };
     const nothing = {
-      type: SET_POINTS_UNDER_BRUSH,
+      type: 'setPointsUnderBrush',
       payload: {
         indices: [],
         m: 2,

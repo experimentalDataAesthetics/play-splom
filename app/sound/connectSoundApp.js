@@ -6,16 +6,7 @@
  * to the SoundApp
  */
 
-import {
-  SPAWN_SYNTHS,
-  SET_LOOP
-} from '../actionTypes';
-
-import {
-  spawnEventsFromBrush,
-  getLoopModePayload
-} from '../selectors/index';
-
+import { spawnEventsFromBrush, getLoopModePayload } from '../selectors/index';
 
 /**
  * observeStore - Call onChange whenever the state changes
@@ -45,28 +36,27 @@ function observeStore(store, select, onChange) {
   return unsubscribe;
 }
 
-const getPointsEntering = (state) => state.interaction.pointsEntering;
+const getPointsEntering = state => state.interaction.pointsEntering;
 
 /**
  * connectSoundApp - connect redux store to the SoundApp on main thread
  *
  * Observes the redux store:
  *
- *  for pointsEntering it spawns synth events via callActionOnMain SPAWN_SYNTHS
+ *  for pointsEntering it spawns synth events via callActionOnMain 'spawnSynths'
  *
- *  for loopMode it makes the loop payload and sends SET_LOOP to main
+ *  for loopMode it makes the loop payload and sends 'setLoop' to main
  *
  * @param  {Object} store            redux store
  * @param  {Function} callActionOnMain
  * @return {undefined}
  */
 export default function connectSoundApp(store, callActionOnMain) {
-
-  observeStore(store, getPointsEntering, (state) => {
+  observeStore(store, getPointsEntering, state => {
     const synthEvents = spawnEventsFromBrush(state);
     if (synthEvents.length) {
       callActionOnMain({
-        type: SPAWN_SYNTHS,
+        type: 'spawnSynths',
         payload: synthEvents
       });
     }
@@ -74,8 +64,11 @@ export default function connectSoundApp(store, callActionOnMain) {
 
   observeStore(store, getLoopModePayload, (state, payload) => {
     callActionOnMain({
-      type: SET_LOOP,
-      payload
+      type: 'setLoop',
+      payload: {
+        ...payload,
+        epoch: performance.timing.navigationStart + payload.epoch
+      }
     });
   });
 }

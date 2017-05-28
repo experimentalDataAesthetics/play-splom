@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import _ from 'lodash';
 import connect from '../utils/reduxers';
 import { setWindowSize } from '../actions/ui';
@@ -9,8 +9,7 @@ import MainLayout from '../containers/MainLayout';
  *
  * It handles window resizing and presents the MainLayout.
  */
-class Main extends Component {
-
+class Main extends React.PureComponent {
   componentDidMount() {
     this._debouncedHandleResize = _.debounce(() => this.handleResize(), 300);
     window.addEventListener('resize', this._debouncedHandleResize);
@@ -28,9 +27,7 @@ class Main extends Component {
   }
 
   render() {
-    return (
-      <MainLayout />
-    );
+    return <MainLayout />;
   }
 }
 

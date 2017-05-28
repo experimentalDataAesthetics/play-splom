@@ -12,8 +12,6 @@ import styles from './Sidebar.css';
  */
 export default class Help extends React.Component {
   render() {
-    return (
-      <div className={styles.help} />
-    );
+    return <div className={styles.help} />;
   }
 }

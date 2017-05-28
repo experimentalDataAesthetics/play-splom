@@ -1,4 +1,3 @@
-
 /**
  * http://redux.js.org/docs/basics/Reducers.html
  *
@@ -10,37 +9,53 @@
  * This is the job of a reducer. The reducers handle the actions and return
  * a new state.
  *
- * Each module in reducers/ (interaction, datasets etc) contains one function
- * that is given just it's slice of the state and should return a new state
- * for that slice.
+ * Each module in reducers/ (reducers/interaction.js, reducers/datasets.js etc)
+ * export functions that have the same names as the action.type that they handle.
+ *
+ * If the actions.type === function name then it is called with (state, action)
+ * and should return a new modified state in response to that action.
+ *
+ * Actually they are each given just it's slice of the state:
+ * reducers/interaction.js gets (state.interaction, action)
+ * and should return a new state for just that slice.
+ *
+ * They shouldn't concern themselves with other parts of the state object.
  *
  * So reducers/interaction is given state.interaction and should return a new
  * state object which is saved back into state['interaction']
  */
 
 import { combineReducers } from 'redux';
-import { routerReducer as routing } from 'react-router-redux';
+import { autoReducer } from '../utils/reduxers';
+import * as dataset from './dataset';
+import * as datasets from './datasets';
+import * as mapping from './mapping';
+import * as sound from './sound';
+import * as sounds from './sounds';
+import * as ui from './ui';
+import * as interaction from './interaction';
+import * as transport from './transport';
 
-import dataset from './dataset';
-import datasets from './datasets';
-import mapping from './mapping';
-import sound from './sound';
-import sounds from './sounds';
-import ui from './ui';
-import interaction from './interaction';
-import transport from './transport';
-
-// combine all into a single reduction function
+// Combine all into a single reduction function
 // that can be passed to createStore
 // http://redux.js.org/docs/api/combineReducers.html
-export default combineReducers({
-  datasets,
-  dataset,
-  sounds,
-  sound,
-  mapping,
-  ui,
-  interaction,
-  transport,
-  routing
+const reducers = combineReducers({
+  datasets: autoReducer(datasets),
+  dataset: autoReducer(dataset),
+  sounds: autoReducer(sounds),
+  sound: autoReducer(sound),
+  mapping: autoReducer(mapping),
+  ui: autoReducer(ui),
+  interaction: autoReducer(interaction),
+  transport: autoReducer(transport)
 });
+
+export default function(state = {}, action) {
+  const nextState = reducers(state, action);
+  if (process.env.NODE_ENV !== 'production') {
+    if (state === nextState) {
+      console.warn('ACTION did not change state:', action, state);
+    }
+  }
+  return nextState;
+}

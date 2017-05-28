@@ -1,14 +1,15 @@
 /* eslint import/no-extraneous-dependencies: 0 */
 /* eslint global-require: 0 */
 import { expect } from 'chai';
-import mapping from '../../app/reducers/mapping';
-import * as types from '../../app/actionTypes';
+import * as mappingModule from '../../app/reducers/mapping';
+import { autoReducer } from '../../app/utils/reduxers';
+
+const mapping = autoReducer(mappingModule);
 
 describe('mapping', function() {
-
-  describe('SET_FIXED_PARAM', function() {
+  describe('setFixedParam', function() {
     const setRange = {
-      type: types.SET_FIXED_PARAM,
+      type: 'setFixedParam',
       payload: {
         param: 'freq',
         values: {
@@ -18,7 +19,7 @@ describe('mapping', function() {
       }
     };
     const setValue = {
-      type: types.SET_FIXED_PARAM,
+      type: 'setFixedParam',
       payload: {
         param: 'freq',
         values: {
@@ -35,7 +36,7 @@ describe('mapping', function() {
     it('should still have range set after doing setRange ... setValue', function() {
       const state = mapping({}, setRange);
       const state2 = mapping(state, setValue);
-      const should = {minval: 0.25, maxval: 0.75, value: 0.5};
+      const should = { minval: 0.25, maxval: 0.75, value: 0.5 };
       expect(state2.unipolarMappingRanges.freq).to.eql(should);
     });
   });
@@ -59,7 +60,7 @@ describe('mapping', function() {
     };
 
     const payload = {
-      type: types.AUTO_MAP,
+      type: 'autoMap',
       payload: {
         sound
       }
@@ -77,7 +78,5 @@ describe('mapping', function() {
       const state2 = mapping(state, payload);
       expect(state2).to.eql(should);
     });
-
   });
-
 });

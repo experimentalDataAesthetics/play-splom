@@ -1,5 +1,5 @@
-
 const path = require('path');
+const webpack = require('webpack');
 
 module.exports = {
   node: {
@@ -8,26 +8,26 @@ module.exports = {
   },
   target: 'electron-renderer',
   module: {
-    loaders: [
+    rules: [
       {
         test: /\.jsx?$/,
-        loaders: ['babel-loader'],
-        exclude: /node_modules/
-      }, {
+        use: ['babel-loader']
+      },
+      {
         test: /\.json$/,
-        loader: 'json-loader'
+        use: 'json-loader'
       },
       {
         test: /\.(?:csv|scd|scsyndef)$/,
-        loader: 'file-loader'
+        use: 'file-loader'
       },
       {
         test: /\.(?:png|jpg|svg)$/,
-        loader: 'url-loader'
+        use: 'url-loader'
       },
       {
         test: /LICENSE$/,
-        loader: 'null'
+        use: 'null'
       }
     ]
   },
@@ -36,32 +36,24 @@ module.exports = {
     filename: 'bundle.js',
     libraryTarget: 'commonjs2'
   },
-  resolve: {
-    extensions: ['', '.js', '.jsx'],
-    packageMains: ['webpack', 'browser', 'web', 'browserify', ['jam', 'main'], 'main']
-  },
-  // https://github.com/webpack/webpack/issues/1260
-  resolveLoader: {
-    root: path.resolve('./node_modules')
-  },
-  plugins: [
-  ],
+  plugins: [new webpack.NamedModulesPlugin()],
   externals: [
-    // put your node 3rd party libraries which can't be built with webpack here
+    // Put your node 3rd party libraries which can't be built with webpack here
     // (mysql, mongodb, and so on..)
-    // cannot compile these.
-    // Critical dependencies:
-    // the request of a dependency is an expression
-    // cannot find miso.events
-    'winston',
+    // Including any libraries that are ES6 as UglifyJS cannot handle those yet.
+    'binpack',
     'colors',
-    'miso.dataset',
-    'miso.events',
-    // doesnt get the submodules
-    // better to import just the ones you need anyway
+    'cuid',
+    'data-projector',
+    'd3',
+    'electron-debug',
+    'table',
+    'temp',
+    'untildify',
+    'winston',
     'lodash',
-    // not loading the dryad classes ?
-    // scsynthdef missing
-    'supercolliderjs'
+    // for osc-min and binpack
+    'supercolliderjs',
+    'dryadic'
   ]
 };

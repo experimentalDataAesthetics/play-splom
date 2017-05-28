@@ -1,5 +1,6 @@
 import _ from 'lodash';
 import React from 'react';
+import PropTypes from 'prop-types';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import connect from '../utils/reduxers';
 
@@ -7,10 +8,7 @@ import Sidebar from './Sidebar';
 import SVGFrame from './SVGFrame';
 import Notification from '../components/Notification';
 
-import {
-  getLayout,
-  getMuiTheme
-} from '../selectors/index';
+import { getLayout, getMuiTheme } from '../selectors/index';
 
 /**
  * This is the layout of the application itself.
@@ -23,11 +21,10 @@ import {
  * when the window size changes, also on change of number of dataset features,
  * number of boxes etc.
  */
-class MainLayout extends React.Component {
-
+class MainLayout extends React.PureComponent {
   static propTypes = {
-    muiTheme: React.PropTypes.object.isRequired,
-    layout: React.PropTypes.object.isRequired
+    muiTheme: PropTypes.object.isRequired,
+    layout: PropTypes.object.isRequired
   };
 
   render() {
@@ -42,18 +39,15 @@ class MainLayout extends React.Component {
 
     const svg = (
       <div style={svgStyle}>
-        <SVGFrame
-          containerWidth={layout.svgStyle.width}
-          containerHeight={layout.svgStyle.height}
-        />
+        <SVGFrame containerWidth={layout.svgStyle.width} containerHeight={layout.svgStyle.height} />
       </div>
     );
 
-    const sidebar = layout.showSidebar ? (
-      <div style={layout.sideBarStyle}>
+    const sidebar = layout.showSidebar
+      ? (<div style={layout.sideBarStyle}>
         <Sidebar />
-      </div>
-    ) : null;
+      </div>)
+      : null;
 
     return (
       <MuiThemeProvider muiTheme={this.props.muiTheme}>

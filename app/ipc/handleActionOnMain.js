@@ -1,15 +1,7 @@
 /* eslint import/no-extraneous-dependencies: 0 */
 /* eslint import/no-unresolved: 0 */
 /* eslint import/extensions: 0 */
-import {dialog} from 'electron';
-import {
-  OPEN_DATASET_DIALOG,
-  LOAD_DATASET,
-  SET_MASTER_CONTROLS,
-  SPAWN_SYNTH,
-  SPAWN_SYNTHS,
-  SET_LOOP
-} from '../actionTypes';
+import { dialog } from 'electron';
 
 /**
  * This runs on the main process and should be included in background.js
@@ -17,11 +9,11 @@ import {
  */
 export default function handleActionOnMain(event, action, soundApp) {
   switch (action.type) {
-    case OPEN_DATASET_DIALOG:
-      dialog.showOpenDialog((fileNames) => {
+    case 'openDatasetDialog':
+      dialog.showOpenDialog(fileNames => {
         if (fileNames && fileNames.length) {
           reply(event, {
-            type: LOAD_DATASET,
+            type: 'loadDataset',
             payload: {
               path: fileNames[0]
             }
@@ -30,16 +22,16 @@ export default function handleActionOnMain(event, action, soundApp) {
       });
 
       break;
-    case SPAWN_SYNTH:
+    case 'spawnSynth':
       soundApp.spawnSynth(action.payload);
       break;
-    case SPAWN_SYNTHS:
+    case 'spawnSynths':
       soundApp.spawnSynths(action.payload);
       break;
-    case SET_MASTER_CONTROLS:
+    case 'setMasterControls':
       soundApp.setMasterControls(action.payload);
       break;
-    case SET_LOOP:
+    case 'setLoop':
       soundApp.setLoop(action.payload);
       break;
     // FREE_ALL

@@ -1,4 +1,5 @@
-import { Component, PropTypes } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 import h from 'react-hyperscript';
 
 import ScatterPlotsContainer from './ScatterPlotsContainer';
@@ -7,11 +8,10 @@ import ScatterPlotsContainer from './ScatterPlotsContainer';
 /**
  * Renders the SVG element in which the scatterplots are placed.
  */
-export default class SVGFrame extends Component {
-
+export default class SVGFrame extends React.Component {
   static propTypes = {
     containerHeight: PropTypes.number.isRequired,
-    containerWidth: PropTypes.number.isRequired,
+    containerWidth: PropTypes.number.isRequired
   };
 
   render() {

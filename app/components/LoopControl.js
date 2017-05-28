@@ -1,51 +1,47 @@
 import React from 'react';
-import d3 from 'd3';
+import PropTypes from 'prop-types';
+import { scale, round } from 'd3';
 import _ from 'lodash';
-import { Slider } from 'material-ui';
+import InputRange from 'react-input-range';
+import SelectField from 'material-ui/SelectField';
+import MenuItem from 'material-ui/MenuItem';
 import connect from '../utils/reduxers';
-import { getLoop } from '../selectors';
-import { toggleLoopMode, setLoopTime } from '../actions/interaction';
+import { getLoop, getDatasetMetadata } from '../selectors';
+import { toggleLoopMode, setLoopTime, setLoopTimeDimension } from '../actions/interaction';
 import ToggleButton from './ToggleButton';
 import style from './XYParamTable.css';
 import styles from '../containers/Sidebar.css';
 
 const MIN = 0.05;
 const MAX = 60.0;
-const mapv = d3.scale.pow().exponent(2).range([MIN, MAX]);
+const mapv = scale.pow().exponent(2).range([MIN, MAX]);
 const unmapv = mapv.invert;
-
 
 /**
  * A toggle button to turn looping on and off,
  * and a slider to adjust loopTime.
  *
  */
-class LoopControl extends React.Component {
-
+class LoopControl extends React.PureComponent {
   static propTypes = {
-    loopMode: React.PropTypes.object.isRequired,
-    setLoopTime: React.PropTypes.func.isRequired,
-    toggleLoopMode: React.PropTypes.func.isRequired
+    loopMode: PropTypes.object.isRequired,
+    setLoopTime: PropTypes.func.isRequired,
+    toggleLoopMode: PropTypes.func.isRequired
   };
 
+  setLoopTime = _.debounce(v => {
+    this.props.setLoopTime(mapv(v));
+  }, 100);
+
   render() {
-    const sliderAction = (e, v) => {
-      this.props.setLoopTime(mapv(1 - v));
-    };
-
-    const sliderStyle = {
-      marginTop: 4,
-      marginBottom: 4
-    };
-
     const slider = (
-      <Slider
-        defaultValue={1 - unmapv(this.props.loopMode.loopTime || 10)}
-        min={0}
-        max={1}
-        step={0.01}
-        onChange={_.debounce(sliderAction, 100)}
-        sliderStyle={sliderStyle}
+      <InputRange
+        minValue={0}
+        maxValue={1}
+        step={0.001}
+        value={unmapv(this.props.loopMode.loopTime || 10)}
+        onChange={this.setLoopTime}
+        formatLabel={v => round(mapv(v), 2)}
       />
     );
 
@@ -54,12 +50,34 @@ class LoopControl extends React.Component {
     // or make a different action
     const button = (
       <ToggleButton
-        isActive={Boolean(this.props.loopMode.box)}
+        isActive={!!this.props.loopMode.box}
         action={() => this.props.toggleLoopMode()}
         iconActive="repeat"
         iconInactive="repeat"
       />
     );
+
+    const timeColumns = this.props.dataSetMetadata
+      ? this.props.dataSetMetadata.columnNames.map((name, i) => {
+        return {
+          value: i,
+          label: name
+        };
+      })
+      : [];
+
+    const timeOptions = [
+      {
+        value: null,
+        label: 'Index'
+      },
+      {
+        value: 'x',
+        label: 'x'
+      }
+    ].concat(timeColumns);
+
+    const timeValue = this.props.loopMode.timeDimension;
 
     return (
       <div className={styles.loopControl}>
@@ -68,7 +86,20 @@ class LoopControl extends React.Component {
             <tr>
               <th>Loop</th>
               <td>{button}</td>
+            </tr>
+            <tr>
+              <th>Time</th>
               <td className={style.range}>{slider}</td>
+            </tr>
+            <tr>
+              <th>Dimension</th>
+              <td>
+                <Select
+                  value={timeValue}
+                  set={value => this.props.setLoopTimeDimension(value)}
+                  options={timeOptions}
+                />
+              </td>
             </tr>
           </tbody>
         </table>
@@ -77,10 +108,49 @@ class LoopControl extends React.Component {
   }
 }
 
+function Select({ value, set, options }) {
+  const onChange = (e, i, v) => set(selectToValue(v));
+  return (
+    <SelectField value={valueToSelect(value)} onChange={onChange}>
+      {options.map(vl => (
+        <MenuItem value={valueToSelect(vl.value)} primaryText={vl.label} key={vl.label} />
+      ))}
+    </SelectField>
+  );
+}
 
-export default connect({
-  loopMode: getLoop
-}, {
-  setLoopTime,
-  toggleLoopMode
-})(LoopControl);
+const X = 200;
+const INDEX = 100;
+
+function valueToSelect(v) {
+  if (_.isNumber) {
+    return v;
+  }
+  if (v === 'x') {
+    return X;
+  }
+  return INDEX;
+}
+
+function selectToValue(s) {
+  switch (s) {
+    case X:
+      return 'x';
+    case INDEX:
+      return null;
+    default:
+      return s;
+  }
+}
+
+export default connect(
+  {
+    loopMode: getLoop,
+    dataSetMetadata: getDatasetMetadata
+  },
+  {
+    setLoopTime,
+    toggleLoopMode,
+    setLoopTimeDimension
+  }
+)(LoopControl);

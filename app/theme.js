@@ -47,7 +47,7 @@ const dark = {
 
 const customize = dark;
 
-const makeMuiTheme = (base) => {
+const makeMuiTheme = base => {
   const t = u(customize, base);
   return getMuiTheme(t);
 };

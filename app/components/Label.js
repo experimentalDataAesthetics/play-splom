@@ -1,85 +1,65 @@
-
 import React from 'react';
+import PropTypes from 'prop-types';
 
 /**
  * A string label used by the XAxis and YAxis.
- *
- * source:
- * https://github.com/esbullington/react-d3
  */
-module.exports = React.createClass({
 
-  displayName: 'Label',
-
-  propTypes: {
-    label: React.PropTypes.string.isRequired,
-    height: React.PropTypes.number,
-    offset: React.PropTypes.number,
-    horizontalChart: React.PropTypes.bool,
-    horizontalTransform: React.PropTypes.string,
-    textColor: React.PropTypes.string,
-    width: React.PropTypes.number,
-    strokeWidth: React.PropTypes.number,
-    textAnchor: React.PropTypes.string,
-    verticalTransform: React.PropTypes.string
-  },
-
-  getDefaultProps() {
-    return {
-      horizontalTransform: 'rotate(270)',
-      strokeWidth: 0.01,
-      offset: 0,
-      textAnchor: 'middle',
-      verticalTransform: 'rotate(0)',
-      textColor: '#000000'
-    };
-  },
-
-  render() {
-
-    var props = this.props;
-
-    if (!props.label) {
-      return <text />;
-    }
-
-    var transform, x, y;
-    if (props.orient === 'top' || props.orient === 'bottom') {
-      transform = props.verticalTransform;
-      x = props.width / 2;
-      y = props.offset;
-
-      if (props.horizontalChart) {
-        transform = `rotate(180 ${x} ${y}) ${transform}`;
-      }
-    } else {  // left, right
-      transform = props.horizontalTransform;
-      x = -props.height / 2;
-      if (props.orient === 'left') {
-        y = -props.offset;
-      } else {
-        y = props.offset;
-      }
-    }
-
-    const style = {
-      stroke: props.textColor,
-      fill: props.textColor,
-      fontSize: 10
-    };
-
-    return (
-      <text
-        strokeWidth={props.strokeWidth.toString()}
-        textAnchor={props.textAnchor}
-        transform={transform}
-        style={style}
-        y={y}
-        x={x}
-      >
-        {props.label}
-      </text>
-    );
+export default function Label({
+  label,
+  orient, // top bottom left right
+  height,
+  width,
+  offset = 0,
+  textColor = '#000000',
+  strokeWidth = 0.01
+}) {
+  if (!label) {
+    return <text />;
   }
 
-});
+  let transform;
+  let x;
+  let y;
+  switch (orient) {
+    case 'top':
+    case 'bottom':
+      transform = 'rotate(0)';
+      x = width / 2;
+      y = offset;
+      break;
+    case 'left':
+    case 'right':
+    default:
+      transform = 'rotate(270)';
+      x = -height / 2;
+      y = orient === 'left' ? -offset : offset;
+  }
+
+  return (
+    <text
+      strokeWidth={strokeWidth.toString()}
+      textAnchor="middle"
+      transform={transform}
+      style={{
+        stroke: textColor,
+        fill: textColor,
+        fontSize: 10
+      }}
+      x={x}
+      y={y}
+    >
+      {label}
+    </text>
+  );
+}
+
+Label.propTypes = {
+  label: PropTypes.string.isRequired,
+  orient: PropTypes.oneOf(['top', 'bottom', 'left', 'right']),
+  height: PropTypes.number,
+  width: PropTypes.number,
+  offset: PropTypes.number,
+  textColor: PropTypes.string,
+  strokeWidth: PropTypes.number
+};

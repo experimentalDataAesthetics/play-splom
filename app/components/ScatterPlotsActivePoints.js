@@ -25,8 +25,7 @@ import {
  * (eg. 30) and not all points for the dataset (eg. 500) -- multiplied
  * by the number of boxes (eg. 25)
  */
-class ScatterPlotsActivePoints extends React.Component {
-
+class ScatterPlotsActivePoints extends React.PureComponent {
   render() {
     const children = [];
 
@@ -35,11 +34,11 @@ class ScatterPlotsActivePoints extends React.Component {
       const margin = this.props.layout.margin;
       const innerSide = sideLength - margin;
 
-      this.props.layout.boxes.forEach((box) => {
+      this.props.layout.boxes.forEach(box => {
         const points = [];
 
         if (this.props.pointsUnderBrush.length <= 200) {
-          this.props.pointsUnderBrush.forEach((i) => {
+          this.props.pointsUnderBrush.forEach(i => {
             points.push([
               this.props.features[box.m].values[i],
               this.props.features[box.n].yValues[i]

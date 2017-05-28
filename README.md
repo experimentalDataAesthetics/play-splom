@@ -157,8 +157,6 @@ This will compile and open an Electron app in development mode with hot loading 
 
 `Alt-Command-i` will open Chrome Devtools
 
-`Ctrl-h` will open the [Redux-Devtools](https://github.com/gaearon/redux-devtools)
-
 To install the extra devtools, open a console inside the Electron app and run:
 
 ```

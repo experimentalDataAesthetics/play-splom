@@ -1,22 +1,20 @@
 import log from 'electron-log';
-import {LOAD_DATASET, ERROR_ON_MAIN} from '../actionTypes';
-import {loadDataset} from '../actions/datasets';
-import {notify} from '../actions/ui';
+import { loadDataset } from '../actions/datasets';
+import { notify } from '../actions/ui';
 
 /**
  * This runs on the main process and should be included in background.js
  * It handles actions sent from callActionOnMain.
  */
 export default function(dispatch, sender, action) {
-
   switch (action.type) {
     // Special cases: if async is needed then use an action creator
     // which does the async and then dispatches an action.
     // there is middleware added to dispatch that recognizes thunks (functions)
-    case LOAD_DATASET:
+    case 'loadDataset':
       dispatch(loadDataset(action.payload.path));
       break;
-    case ERROR_ON_MAIN: {
+    case 'errorOnMain': {
       const msg = [
         `ERROR on main: ${action.payload.message}`,
         action.payload.data,

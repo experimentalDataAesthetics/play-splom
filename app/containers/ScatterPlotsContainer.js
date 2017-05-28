@@ -1,19 +1,14 @@
-import React, { Component } from 'react';
-import _ from 'lodash';
-import h from 'react-hyperscript';
+import React from 'react';
+import PropTypes from 'prop-types';
 import connect from '../utils/reduxers';
 import ScatterPlots from '../components/ScatterPlots';
 import ScatterPlotsActivePoints from '../components/ScatterPlotsActivePoints';
 import ScatterPlotsInteractive from '../components/ScatterPlotsInteractive';
 import HoveringAxis from '../components/HoveringAxis';
 import LoopPlayHead from '../components/LoopPlayHead';
+import FeatureLabels from '../components/FeatureLabels';
 
-import {
-  getPointsForPlot,
-  getLayout,
-  getDatasetMetadata
-} from '../selectors/index';
-
+import { getPointsForPlot, getLayout, getDatasetMetadata } from '../selectors/index';
 
 /**
  * This holds all of the plotting and interactive components for the Scatter Plots.
@@ -25,49 +20,47 @@ import {
  * - ScatterPlotsInteractive
  *
  */
-class ScatterPlotsContainer extends Component {
-
+class ScatterPlotsContainer extends React.PureComponent {
   static propTypes = {
-    width: React.PropTypes.number.isRequired,
-    height: React.PropTypes.number.isRequired,
-    dataset: React.PropTypes.object,
-    features: React.PropTypes.array.isRequired,
-    layout: React.PropTypes.object.isRequired
+    width: PropTypes.number.isRequired,
+    height: PropTypes.number.isRequired,
+    dataset: PropTypes.object,
+    features: PropTypes.array.isRequired,
+    layout: PropTypes.object.isRequired
   };
 
   render() {
-    const padding = this.props.layout.scatterPlotsMargin;
-    const props = _.pick(this.props, [
-      'dataset',
-      'features',
-      'layout'
-    ]);
+    const { dataset, features, layout } = this.props;
+    const padding = layout.scatterPlotsMargin;
 
-    props.height = this.props.height - (padding * 2);
-    props.width = this.props.width - (padding * 2);
+    const subProps = {
+      height: this.props.height - padding * 2,
+      width: this.props.width - padding * 2,
+      dataset,
+      features,
+      layout
+    };
 
-    const plots = h(ScatterPlots, props);
-    const activePoints = h(ScatterPlotsActivePoints);
-    const loopPlayHead = h(LoopPlayHead);
-    const surface = h(ScatterPlotsInteractive, props);
-    const hoveringAxis = h(HoveringAxis);
-
-    return h(
-      'g',
-      {
-        height: props.height,
-        width: props.width,
-        transform: `translate(${padding}, ${padding})`
-      },
-      [
-        plots,
-        activePoints,
-        loopPlayHead,
-        hoveringAxis,
-        surface
-      ]
+    return (
+      <g
+        height={subProps.height}
+        width={subProps.width}
+        transform={`translate(${padding}, ${padding})`}
+      >
+        <ScatterPlots {...subProps} />
+        <ScatterPlotsActivePoints />
+        <LoopPlayHead />
+        <FeatureLabels
+          dataset={dataset}
+          layout={layout}
+          width={subProps.width}
+          height={subProps.height}
+          color={'#999'}
+        />
+        <HoveringAxis />
+        <ScatterPlotsInteractive {...subProps} />
+      </g>
     );
-
   }
 }
 

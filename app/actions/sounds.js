@@ -1,21 +1,13 @@
 import _ from 'lodash';
 
 import callActionOnMain from '../ipc/callActionOnMain';
-import {
-  SET_SOUNDS,
-  SELECT_SOUND,
-  SPAWN_SYNTH,
-  SET_MASTER_CONTROLS,
-  AUTO_MAP
-} from '../actionTypes';
-
 
 /**
  * Set sounds (objects with synthdef descriptions) to store
  */
 export function setSounds(sounds) {
   return {
-    type: SET_SOUNDS,
+    type: 'setSounds',
     payload: sounds
   };
 }
@@ -28,11 +20,11 @@ export function selectSound(name) {
     const state = getState();
     const sound = _.find(state.sounds, { name });
     dispatch({
-      type: SELECT_SOUND,
+      type: 'selectSound',
       payload: name
     });
     dispatch({
-      type: AUTO_MAP,
+      type: 'autoMap',
       payload: {
         sound
       }
@@ -45,7 +37,7 @@ export function selectSound(name) {
  */
 export function spawnSynth(event) {
   callActionOnMain({
-    type: SPAWN_SYNTH,
+    type: 'spawnSynth',
     payload: event
   });
 }
@@ -57,7 +49,7 @@ export function spawnSynth(event) {
  */
 export function setMasterControls(event) {
   callActionOnMain({
-    type: SET_MASTER_CONTROLS,
+    type: 'setMasterControls',
     payload: event
   });
 }

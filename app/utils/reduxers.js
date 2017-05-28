@@ -1,7 +1,23 @@
-
 import { createSelector } from 'reselect';
 import { connect as reduxConnect } from 'react-redux';
 import _ from 'lodash';
+
+/**
+ * Call any function in the module with the same name as the action.type
+ * eg. {type: 'setLoop' }  -> setLoop(state, action)
+ *
+ * @param  {Object} module  Module with exported functions.
+ *                          default export should be initial state.
+ * @return {Function}       (state, action) => state
+ */
+export function autoReducer(module) {
+  return (state, action) => {
+    // console.log('handler', { module, state, default: module.default, action });
+    const h = module[action.type];
+    const s = state || module.default;
+    return h ? h(s, action) : s;
+  };
+}
 
 /**
  * Create a reselect selector from an object of selector definitions.
@@ -23,10 +39,10 @@ export function selectState(selectors) {
 
   const names = _.keys(selectors);
   // if its a string then select from state
-  const getters = names.map((k) => {
+  const getters = names.map(k => {
     const getter = selectors[k];
     if (_.isString(getter)) {
-      return (state) => state[getter];
+      return state => state[getter];
     }
     if (!_.isFunction(getter)) {
       throw new Error(`${k} is not a selector Function: ${getter}`);
@@ -35,15 +51,13 @@ export function selectState(selectors) {
     return getter;
   });
 
-  return createSelector(
-    getters,
-    (...results) => {
-      const result = {};
-      _.each(names, (k, i) => {
-        result[k] = results[i];
-      });
-      return result;
+  return createSelector(getters, (...results) => {
+    const result = {};
+    _.each(names, (k, i) => {
+      result[k] = results[i];
     });
+    return result;
+  });
 }
 
 /**
@@ -62,8 +76,8 @@ export function mapActions(handlers) {
     return null;
   }
 
-  return (dispatch) => {
-    return _.mapValues(handlers, (fn) => {
+  return dispatch => {
+    return _.mapValues(handlers, fn => {
       return (...args) => {
         dispatch(fn(...args));
       };

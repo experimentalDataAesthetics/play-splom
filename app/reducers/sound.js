@@ -1,10 +1,5 @@
-import {SELECT_SOUND} from '../actionTypes';
+export default null;
 
-export default function(state = null, action) {
-  switch (action.type) {
-    case SELECT_SOUND:
-      return action.payload;
-    default:
-      return state;
-  }
+export function selectSound(state, action) {
+  return action.payload;
 }

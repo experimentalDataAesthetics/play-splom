@@ -3,7 +3,7 @@
  *
  * Config for the main process for electron
  */
-
+import path from 'path';
 import webpack from 'webpack';
 import CopyWebpackPlugin from 'copy-webpack-plugin';
 import baseConfig from './webpack.config.base';
@@ -22,30 +22,23 @@ export default {
   },
 
   plugins: [
-    // now I'm getting everything anyway
-    new CopyWebpackPlugin([
-      {
-        // context: path.join(__dirname, 'app'),
-        from: 'synthdefs',
-        to: 'synthdefs'
-        // to: path.join(__dirname, 'dist', 'app', 'synthdefs')
-        // to: '/Users/crucial/Desktop/synthdefs'
-      },
-      {
-        from: 'vendor',
-        to: 'vendor'
-      }
-    ]),
+    ...baseConfig.plugins,
 
-    new webpack.optimize.UglifyJsPlugin({
-      compressor: {
-        warnings: false
-      }
+    // new webpack.optimize.UglifyJsPlugin({
+    //   compress: false,
+    //   // compress: {
+    //   //   warnings: false
+    //   // },
+    //   output: {
+    //     comments: false
+    //   }
+    // }),
+
+    new webpack.BannerPlugin({
+      banner: 'require("source-map-support").install();',
+      raw: true,
+      entryOnly: false
     }),
-    new webpack.BannerPlugin(
-      'require("source-map-support").install();',
-      { raw: true, entryOnly: false }
-    ),
     new webpack.DefinePlugin({
       'process.env.NODE_ENV': JSON.stringify('production')
     })
@@ -58,8 +51,5 @@ export default {
     __filename: false
   },
 
-  externals: [
-    ...baseConfig.externals,
-    'source-map-support'
-  ]
+  externals: [...baseConfig.externals, 'source-map-support']
 };

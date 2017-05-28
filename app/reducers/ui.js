@@ -1,16 +1,7 @@
 import u from 'updeep';
-import {
-  FOCUS_SCATTERPLOT,
-  SET_HOVERING,
-  ZOOM_SCATTERPLOT,
-  MOUSE_MOVE,
-  SHOW_BRUSH,
-  SET_WINDOW_SIZE,
-  SET_NOTIFICATION
-} from '../actionTypes';
 import defaultTheme from '../theme';
 
-const initial = {
+export default {
   focused: null,
   hovering: null,
   zoomed: null,
@@ -27,46 +18,66 @@ const initial = {
 /**
  * To unfocus, set focused to null. same with hovering and zoomed
  */
-export default function ui(state = initial, action) {
-  switch (action.type) {
+export function focusScatterplot(state, action) {
+  return u(
+    {
+      focused: action.payload
+    },
+    state
+  );
+}
 
-    case FOCUS_SCATTERPLOT:
-      return u({
-        focused: action.payload
-      }, state);
+export function setHovering(state, action) {
+  return u(
+    {
+      hovering: action.payload
+    },
+    state
+  );
+}
 
-    case SET_HOVERING:
-      return u({
-        hovering: action.payload
-      }, state);
+export function zoomScatterplot(state, action) {
+  return u(
+    {
+      zoomed: action.payload
+    },
+    state
+  );
+}
 
-    case ZOOM_SCATTERPLOT:
-      return u({
-        zoomed: action.payload
-      }, state);
+// in svg frame
+export function mouseMove(state, action) {
+  return u(
+    {
+      mouse: action.payload
+    },
+    state
+  );
+}
 
-      // in svg frame
-    case MOUSE_MOVE:
-      return u({
-        mouse: action.payload
-      }, state);
+export function showBrush(state, action) {
+  return u(
+    {
+      brush: action.payload
+    },
+    state
+  );
+}
 
-    case SHOW_BRUSH:
-      return u({
-        brush: action.payload
-      }, state);
+export function setWindowSize(state, action) {
+  return u(
+    {
+      windowSize: action.payload
+    },
+    state
+  );
+}
 
-    case SET_WINDOW_SIZE:
-      return u({
-        windowSize: action.payload
-      }, state);
-
-    case SET_NOTIFICATION:
-      return u({
-        notification: action.payload
-      }, state);
-
-    default:
-      return state;
-  }
+export function setNotification(state, action) {
+  return u(
+    {
+      notification: action.payload
+    },
+    state
+  );
 }

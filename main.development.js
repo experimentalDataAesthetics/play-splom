@@ -12,18 +12,10 @@
  * main.development.js is transpiled to main.js when built for release.
  */
 
-import {
-  BrowserWindow,
-  app,
-  powerSaveBlocker,
-  Menu,
-  shell,
-  ipcMain
-} from 'electron';
+import { BrowserWindow, app, powerSaveBlocker, Menu, shell, ipcMain } from 'electron';
 import path from 'path';
 import log from 'electron-log';
 import SoundApp from './app/sound/SoundApp';
-import { ERROR_ON_MAIN } from './app/actionTypes';
 import handleActionOnMain from './app/ipc/handleActionOnMain';
 
 const pkg = require('./package.json');
@@ -54,7 +46,7 @@ function errorOnMain(error) {
 
   if (mainWindow) {
     mainWindow.webContents.send('dispatch-action', {
-      type: ERROR_ON_MAIN,
+      type: 'errorOnMain',
       payload: {
         message: error.message,
         stack: error.stack,
@@ -65,7 +57,7 @@ function errorOnMain(error) {
 }
 
 function loadSounds(window) {
-  const soundAppDispatch = (action) => {
+  const soundAppDispatch = action => {
     log.debug('dispatch-action', action);
     window.webContents.send('dispatch-action', action);
   };
@@ -85,18 +77,18 @@ function quit() {
     return;
   }
 
-  return soundApp.stop()
-    .then(
-      () => app.quit(),
-      (error) => {
-        console.log(error);
-        // known issue
-        // it will timeout because Synth and Group don't resolve
-        // console.error('soundApp failed to stop');
-        // console.error(error);
-        // soundApp.player.dump();
-        app.quit();
-      });
+  return soundApp.stop().then(
+    () => app.quit(),
+    error => {
+      console.log(error);
+      // known issue
+      // it will timeout because Synth and Group don't resolve
+      // console.error('soundApp failed to stop');
+      // console.error(error);
+      // soundApp.player.dump();
+      app.quit();
+    }
+  );
 }
 
 function loadWindow() {
@@ -109,12 +101,15 @@ function loadWindow() {
  * and then reloading app.html
  */
 function reload() {
-  soundApp.stop().then(() => {
-    loadWindow();
-  }, () => {
-    // never stops because of Synth/Group not responding
-    loadWindow();
-  });
+  soundApp.stop().then(
+    () => {
+      loadWindow();
+    },
+    () => {
+      // never stops because of Synth/Group not responding
+      loadWindow();
+    }
+  );
 }
 
 // https://github.com/electron/electron/issues/973
@@ -128,7 +123,7 @@ ipcMain.on('call-action-on-main', (event, payload) => {
 });
 
 if (debug) {
-  require('electron-debug')({showDevTools: true});
+  require('electron-debug')({ showDevTools: true });
 }
 
 app.on('window-all-closed', quit);
@@ -145,7 +140,7 @@ app.on('ready', () => {
   mainWindow.on('unresponsive', log.error);
 
   process.on('uncaughtException', errorOnMain);
-  process.on('unhandledRejection', (reason) => {
+  process.on('unhandledRejection', reason => {
     log.error('Unhandled Rejection:', reason, reason && reason.stack);
     errorOnMain(reason);
   });
@@ -154,16 +149,16 @@ app.on('ready', () => {
     mainWindow.show();
     mainWindow.focus();
 
-    soundApp.start(synthDefsDir)
+    soundApp
+      .start(synthDefsDir)
       .then(() => {
         loadSounds(mainWindow);
       })
-      .catch((error) => {
+      .catch(error => {
         console.error('SoundApp failed to start', error);
         // and maybe push it to the browser thread to notify user
         errorOnMain(error);
       });
-
   });
 
   mainWindow.on('closed', () => {
@@ -173,171 +168,227 @@ app.on('ready', () => {
   loadWindow();
 
   if (process.platform === 'darwin') {
-    template = [{
-      label: pkg.productName,
-      submenu: [{
-        label: `About ${pkg.productName}`,
-        selector: 'orderFrontStandardAboutPanel:'
-      }, {
-        type: 'separator'
-      }, {
-        label: 'Services',
-        submenu: []
-      }, {
-        type: 'separator'
-      }, {
-        label: `Hide ${pkg.productName}`,
-        accelerator: 'Command+H',
-        selector: 'hide:'
-      }, {
-        label: 'Hide Others',
-        accelerator: 'Command+Shift+H',
-        selector: 'hideOtherApplications:'
-      }, {
-        label: 'Show All',
-        selector: 'unhideAllApplications:'
-      }, {
-        type: 'separator'
-      }, {
-        label: 'Quit',
-        accelerator: 'Command+Q',
-        click() {
-          quit();
-        }
-      }]
-    }, {
-      label: 'Edit',
-      submenu: [{
-        label: 'Undo',
-        accelerator: 'Command+Z',
-        selector: 'undo:'
-      }, {
-        label: 'Redo',
-        accelerator: 'Shift+Command+Z',
-        selector: 'redo:'
-      }, {
-        type: 'separator'
-      }, {
-        label: 'Cut',
-        accelerator: 'Command+X',
-        selector: 'cut:'
-      }, {
-        label: 'Copy',
-        accelerator: 'Command+C',
-        selector: 'copy:'
-      }, {
-        label: 'Paste',
-        accelerator: 'Command+V',
-        selector: 'paste:'
-      }, {
-        label: 'Select All',
-        accelerator: 'Command+A',
-        selector: 'selectAll:'
-      }]
-    }, {
-      label: 'View',
-      submenu: debug ? [{
-        label: 'Reload',
-        accelerator: 'Shift+Command+R',
-        click() {
-          reload();
-        }
-      }, {
-        label: 'Toggle Full Screen',
-        accelerator: 'Ctrl+Command+F',
-        click() {
-          mainWindow.setFullScreen(!mainWindow.isFullScreen());
-        }
-      }, {
-        label: 'Toggle Developer Tools',
-        accelerator: 'Alt+Command+I',
-        click() {
-          mainWindow.toggleDevTools();
-        }
-      }] : [{
-        label: 'Toggle Full Screen',
-        accelerator: 'Ctrl+Command+F',
-        click() {
-          mainWindow.setFullScreen(!mainWindow.isFullScreen());
-        }
-      }]
-    }, {
-      label: 'Window',
-      submenu: [{
-        label: 'Minimize',
-        accelerator: 'Command+M',
-        selector: 'performMiniaturize:'
-      }, {
-        label: 'Close',
-        accelerator: 'Command+W',
-        selector: 'performClose:'
-      }, {
-        type: 'separator'
-      }, {
-        label: 'Bring All to Front',
-        selector: 'arrangeInFront:'
-      }]
-    }, {
-      label: 'Help',
-      submenu: [{
-        label: 'Learn More',
-        click() {
-          shell.openExternal(pkg.author.url);
-        }
-      }]
-    }];
+    template = [
+      {
+        label: pkg.productName,
+        submenu: [
+          {
+            label: `About ${pkg.productName}`,
+            selector: 'orderFrontStandardAboutPanel:'
+          },
+          {
+            type: 'separator'
+          },
+          {
+            label: 'Services',
+            submenu: []
+          },
+          {
+            type: 'separator'
+          },
+          {
+            label: `Hide ${pkg.productName}`,
+            accelerator: 'Command+H',
+            selector: 'hide:'
+          },
+          {
+            label: 'Hide Others',
+            accelerator: 'Command+Shift+H',
+            selector: 'hideOtherApplications:'
+          },
+          {
+            label: 'Show All',
+            selector: 'unhideAllApplications:'
+          },
+          {
+            type: 'separator'
+          },
+          {
+            label: 'Quit',
+            accelerator: 'Command+Q',
+            click() {
+              quit();
+            }
+          }
+        ]
+      },
+      {
+        label: 'Edit',
+        submenu: [
+          {
+            label: 'Undo',
+            accelerator: 'Command+Z',
+            selector: 'undo:'
+          },
+          {
+            label: 'Redo',
+            accelerator: 'Shift+Command+Z',
+            selector: 'redo:'
+          },
+          {
+            type: 'separator'
+          },
+          {
+            label: 'Cut',
+            accelerator: 'Command+X',
+            selector: 'cut:'
+          },
+          {
+            label: 'Copy',
+            accelerator: 'Command+C',
+            selector: 'copy:'
+          },
+          {
+            label: 'Paste',
+            accelerator: 'Command+V',
+            selector: 'paste:'
+          },
+          {
+            label: 'Select All',
+            accelerator: 'Command+A',
+            selector: 'selectAll:'
+          }
+        ]
+      },
+      {
+        label: 'View',
+        submenu: debug
+          ? [
+            {
+              label: 'Reload',
+              accelerator: 'Shift+Command+R',
+              click() {
+                reload();
+              }
+            },
+            {
+              label: 'Toggle Full Screen',
+              accelerator: 'Ctrl+Command+F',
+              click() {
+                mainWindow.setFullScreen(!mainWindow.isFullScreen());
+              }
+            },
+            {
+              label: 'Toggle Developer Tools',
+              accelerator: 'Alt+Command+I',
+              click() {
+                mainWindow.toggleDevTools();
+              }
+            }
+          ]
+          : [
+            {
+              label: 'Toggle Full Screen',
+              accelerator: 'Ctrl+Command+F',
+              click() {
+                mainWindow.setFullScreen(!mainWindow.isFullScreen());
+              }
+            }
+          ]
+      },
+      {
+        label: 'Window',
+        submenu: [
+          {
+            label: 'Minimize',
+            accelerator: 'Command+M',
+            selector: 'performMiniaturize:'
+          },
+          {
+            label: 'Close',
+            accelerator: 'Command+W',
+            selector: 'performClose:'
+          },
+          {
+            type: 'separator'
+          },
+          {
+            label: 'Bring All to Front',
+            selector: 'arrangeInFront:'
+          }
+        ]
+      },
+      {
+        label: 'Help',
+        submenu: [
+          {
+            label: 'Learn More',
+            click() {
+              shell.openExternal(pkg.author.url);
+            }
+          }
+        ]
+      }
+    ];
 
     menu = Menu.buildFromTemplate(template);
     Menu.setApplicationMenu(menu);
   } else {
-    template = [{
-      label: '&File',
-      submenu: [{
-        label: '&Open',
-        accelerator: 'Ctrl+O'
-      }, {
-        label: '&Close',
-        accelerator: 'Ctrl+W',
-        click() {
-          mainWindow.close();
-        }
-      }]
-    }, {
-      label: '&View',
-      submenu: debug ? [{
-        label: '&Reload',
-        accelerator: 'Ctrl+R',
-        click() {
-          reload();
-        }
-      }, {
-        label: 'Toggle &Full Screen',
-        accelerator: 'F11',
-        click() {
-          mainWindow.setFullScreen(!mainWindow.isFullScreen());
-        }
-      }, {
-        label: 'Toggle &Developer Tools',
-        accelerator: 'Alt+Ctrl+I',
-        click() {
-          mainWindow.toggleDevTools();
-        }
-      }] : [{
-        label: 'Toggle &Full Screen',
-        accelerator: 'F11',
-        click() {
-          mainWindow.setFullScreen(!mainWindow.isFullScreen());
-        }
-      }]
-    }, {
-      label: 'Help',
-      submenu: [{
-        label: 'Learn More',
-        click() {
-          shell.openExternal(pkg.author.url);
-        }
-      }]
-    }];
+    template = [
+      {
+        label: '&File',
+        submenu: [
+          {
+            label: '&Open',
+            accelerator: 'Ctrl+O'
+          },
+          {
+            label: '&Close',
+            accelerator: 'Ctrl+W',
+            click() {
+              mainWindow.close();
+            }
+          }
+        ]
+      },
+      {
+        label: '&View',
+        submenu: debug
+          ? [
+            {
+              label: '&Reload',
+              accelerator: 'Ctrl+R',
+              click() {
+                reload();
+              }
+            },
+            {
+              label: 'Toggle &Full Screen',
+              accelerator: 'F11',
+              click() {
+                mainWindow.setFullScreen(!mainWindow.isFullScreen());
+              }
+            },
+            {
+              label: 'Toggle &Developer Tools',
+              accelerator: 'Alt+Ctrl+I',
+              click() {
+                mainWindow.toggleDevTools();
+              }
+            }
+          ]
+          : [
+            {
+              label: 'Toggle &Full Screen',
+              accelerator: 'F11',
+              click() {
+                mainWindow.setFullScreen(!mainWindow.isFullScreen());
+              }
+            }
+          ]
+      },
+      {
+        label: 'Help',
+        submenu: [
+          {
+            label: 'Learn More',
+            click() {
+              shell.openExternal(pkg.author.url);
+            }
+          }
+        ]
+      }
+    ];
     menu = Menu.buildFromTemplate(template);
     mainWindow.setMenu(menu);
   }

@@ -1,6 +1,4 @@
 import React from 'react';
-import h from 'react-hyperscript';
-
 
 function pointSize(sideLength) {
   if (sideLength < 100) {
@@ -17,19 +15,23 @@ function pointSize(sideLength) {
 /**
  * Renders points as SVG circles in a g
  */
-export default (props) => {
-  const radius = pointSize(props.sideLength);
+export default function Points({ sideLength, points, color }) {
+  const radius = pointSize(sideLength);
   // should not have to flip here
-  const flip = props.sideLength;
-  return h('g', props.points.map((xy, i) => {
-    return React.createElement('circle', {
-      cx: xy[0] || 0,
-      cy: (flip - xy[1]) || 0,
-      r: radius,
-      key: String(i),
-      style: {
-        fill: props.color
-      }
-    });
-  }));
-};
+  const flip = sideLength;
+  return (
+    <g>
+      {points.map((xy, i) => (
+        <circle
+          cx={xy[0] || 0}
+          cy={flip - xy[1] || 0}
+          r={radius}
+          key={String(i)}
+          style={{
+            fill: color
+          }}
+        />
+      ))}
+    </g>
+  );
+}

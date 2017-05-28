@@ -1,18 +1,9 @@
-import {
-  MAP_XY_TO_PARAM,
-  AUTO_MAP,
-  SET_MAPPING,
-  SET_MAPPING_RANGE,
-  SET_PCA,
-  SET_FIXED_PARAM
-} from '../actionTypes';
-
 /**
  * Connect X/Y to a sound param for xy mode
  */
 export function mapXYtoParam(xy, param) {
   return {
-    type: MAP_XY_TO_PARAM,
+    type: 'mapXYtoParam',
     payload: {
       mode: 'xy',
       xy,
@@ -26,11 +17,10 @@ export function mapXYtoParam(xy, param) {
  */
 export function autoMap() {
   return {
-    type: AUTO_MAP,
+    type: 'autoMap',
     payload: {}
   };
 }
-
 
 /**
  * Set a non-mapped sound param to a fixed value.
@@ -39,7 +29,7 @@ export function autoMap() {
  */
 export function setFixedParamUnipolar(param, value) {
   return {
-    type: SET_FIXED_PARAM,
+    type: 'setFixedParam',
     payload: {
       param,
       values: {
@@ -55,7 +45,7 @@ export function setFixedParamUnipolar(param, value) {
  */
 export function setParamRangeUnipolar(param, minval, maxval) {
   return {
-    type: SET_FIXED_PARAM,
+    type: 'setFixedParam',
     payload: {
       param,
       values: {
@@ -73,7 +63,7 @@ export function setParamRangeUnipolar(param, minval, maxval) {
  */
 export function setMapping(feature, param) {
   return {
-    type: SET_MAPPING,
+    type: 'setMapping',
     payload: {
       feature,
       param
@@ -88,7 +78,7 @@ export function setMapping(feature, param) {
  */
 export function setMapperRange(feature, param, range) {
   return {
-    type: SET_MAPPING_RANGE,
+    type: 'setMappingRange',
     payload: {
       feature,
       param,
@@ -107,7 +97,7 @@ export function setMapperRange(feature, param, range) {
  */
 export function setPCA(bool) {
   return {
-    type: SET_PCA,
+    type: 'setPca',
     payload: {
       bool
     }
