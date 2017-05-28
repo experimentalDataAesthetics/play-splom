@@ -1,8 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import d3 from 'd3';
+import { scale, round } from 'd3';
 import _ from 'lodash';
-import Slider from 'material-ui/Slider';
+import InputRange from 'react-input-range';
 import SelectField from 'material-ui/SelectField';
 import MenuItem from 'material-ui/MenuItem';
 import connect from '../utils/reduxers';
@@ -14,7 +14,7 @@ import styles from '../containers/Sidebar.css';
 
 const MIN = 0.05;
 const MAX = 60.0;
-const mapv = d3.scale.pow().exponent(2).range([MIN, MAX]);
+const mapv = scale.pow().exponent(2).range([MIN, MAX]);
 const unmapv = mapv.invert;
 
 /**
@@ -29,24 +29,19 @@ class LoopControl extends React.PureComponent {
     toggleLoopMode: PropTypes.func.isRequired
   };
 
-  setLoopTime = _.debounce((e, v) => {
-    this.props.setLoopTime(mapv(1 - v));
+  setLoopTime = _.debounce(v => {
+    this.props.setLoopTime(mapv(v));
   }, 100);
 
   render() {
-    const sliderStyle = {
-      marginTop: 4,
-      marginBottom: 4
-    };
-
     const slider = (
-      <Slider
-        defaultValue={1 - unmapv(this.props.loopMode.loopTime || 10)}
-        min={0}
-        max={1}
-        step={0.01}
+      <InputRange
+        minValue={0}
+        maxValue={1}
+        step={0.001}
+        value={unmapv(this.props.loopMode.loopTime || 10)}
         onChange={this.setLoopTime}
-        sliderStyle={sliderStyle}
+        formatLabel={v => round(mapv(v), 2)}
       />
     );
 
@@ -93,11 +88,11 @@ class LoopControl extends React.PureComponent {
               <td>{button}</td>
             </tr>
             <tr>
-              <th>Speed</th>
+              <th>Time</th>
               <td className={style.range}>{slider}</td>
             </tr>
             <tr>
-              <th>Time Dimension</th>
+              <th>Dimension</th>
               <td>
                 <Select
                   value={timeValue}

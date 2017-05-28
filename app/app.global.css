@@ -4,6 +4,13 @@
  */
 @import url(https://fonts.googleapis.com/css?family=Open+Sans);
 
+@import "~react-input-range/lib/css/index.css";
+
+.input-range__label--min,
+.input-range__label--max {
+  display: none;
+}
+
 html,
 body {
   width: 100%;

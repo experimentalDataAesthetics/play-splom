@@ -1,13 +1,16 @@
 import React from 'react';
 import h from 'react-hyperscript';
-// single value slider:
-import { Slider } from 'material-ui';
-// dual value range slider:
-import ReactSlider from 'react-slider';
+import InputRange from 'react-input-range';
+import { map } from 'supercolliderjs';
 import { round } from 'd3';
-import { debounce } from 'lodash';
 import ToggleButton from './ToggleButton';
+// local css module import
+// style object is unique hashed classnames
 import style from './XYParamTable.css';
+
+// app.global.css imports this globally
+// otherwise it would be a css modeul import
+// import 'react-input-range/lib/css/index.css';
 
 /**
  * Editable params in the right sidebar of the app
@@ -37,72 +40,79 @@ export default class XYParamTable extends React.Component {
           max
     */
 
-    const sliderStyle = {
-      marginTop: 4,
-      marginBottom: 4
+    return (
+      <table className={style.table}>
+        <thead>
+          <tr>
+            <th />
+            <th>X</th>
+            <th>Y</th>
+            <th />
+          </tr>
+        </thead>
+        <tbody>
+          {this.props.xyMappingControls.map(control => (
+            <XYParamRow
+              key={control.name}
+              control={control}
+              setParamRangeUnipolar={this.props.setParamRangeUnipolar}
+              setFixedParamUnipolar={this.props.setFixedParamUnipolar}
+              mapXYtoParam={this.props.mapXYtoParam}
+            />
+          ))}
+        </tbody>
+      </table>
+    );
+  }
+}
+
+class XYParamRow extends React.PureComponent {
+  render() {
+    const { control } = this.props;
+    // console.log('render control', control);
+    let onChange;
+    let rangeValue;
+    const fmt = v => {
+      const u = map.mapWithSpec(v || 0, control.natural.spec);
+      return round(u, u > 10 ? 0 : 2);
     };
 
-    const rows = this.props.xyMappingControls.map(control => {
-      let range;
-      if (control.connected) {
-        // get min max uni values
-        // from mapping
-        // get text values of actual from mapping
-        range = h(
-          ReactSlider,
-          {
-            min: 0.0,
-            max: 1.0,
-            step: 0.01,
-            minDistance: 0.1,
-            defaultValue: [control.unipolar.minval, control.unipolar.maxval],
-            pearling: true,
-            withBars: true,
-            className: style.rangeSlider,
-            onAfterChange: v => this.props.setParamRangeUnipolar(control.name, v[0], v[1])
-          },
-          [
-            h('div', { className: style.rangeHandleMin }, [round(control.natural.minval)]),
-            h('div', { className: style.rangeHandleMax }, [round(control.natural.maxval)])
-          ]
-        );
-      } else {
-        const sliderAction = (e, v) => this.props.setFixedParamUnipolar(control.name, v);
-        range = h(Slider, {
-          defaultValue: control.unipolar.value,
-          min: 0.0,
-          max: 1.0,
-          step: 0.001,
-          onChange: debounce(sliderAction, 300),
-          sliderStyle
-        });
-      }
+    if (control.connected) {
+      rangeValue = { min: control.unipolar.minval, max: control.unipolar.maxval };
+      onChange = value => this.props.setParamRangeUnipolar(control.name, value.min, value.max);
+    } else {
+      onChange = v => this.props.setFixedParamUnipolar(control.name, v);
+      rangeValue = control.unipolar.value || 0;
+    }
 
-      return h('tr', { className: control.connected ? style.connected : style.fixed }, [
-        h('th', control.name),
-        h('td', { className: style.pa0 }, [
-          h(ToggleButton, {
-            isActive: control.xConnected,
-            action: () => this.props.mapXYtoParam('x', control.name),
-            iconActive: 'radio_button_checked',
-            iconInactive: 'radio_button_unchecked'
-          })
-        ]),
-        h('td', { className: style.pa0 }, [
-          h(ToggleButton, {
-            isActive: control.yConnected,
-            action: () => this.props.mapXYtoParam('y', control.name),
-            iconActive: 'radio_button_checked',
-            iconInactive: 'radio_button_unchecked'
-          })
-        ]),
-        h('td', { className: style.range }, [range])
-      ]);
-    });
-
-    return h('table', { className: style.table }, [
-      h('thead', [h('tr', [h('th', ''), h('th', 'X'), h('th', 'Y'), h('th', '')])]),
-      h('tbody', rows)
+    return h('tr', { className: control.connected ? style.connected : style.fixed }, [
+      h('th', control.name),
+      h('td', { className: style.pa0 }, [
+        h(ToggleButton, {
+          isActive: control.xConnected,
+          action: () => this.props.mapXYtoParam('x', control.name),
+          iconActive: 'radio_button_checked',
+          iconInactive: 'radio_button_unchecked'
+        })
+      ]),
+      h('td', { className: style.pa0 }, [
+        h(ToggleButton, {
+          isActive: control.yConnected,
+          action: () => this.props.mapXYtoParam('y', control.name),
+          iconActive: 'radio_button_checked',
+          iconInactive: 'radio_button_unchecked'
+        })
+      ]),
+      <td className={style.range}>
+        <InputRange
+          minValue={0}
+          maxValue={1}
+          step={0.001}
+          value={rangeValue}
+          onChange={onChange}
+          formatLabel={fmt}
+        />
+      </td>
     ]);
   }
 }
