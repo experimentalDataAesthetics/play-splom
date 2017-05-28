@@ -1,7 +1,3 @@
-/**
- * https://github.com/esbullington/react-d3
- */
-
 import React from 'react';
 import PropTypes from 'prop-types';
 import d3 from 'd3';
@@ -10,107 +6,105 @@ import AxisLine from './AxisLine';
 import Label from './Label';
 
 /**
- * XAxis with lines, ticks and string label
- *
- * source:
- * https://github.com/esbullington/react-d3
+ * X or Y Axis with lines, ticks and string label
  */
-export default React.createClass({
-  displayName: 'XAxis',
+export default function XAxis({
+  width,
+  height,
+  tickTextStroke,
+  label,
+  tickCount,
+  tickInterval,
+  tickValues,
+  tickSize,
+  horizontal,
+  labelOffset,
+  scale,
 
-  propTypes: {
-    fill: PropTypes.string,
-    height: PropTypes.number.isRequired,
-    width: PropTypes.number.isRequired,
-    stroke: PropTypes.string,
-    strokeWidth: PropTypes.string,
-    tickStroke: PropTypes.string,
-    tickTextStroke: PropTypes.string,
-    xAxisClassName: PropTypes.string,
-    xAxisLabel: PropTypes.string,
-    xAxisTickValues: PropTypes.array,
-    xScale: PropTypes.func.isRequired,
-    xOrient: PropTypes.oneOf(['top', 'bottom']),
-    yOrient: PropTypes.oneOf(['left', 'right']),
-    gridVertical: PropTypes.bool,
-    gridVerticalStroke: PropTypes.string,
-    gridVerticalStrokeWidth: PropTypes.number,
-    gridVerticalStrokeDash: PropTypes.string
-  },
-
-  getDefaultProps: function getDefaultProps() {
-    return {
-      fill: 'none',
-      stroke: 'none',
-      strokeWidth: '1',
-      tickStroke: '#000',
-      xAxisClassName: 'rd3-x-axis',
-      xOrient: 'bottom',
-      yOrient: 'left'
-    };
-  },
-
-  render: function render() {
-    const props = this.props;
-
-    let tickArguments;
-    if (typeof props.xAxisTickCount !== 'undefined') {
-      tickArguments = [props.xAxisTickCount];
-    }
-
-    if (typeof props.xAxisTickInterval !== 'undefined') {
-      tickArguments = [d3.time[props.xAxisTickInterval.unit], props.xAxisTickInterval.interval];
-    }
-
-    let ticks;
-    if (props.xAxisTickCount !== 0) {
-      ticks = React.createElement(AxisTicks, {
-        tickValues: props.xAxisTickValues,
-        tickFormatting: props.tickFormatting,
-        tickArguments,
-        tickStroke: props.tickStroke,
-        tickTextStroke: props.tickTextStroke,
-        innerTickSize: props.tickSize,
-        scale: props.xScale,
-        orient: props.xOrient,
-        orient2nd: props.yOrient,
-        height: props.height,
-        width: props.width,
-        horizontal: props.horizontal,
-        gridVertical: props.gridVertical,
-        gridVerticalStroke: props.gridVerticalStroke,
-        gridVerticalStrokeWidth: props.gridVerticalStrokeWidth,
-        gridVerticalStrokeDash: props.gridVerticalStrokeDash
-      });
-    }
-
-    return React.createElement(
-      'g',
-      {
-        className: props.xAxisClassName,
-        transform: `translate(0, ${props.height})`
-      },
-      ticks,
-      React.createElement(
-        AxisLine,
-        Object.assign(
-          {
-            scale: props.xScale,
-            stroke: props.stroke,
-            orient: props.xOrient,
-            outerTickSize: props.tickSize
-          },
-          props
-        )
-      ),
-      <Label
-        label={props.xAxisLabel}
-        textColor={props.tickTextStroke}
-        offset={props.xAxisLabelOffset}
-        orient={props.xOrient}
-        height={props.height}
-        width={props.width}
-      />
-    );
+  fill = 'none',
+  stroke = 'none',
+  strokeWidth = '1',
+  tickStroke = '#000',
+  orient = 'bottom'
+}) {
+  let tickArguments;
+  if (typeof tickCount !== 'undefined') {
+    tickArguments = [tickCount];
   }
-});
+
+  if (typeof tickInterval !== 'undefined') {
+    tickArguments = [d3.time[tickInterval.unit], tickInterval.interval];
+  }
+  let ticks;
+  if (tickCount !== 0) {
+    ticks = React.createElement(AxisTicks, {
+      tickValues,
+      tickArguments,
+      tickStroke,
+      tickTextStroke,
+      innerTickSize: tickSize,
+      scale,
+      orient,
+      height,
+      width,
+      horizontal
+    });
+  }
+
+  let transform;
+  switch (orient) {
+    case 'right':
+      transform = `translate(${width}, 0)`;
+      break;
+    case 'left':
+      break;
+    case 'bottom':
+    case 'top':
+    default:
+      transform = `translate(0, ${height})`;
+  }
+
+  return (
+    <g transform={transform}>
+      {ticks}
+      <AxisLine
+        fill={fill}
+        orient={orient}
+        scale={scale}
+        stroke={stroke}
+        outerTickSize={tickSize}
+        strokeWidth={strokeWidth}
+      />
+      {label
+        ? <Label
+          label={label}
+          textColor={tickTextStroke}
+          offset={labelOffset}
+          orient={orient}
+          height={height}
+          width={width}
+        />
+        : null}
+    </g>
+  );
+}
+
+XAxis.propTypes = {
+  fill: PropTypes.string,
+  height: PropTypes.number.isRequired,
+  width: PropTypes.number.isRequired,
+  stroke: PropTypes.string,
+  strokeWidth: PropTypes.string,
+  tickStroke: PropTypes.string,
+  tickTextStroke: PropTypes.string,
+  tickCount: PropTypes.number,
+  tickInterval: PropTypes.number,
+  tickSize: PropTypes.number,
+  horizontal: PropTypes.bool,
+  labelOffset: PropTypes.number,
+
+  label: PropTypes.string,
+  tickValues: PropTypes.array,
+  scale: PropTypes.func.isRequired,
+  orient: PropTypes.oneOf(['top', 'bottom'])
+};

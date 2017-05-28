@@ -1,8 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import h from 'react-hyperscript';
 import XAxis from './XAxis';
-import YAxis from './YAxis';
 import Box from './Box';
 
 /**
@@ -27,36 +25,34 @@ export default class Axis extends React.Component {
     const textColor = this.props.muiTheme.palette.textColor;
     const numTicks = Math.floor(Math.max(sideLength / 75));
 
-    const children = [
-      h(XAxis, {
-        key: 'x',
-        xAxisLabel: this.props.xLabel,
-        xScale: this.props.xScale,
-        height: sideLength,
-        width: sideLength,
-        stroke: textColor,
-        tickStroke: textColor,
-        tickTextStroke: textColor,
-        xAxisTickCount: numTicks,
-        xAxisLabelOffset: 40
-      }),
-      h(YAxis, {
-        key: 'y',
-        yAxisLabel: this.props.yLabel,
-        yScale: this.props.yScale,
-        height: sideLength,
-        width: sideLength,
-        stroke: textColor,
-        tickStroke: textColor,
-        tickTextStroke: textColor,
-        yAxisTickCount: numTicks,
-        yAxisLabelOffset: 40
-      })
-    ];
-
     return (
       <Box x={this.props.xOffset} y={this.props.yOffset} sideLength={sideLength}>
-        {children}
+        <XAxis
+          key="x"
+          orient="bottom"
+          label={this.props.xLabel}
+          scale={this.props.xScale}
+          width={sideLength}
+          height={sideLength}
+          stroke={textColor}
+          tickStroke={textColor}
+          tickTextStroke={textColor}
+          tickCount={numTicks}
+          labelOffset={40}
+        />
+        <XAxis
+          key="y"
+          orient="left"
+          label={this.props.yLabel}
+          scale={this.props.yScale}
+          width={sideLength}
+          height={sideLength}
+          stroke={textColor}
+          tickStroke={textColor}
+          tickTextStroke={textColor}
+          tickCount={numTicks}
+          labelOffset={40}
+        />
       </Box>
     );
   }
