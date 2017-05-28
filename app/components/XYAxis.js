@@ -8,7 +8,7 @@ import Label from './Label';
 /**
  * X or Y Axis with lines, ticks and string label
  */
-export default function XAxis({
+export default function XYAxis({
   width,
   height,
   tickTextStroke,
@@ -89,7 +89,7 @@ export default function XAxis({
   );
 }
 
-XAxis.propTypes = {
+XYAxis.propTypes = {
   fill: PropTypes.string,
   height: PropTypes.number.isRequired,
   width: PropTypes.number.isRequired,
@@ -106,5 +106,5 @@ XAxis.propTypes = {
   label: PropTypes.string,
   tickValues: PropTypes.array,
   scale: PropTypes.func.isRequired,
-  orient: PropTypes.oneOf(['top', 'bottom'])
+  orient: PropTypes.oneOf(['top', 'bottom', 'left', 'right'])
 };

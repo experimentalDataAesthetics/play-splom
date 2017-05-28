@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import XAxis from './XAxis';
+import XYAxis from './XYAxis';
 import Box from './Box';
 
 /**
@@ -27,7 +27,7 @@ export default class Axis extends React.Component {
 
     return (
       <Box x={this.props.xOffset} y={this.props.yOffset} sideLength={sideLength}>
-        <XAxis
+        <XYAxis
           key="x"
           orient="bottom"
           label={this.props.xLabel}
@@ -40,7 +40,7 @@ export default class Axis extends React.Component {
           tickCount={numTicks}
           labelOffset={40}
         />
-        <XAxis
+        <XYAxis
           key="y"
           orient="left"
           label={this.props.yLabel}
