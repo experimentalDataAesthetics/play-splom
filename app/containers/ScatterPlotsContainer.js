@@ -6,6 +6,7 @@ import ScatterPlotsActivePoints from '../components/ScatterPlotsActivePoints';
 import ScatterPlotsInteractive from '../components/ScatterPlotsInteractive';
 import HoveringAxis from '../components/HoveringAxis';
 import LoopPlayHead from '../components/LoopPlayHead';
+import FeatureLabels from '../components/FeatureLabels';
 
 import { getPointsForPlot, getLayout, getDatasetMetadata } from '../selectors/index';
 
@@ -49,6 +50,12 @@ class ScatterPlotsContainer extends React.PureComponent {
         <ScatterPlots {...subProps} />
         <ScatterPlotsActivePoints />
         <LoopPlayHead />
+        <FeatureLabels
+          dataset={dataset}
+          layout={layout}
+          width={subProps.width}
+          height={subProps.height}
+        />
         <HoveringAxis />
         <ScatterPlotsInteractive {...subProps} />
       </g>
