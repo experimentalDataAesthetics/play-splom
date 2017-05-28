@@ -1,8 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import h from 'react-hyperscript';
 import LAxis from '../components/LAxis';
 import Points from '../components/Points';
+import Box from './Box';
 
 /**
  * Renders a single scatter plot on a parent svg g
@@ -37,14 +37,10 @@ export default class ScatterPlot extends React.Component {
       children = points;
     }
 
-    return h(
-      'g',
-      {
-        transform: `translate(${this.props.xOffset}, ${this.props.yOffset})`,
-        width: sideLength,
-        height: sideLength
-      },
-      children
+    return (
+      <Box x={this.props.xOffset} y={this.props.yOffset} sideLength={sideLength}>
+        {children}
+      </Box>
     );
   }
 }
