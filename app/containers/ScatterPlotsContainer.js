@@ -55,6 +55,7 @@ class ScatterPlotsContainer extends React.PureComponent {
           layout={layout}
           width={subProps.width}
           height={subProps.height}
+          color={'#999'}
         />
         <HoveringAxis />
         <ScatterPlotsInteractive {...subProps} />
