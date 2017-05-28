@@ -17,29 +17,18 @@ export default class ScatterPlot extends React.Component {
   };
 
   render() {
-    let children;
-    const { muiTheme, sideLength } = this.props;
-    const points = Points({
-      sideLength,
-      points: this.props.points,
-      // active or fill
-      color: muiTheme.palette[this.props.className] || muiTheme.palette.point
-    });
-
-    // draw a minimal L-shaped axis
-    if (!this.props.hideAxis) {
-      const axis = LAxis({
-        sideLength,
-        color: muiTheme.tableRow.borderColor
-      });
-      children = [axis].concat(points);
-    } else {
-      children = points;
-    }
+    const { muiTheme, sideLength, className } = this.props;
 
     return (
       <Box x={this.props.xOffset} y={this.props.yOffset} sideLength={sideLength}>
-        {children}
+        {this.props.hideAxis
+          ? null
+          : <LAxis sideLength={sideLength} color={muiTheme.tableRow.borderColor} />}
+        <Points
+          sideLength={sideLength}
+          points={this.props.points}
+          color={muiTheme.palette[className] || muiTheme.palette.point}
+        />
       </Box>
     );
   }

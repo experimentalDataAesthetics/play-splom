@@ -21,10 +21,8 @@ export default React.createClass({
     tickStroke: PropTypes.string,
     width: PropTypes.number.isRequired,
     height: PropTypes.number.isRequired,
-    horizontalChart: PropTypes.bool,
     yAxisClassName: PropTypes.string,
     yAxisLabel: PropTypes.string,
-    yAxisOffset: PropTypes.number,
     yAxisTickValues: PropTypes.array,
     xOrient: PropTypes.oneOf(['top', 'bottom']),
     yOrient: PropTypes.oneOf(['left', 'right']),
@@ -43,7 +41,6 @@ export default React.createClass({
       tickStroke: '#000',
       yAxisClassName: 'rd3-y-axis',
       yAxisLabel: '',
-      yAxisOffset: 0,
       xOrient: 'bottom',
       yOrient: 'left'
     };
@@ -52,12 +49,7 @@ export default React.createClass({
   render: function render() {
     const props = this.props;
 
-    let t;
-    if (props.yOrient === 'right') {
-      t = `translate(${props.yAxisOffset + props.width}, 0)`;
-    } else {
-      t = `translate(${props.yAxisOffset}, 0)`;
-    }
+    const t = props.yOrient === 'right' ? `translate(${props.width}, 0)` : null;
 
     let tickArguments;
     if (props.yAxisTickCount) {
@@ -82,7 +74,7 @@ export default React.createClass({
         scale: props.yScale,
         height: props.height,
         width: props.width,
-        horizontalChart: props.horizontalChart,
+        horizontal: props.horizontal,
         gridHorizontal: props.gridHorizontal,
         gridHorizontalStroke: props.gridHorizontalStroke,
         gridHorizontalStrokeWidth: props.gridHorizontalStrokeWidth,
@@ -110,12 +102,10 @@ export default React.createClass({
         )
       ),
       <Label
-        horizontalChart={props.horizontalChart}
         label={props.yAxisLabel}
         textColor={props.tickTextStroke}
         offset={props.yAxisLabelOffset}
         orient={props.yOrient}
-        margins={props.margins}
         width={props.width}
         height={props.height}
       />

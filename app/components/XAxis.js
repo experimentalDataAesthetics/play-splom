@@ -22,7 +22,6 @@ export default React.createClass({
     fill: PropTypes.string,
     height: PropTypes.number.isRequired,
     width: PropTypes.number.isRequired,
-    horizontalChart: PropTypes.bool,
     stroke: PropTypes.string,
     strokeWidth: PropTypes.string,
     tickStroke: PropTypes.string,
@@ -30,7 +29,6 @@ export default React.createClass({
     xAxisClassName: PropTypes.string,
     xAxisLabel: PropTypes.string,
     xAxisTickValues: PropTypes.array,
-    xAxisOffset: PropTypes.number,
     xScale: PropTypes.func.isRequired,
     xOrient: PropTypes.oneOf(['top', 'bottom']),
     yOrient: PropTypes.oneOf(['left', 'right']),
@@ -47,7 +45,6 @@ export default React.createClass({
       strokeWidth: '1',
       tickStroke: '#000',
       xAxisClassName: 'rd3-x-axis',
-      xAxisOffset: 0,
       xOrient: 'bottom',
       yOrient: 'left'
     };
@@ -79,7 +76,7 @@ export default React.createClass({
         orient2nd: props.yOrient,
         height: props.height,
         width: props.width,
-        horizontalChart: props.horizontalChart,
+        horizontal: props.horizontal,
         gridVertical: props.gridVertical,
         gridVerticalStroke: props.gridVerticalStroke,
         gridVerticalStrokeWidth: props.gridVerticalStrokeWidth,
@@ -91,7 +88,7 @@ export default React.createClass({
       'g',
       {
         className: props.xAxisClassName,
-        transform: `translate(0 ,${props.xAxisOffset + props.height})`
+        transform: `translate(0, ${props.height})`
       },
       ticks,
       React.createElement(
@@ -107,12 +104,10 @@ export default React.createClass({
         )
       ),
       <Label
-        horizontalChart={props.horizontalChart}
         label={props.xAxisLabel}
         textColor={props.tickTextStroke}
         offset={props.xAxisLabelOffset}
         orient={props.xOrient}
-        margins={props.margins}
         height={props.height}
         width={props.width}
       />

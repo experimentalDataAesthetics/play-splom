@@ -141,7 +141,7 @@ export default React.createClass({
         break;
     }
 
-    if (props.horizontalChart) {
+    if (props.horizontal) {
       textTransform = 'rotate(-90)';
       [y1, x1] = [x1, -y1 || 0];
 
@@ -216,7 +216,7 @@ export default React.createClass({
       ticks.map((tick, idx) => {
         return React.createElement(
           'g',
-          { key: idx, className: 'tick', transform: tr(tick) },
+          { key: `idx${idx}`, className: 'tick', transform: tr(tick) },
           gridLine(adjustedScale(tick)),
           React.createElement('line', {
             style: {

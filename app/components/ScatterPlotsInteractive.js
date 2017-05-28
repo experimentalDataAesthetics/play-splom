@@ -36,10 +36,7 @@ class ScatterPlotsInteractive extends React.PureComponent {
     setLoopBox: PropTypes.func.isRequired
   };
 
-  constructor(props) {
-    super(props);
-    this.state = {};
-  }
+  state = {};
 
   onMouseDown = event => {
     // console.log({type: 'down', x: event.clientX, y: event.clientY});

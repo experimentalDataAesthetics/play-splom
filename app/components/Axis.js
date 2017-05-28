@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import h from 'react-hyperscript';
 import XAxis from './XAxis';
 import YAxis from './YAxis';
+import Box from './Box';
 
 /**
  * Standard pair of X and Y axis with ticks and labelling.
@@ -28,6 +29,7 @@ export default class Axis extends React.Component {
 
     const children = [
       h(XAxis, {
+        key: 'x',
         xAxisLabel: this.props.xLabel,
         xScale: this.props.xScale,
         height: sideLength,
@@ -39,6 +41,7 @@ export default class Axis extends React.Component {
         xAxisLabelOffset: 40
       }),
       h(YAxis, {
+        key: 'y',
         yAxisLabel: this.props.yLabel,
         yScale: this.props.yScale,
         height: sideLength,
@@ -51,14 +54,10 @@ export default class Axis extends React.Component {
       })
     ];
 
-    return h(
-      'g',
-      {
-        transform: `translate(${this.props.xOffset}, ${this.props.yOffset})`,
-        width: sideLength,
-        height: sideLength
-      },
-      children
+    return (
+      <Box x={this.props.xOffset} y={this.props.yOffset} sideLength={sideLength}>
+        {children}
+      </Box>
     );
   }
 }
