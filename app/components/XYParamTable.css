@@ -1,10 +1,8 @@
-
 .table {
   width: 100%;
 }
 
-.table td,
-.table th {
+.table td, .table th {
   margin: 0;
 }
 
@@ -29,11 +27,9 @@
 
 .range {
   width: 100px;
-  padding: 0 20px 0 0;
 }
 
-.connected td,
-.connected th {
+.connected td, .connected th {
   /*height: 75px;*/
   /*background: rgba(116, 218, 69, 0.03);*/
   transition: background-color 0.5s ease;
