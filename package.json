@@ -63,6 +63,7 @@
     "react-input-range": "^1.1.4",
     "react-redux": "^5.0.5",
     "react-tap-event-plugin": "^2.0.1",
+    "react-textselect": "^0.2.0",
     "redux": "^3.6.0",
     "redux-logger": "^3.0.6",
     "redux-thunk": "^2.1.0",

@@ -57,6 +57,23 @@ export function setParamRangeUnipolar(param, minval, maxval) {
 }
 
 /**
+ * For the selectable slots in the XYParamTable,
+ * set the datasource that a slot should map from.
+ *
+ * @param {string} slot
+ * @param {string} datasource
+ */
+export function setSelectableSlot(slot, datasource) {
+  return {
+    type: 'setSelectableSlot',
+    payload: {
+      slot,
+      datasource
+    }
+  };
+}
+
+/**
  * Connect dataset feature to sound param for multi-variate mode.
  *
  * not yet used
@@ -83,23 +100,6 @@ export function setMapperRange(feature, param, range) {
       feature,
       param,
       range
-    }
-  };
-}
-
-/**
- * Set PCA for current dataset.
- *
- * This could result in async calculation
- * and produces a new mapping metadata
- *
- * not yet used
- */
-export function setPCA(bool) {
-  return {
-    type: 'setPca',
-    payload: {
-      bool
     }
   };
 }

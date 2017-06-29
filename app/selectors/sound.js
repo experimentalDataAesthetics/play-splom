@@ -2,6 +2,7 @@ import { map } from 'supercolliderjs';
 import _ from 'lodash';
 import { createSelector } from 'reselect';
 import { getNormalizedPoints } from './dataset';
+import { NUM_SELECTABLE_SOURCE_SLOTS } from '../constants';
 
 export const getPointsUnderBrush = state => _.get(state, 'interaction.pointsUnderBrush', []);
 const getPreviousPointsUnderBrush = state =>

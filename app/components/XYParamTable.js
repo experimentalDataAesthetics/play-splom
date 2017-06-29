@@ -1,10 +1,10 @@
 import React from 'react';
 import _ from 'lodash';
-import h from 'react-hyperscript';
 import InputRange from 'react-input-range';
 import { map } from 'supercolliderjs';
 import { round } from 'd3';
 import ToggleButton from './ToggleButton';
+import SelectableSlot from './SelectableSlot';
 // local css module import
 // style object is unique hashed classnames
 import style from './XYParamTable.css';
@@ -46,9 +46,20 @@ export default class XYParamTable extends React.Component {
     */
     // these should be dynamic
     // clickable to select a source
-    const selectableSlots = _.map(_.range(0, NUM_SELECTABLE_SOURCE_SLOTS), i =>
-      <th key={`th${i}`}>{i}</th>
-    );
+    const selectableSlots = _.map(_.range(0, NUM_SELECTABLE_SOURCE_SLOTS), i => {
+      const slot = String(i);
+      const datasource = _.get(this.props, `mapping.xy.selectableSlots.${slot}`);
+      return (
+        <th key={slot}>
+          <SelectableSlot
+            slot={slot}
+            sources={this.props.selectableSources}
+            action={this.props.setSelectableSlot}
+            datasource={datasource}
+          />
+        </th>
+      );
+    });
 
     return (
       <table className={style.table}>

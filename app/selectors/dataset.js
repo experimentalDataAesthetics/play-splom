@@ -17,6 +17,26 @@ export const getDatasetMetadata = createSelector([getDataset], dataset => {
 });
 
 /**
+ * Dataset statistics that can be used as modulation sources.
+ *
+ * @type {Function}
+ * @returns {Array.<string>}
+ */
+export const getSelectableSources = createSelector(
+  [getDataset],
+  dataset => (dataset ? sourcesFromStats(dataset.stats) : [])
+);
+
+export function sourcesFromStats(stats) {
+  const pairwise = _.keys(_.head(_.values(stats.pairwise)));
+  const firstFieldKey = _.head(_.keys(stats.fields));
+  const fieldStats = _.keys(stats.fields[firstFieldKey]);
+  const fields = _.without(fieldStats, 'type', 'minval', 'maxval', 'linearRegression');
+  const sources = [].concat(pairwise, _.map(fields, f => `x-${f}`), _.map(fields, f => `y-${f}`));
+  return sources;
+}
+
+/**
  * Extract each column as values with min, max, mean, std calculated
  *
  * Each feature is an object:
