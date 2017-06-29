@@ -31,9 +31,10 @@ export const getSound = createSelector([getSoundName, getSounds], (soundName, so
  * Each object contains:
  *
  *   name
- *   xConnected
- *   yConnected
- *   connected
+ *   sources[]
+ *    connected: boolean
+ *    datasource: x y x.cor etc
+ *    slot: x y 0 1 2 3
  *   unipolar
  *     value
  *     minval
@@ -53,9 +54,10 @@ export function xyMappingControls(mapping, sound) {
   }
 
   const modulateable = c => c.name !== 'out' && c.spec;
+  const selectableSlots = _.get(mapping, 'xy.selectableSlots', {});
 
   const isConnected = (xy, param) => {
-    if (!mapping) {
+    if (!(mapping && xy)) {
       return false;
     }
 
@@ -72,11 +74,30 @@ export function xyMappingControls(mapping, sound) {
   };
 
   return sound.controls.filter(modulateable).map(control => {
-    const xcon = isConnected('x', control.name);
-    const ycon = isConnected('y', control.name);
-    const connected = xcon || ycon;
     const spec = control.spec;
-    // const minval = _.get(mapping, '')
+
+    const slots = _.range(0, NUM_SELECTABLE_SOURCE_SLOTS).map(i => {
+      const slot = String(i);
+      const datasource = selectableSlots[slot];
+      return {
+        slot,
+        datasource,
+        connected: isConnected(datasource, control.name)
+      };
+    });
+
+    const sources = [
+      {
+        slot: 'x',
+        datasource: 'x',
+        connected: isConnected('x', control.name)
+      },
+      {
+        slot: 'y',
+        datasource: 'y',
+        connected: isConnected('y', control.name)
+      }
+    ].concat(slots);
 
     // value should be unmapped defaultValue
     const unipolar = _.assign(
@@ -102,9 +123,8 @@ export function xyMappingControls(mapping, sound) {
 
     return {
       name: control.name,
-      xConnected: xcon,
-      yConnected: ycon,
-      connected,
+      sources,
+      connected: _.some(sources, 'connected'),
       unipolar,
       natural
     };
@@ -178,7 +198,7 @@ function makeXYMappingFn(mapping, mappingControls) {
     paramsY,
     (v, paramY) => makeXYMapper(mappingControls, paramY) || alwaysNull
   );
-  // mapping funciton
+  // mapping function
   return (x, y) => {
     return _.assign(
       {},
