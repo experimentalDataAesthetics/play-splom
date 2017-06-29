@@ -48,6 +48,7 @@
     "baconjs": "^0.7.88",
     "d3": "^3.5.17",
     "data-projector": "^0.1.0",
+    "datalib": "^1.7.3",
     "electron-debug": "^1.0.1",
     "electron-log": "^1.2.2",
     "font-awesome": "^4.6.3",
