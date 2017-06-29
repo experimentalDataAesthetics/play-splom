@@ -336,3 +336,64 @@ describe('selectors/sound', () => {
     });
   });
 });
+
+const pairwise = {
+  Date: {
+    cor: {
+      Date: null,
+      Month: null,
+      Year: 0.9009311952825864,
+      Army: 0.8818957622757273,
+      Disease: -0.22811693680548575,
+      Wounds: 0.06166299881572622,
+      Other: -0.13163780045759335,
+      'Disease.rate': -0.25867046096413593,
+      'Wounds.rate': -0.031553107137757955,
+      'Other.rate': -0.1838433695656411
+    },
+    corRank: {
+      Date: -0.11304347826086958,
+      Month: 0.26521739130434785,
+      Year: -0.2760869565217392,
+      Army: -0.3182608695652174,
+      Disease: 0.24956521739130433,
+      Wounds: -0.3519565217391305,
+      Other: -0.3234782608695652,
+      'Disease.rate': 0.3052173913043478,
+      'Wounds.rate': -0.10586956521739133,
+      'Other.rate': 0.006086956521739184
+    }
+  }
+};
+
+describe('pairwiseMinMax', () => {
+  it('should find min max from the dataset.stats', () => {
+    const minmax = selectors.pairwiseMinMax(pairwise);
+
+    expect(minmax).to.deep.equal({
+      cor: { min: -0.25867046096413593, max: 0.9009311952825864 },
+      corRank: { min: -0.3519565217391305, max: 0.3052173913043478 }
+    });
+    // expect(minmax.cor.min).to.equal(-0.25867046096413593);
+    // expect(minmax.cor.max).to.equal(0.9009311952825864);
+    // expect(minmax.corRank.min).to.equal(-0.3519565217391305);
+    // expect(minmax.corRank.max).to.equal(0.3052173913043478);
+  });
+});
+
+describe('_statsTable', () => {
+  const stats = { pairwise };
+  const fields = ['Date'];
+
+  it('should make pairwise lookup table', () => {
+    const table = selectors._statsTable(stats, fields);
+    expect(table).to.deep.equal({
+      cor: {
+        '0@0': 0.5
+      },
+      corRank: {
+        '0@0': 0.3635461462123719
+      }
+    });
+  });
+});

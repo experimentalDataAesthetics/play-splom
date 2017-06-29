@@ -1,7 +1,8 @@
+import d3 from 'd3';
 import { map } from 'supercolliderjs';
 import _ from 'lodash';
 import { createSelector } from 'reselect';
-import { getNormalizedPoints } from './dataset';
+import { getNormalizedPoints, getDataset, pairwiseStatNames } from './dataset';
 import { NUM_SELECTABLE_SOURCE_SLOTS } from '../constants';
 
 export const getPointsUnderBrush = state => _.get(state, 'interaction.pointsUnderBrush', []);
@@ -23,6 +24,80 @@ export const getSound = createSelector([getSoundName, getSounds], (soundName, so
 
   return null;
 });
+
+/**
+ * min max accumulator
+ */
+const mm = (prev, num) => {
+  const p = prev || { min: Number.MAX_VALUE, max: Number.MIN_VALUE };
+  return {
+    min: Math.min(p.min, num),
+    max: Math.max(p.max, num)
+  };
+};
+
+/**
+ * A statistics lookup table accessed by the name of the statistic
+ * and the m / n box coordinate.
+ *
+ * All values in the table are normalized to 0..1
+ *
+ * This is for fast usage in mapping
+ *
+ *  median
+ *    0
+ *    1
+ *  cor
+ *    2@3
+ *    3@2
+ *
+ * @type {Function}
+ */
+export const statsTable = createSelector([getDataset], dataset => {
+  return _statsTable(dataset.stats, dataset.fields);
+});
+
+export function _statsTable(stats, fields) {
+  const table = {};
+  const minmax = pairwiseMinMax(stats.pairwise);
+  pairwiseStatNames(stats.pairwise).forEach(statName => {
+    table[statName] = {};
+    fields.forEach((f1, m) => {
+      fields.forEach((f2, n) => {
+        const key = `${m}@${n}`;
+        const value = stats.pairwise[f1][statName][f2];
+        // scale it between min max
+        const scale = d3.scale.linear().domain([minmax[statName].min, minmax[statName].max]);
+        table[statName][key] = _.isNumber(value) ? scale(value) : 0.5;
+      });
+    });
+  });
+
+  return table;
+}
+
+/**
+ * Given dataset.stats.pairwise, determine the min/max of all
+ * valid numbers in the m@n pairs.
+ *
+ * {
+ *   cor: { min: -0.25867046096413593, max: 0.9009311952825864 },
+ *   corRank: { min: -0.3519565217391305, max: 0.3052173913043478 }
+ * }
+ */
+export function pairwiseMinMax(pairwise) {
+  const minmax = {};
+  _.forEach(pairwise, crossStats => {
+    _.forEach(crossStats, (statCrossValues, statName) => {
+      _.forEach(statCrossValues, num => {
+        if (_.isNumber(num)) {
+          minmax[statName] = mm(minmax[statName], num);
+        }
+      });
+    });
+  });
+  return minmax;
+}
 
 /**
  * getXYMappingControls - Generates an object for each modulateable control of the current sound.

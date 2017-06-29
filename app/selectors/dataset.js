@@ -19,6 +19,9 @@ export const getDatasetMetadata = createSelector([getDataset], dataset => {
 /**
  * Dataset statistics that can be used as modulation sources.
  *
+ * These are names: 'cor' 'covariance'
+ * and x / y names: 'x-median' 'x-variance' 'y-median' 'y-variance'
+ *
  * @type {Function}
  * @returns {Array.<string>}
  */
@@ -27,8 +30,12 @@ export const getSelectableSources = createSelector(
   dataset => (dataset ? sourcesFromStats(dataset.stats) : [])
 );
 
+export function pairwiseStatNames(pairwiseStats) {
+  return _.keys(_.head(_.values(pairwiseStats)));
+}
+
 export function sourcesFromStats(stats) {
-  const pairwise = _.keys(_.head(_.values(stats.pairwise)));
+  const pairwise = pairwiseStatNames(stats.pairwise);
   const firstFieldKey = _.head(_.keys(stats.fields));
   const fieldStats = _.keys(stats.fields[firstFieldKey]);
   const fields = _.without(fieldStats, 'type', 'minval', 'maxval', 'linearRegression');
