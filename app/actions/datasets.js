@@ -7,6 +7,7 @@ import { project } from 'data-projector';
 import callActionOnMain from '../ipc/callActionOnMain';
 import { notify } from './ui';
 import { clipLoopBox } from './interaction';
+import { autoSetSelectableSlots } from './mapping';
 
 /**
  * setDataset - having loaded and parsed a dataset, put that into the redux state
@@ -72,6 +73,7 @@ export function loadDataset(path) {
       dataset => {
         dispatch(notify());
         dispatch(setDataset(dataset));
+        dispatch(autoSetSelectableSlots(dataset));
         dispatch(clipLoopBox());
       },
       error => {

@@ -25,10 +25,9 @@ export const getDatasetMetadata = createSelector([getDataset], dataset => {
  * @type {Function}
  * @returns {Array.<string>}
  */
-export const getSelectableSources = createSelector(
-  [getDataset],
-  dataset => (dataset ? sourcesFromStats(dataset.stats) : [])
-);
+export const getSelectableSources = createSelector([getDataset], dataset => {
+  return dataset ? sourcesFromStats(dataset.stats) : [];
+});
 
 export function pairwiseStatNames(pairwiseStats) {
   return _.keys(_.head(_.values(pairwiseStats)));

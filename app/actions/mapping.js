@@ -23,6 +23,18 @@ export function autoMap() {
 }
 
 /**
+ * Set each selectable slot to something.
+ */
+export function autoSetSelectableSlots(dataset) {
+  return {
+    type: 'autoSetSelectableSlots',
+    payload: {
+      dataset
+    }
+  };
+}
+
+/**
  * Set a non-mapped sound param to a fixed value.
  *
  * Supplies the 0..1 unipolar value and maps it using the sound spec.

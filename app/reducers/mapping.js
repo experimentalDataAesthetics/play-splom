@@ -1,5 +1,7 @@
 import u from 'updeep';
 import _ from 'lodash';
+import { sourcesFromStats } from '../selectors/dataset';
+import { NUM_SELECTABLE_SOURCE_SLOTS } from '../constants';
 
 export default {};
 
@@ -77,7 +79,7 @@ export function autoMap(state, action) {
         return mapXYtoParam(nextState, { payload: { xy: 'y', param: controlNames[2] } });
       }
     } else {
-      // just select the first two as long as their are that many
+      // just select the first two as long as there are that many
       const nextState = mapXYtoParam(state, { payload: { xy: 'x', param: controlNames[1] } });
       return mapXYtoParam(nextState, { payload: { xy: 'y', param: controlNames[2] } });
     }
@@ -107,6 +109,40 @@ export function setSelectableSlot(state, action) {
         selectableSlots: {
           [action.payload.slot]: action.payload.datasource
         }
+      }
+    },
+    state
+  );
+}
+
+/**
+ * Set initial default values for each of the selectable slots -
+ * the ones that map derived statistics to sound parameter targets.
+ *
+ * This only really needs to happen on app startup.
+ *
+ * @param {object} state
+ */
+export function autoSetSelectableSlots(state, action) {
+  // Already set
+  if (state.xy.selectableSlots) {
+    return state;
+  }
+
+  const dataset = action.payload.dataset;
+
+  // All those possible
+  const selectableSources = sourcesFromStats(dataset.stats);
+
+  const selectableSlots = {};
+  for (let index = 0; index < NUM_SELECTABLE_SOURCE_SLOTS; index += 1) {
+    selectableSlots[String(index)] = selectableSources[index];
+  }
+
+  return u(
+    {
+      xy: {
+        selectableSlots
       }
     },
     state

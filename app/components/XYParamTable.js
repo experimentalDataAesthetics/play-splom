@@ -99,7 +99,6 @@ export default class XYParamTable extends React.Component {
 class XYParamRow extends React.PureComponent {
   render() {
     const { control } = this.props;
-    // console.log('render control', control);
     let onChange;
     let rangeValue;
     const fmt = v => {
@@ -134,7 +133,9 @@ class XYParamRow extends React.PureComponent {
 
     return (
       <tr className={control.connected ? style.connected : style.fixed}>
-        <th>{control.name}</th>
+        <th>
+          {control.name}
+        </th>
         {buttons}
         <td className={style.range}>
           <InputRange
