@@ -33,6 +33,11 @@ export function pairwiseStatNames(pairwiseStats) {
   return _.keys(_.head(_.values(pairwiseStats)));
 }
 
+export function fieldStatNames(fieldStats) {
+  const allNames = _.keys(_.head(_.values(fieldStats)));
+  return _.without(allNames, ['type', 'minval', 'maxval']);
+}
+
 export function sourcesFromStats(stats) {
   const pairwise = pairwiseStatNames(stats.pairwise);
   const firstFieldKey = _.head(_.keys(stats.fields));

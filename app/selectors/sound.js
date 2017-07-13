@@ -2,7 +2,7 @@ import d3 from 'd3';
 import { map } from 'supercolliderjs';
 import _ from 'lodash';
 import { createSelector } from 'reselect';
-import { getNormalizedPoints, getDataset, pairwiseStatNames } from './dataset';
+import { getNormalizedPoints, getDataset, pairwiseStatNames, fieldStatNames } from './dataset';
 import { NUM_SELECTABLE_SOURCE_SLOTS } from '../constants';
 
 export const getPointsUnderBrush = state => _.get(state, 'interaction.pointsUnderBrush', []);
@@ -54,10 +54,21 @@ const mm = (prev, num) => {
  * @type {Function}
  */
 export const statsTable = createSelector([getDataset], dataset => {
-  return _statsTable(dataset.stats, dataset.fields);
+  return dataset ? _statsTable(dataset.stats, dataset.fields) : null;
 });
 
 export function _statsTable(stats, fields) {
+  // fields Array<string>
+  // stats
+  //    fields
+  //      fieldName
+  //        statName: value
+  //    global
+  //    pairwise
+  //      fieldname
+  //        statname
+  //          otherField
+
   const table = {};
   const minmax = pairwiseMinMax(stats.pairwise);
   pairwiseStatNames(stats.pairwise).forEach(statName => {
@@ -66,12 +77,37 @@ export function _statsTable(stats, fields) {
       fields.forEach((f2, n) => {
         const key = `${m}@${n}`;
         const value = stats.pairwise[f1][statName][f2];
+        let scaled = 0.5;
         // scale it between min max
-        const scale = d3.scale.linear().domain([minmax[statName].min, minmax[statName].max]);
-        table[statName][key] = _.isNumber(value) ? scale(value) : 0.5;
+        const statMinMax = minmax[statName];
+        if (statMinMax) {
+          const min = statMinMax.min;
+          const max = statMinMax.max;
+          if (!(_.isNaN(min) || _.isNaN(max) || !_.isNumber(value))) {
+            const scale = d3.scale.linear().domain([min, max]);
+            scaled = scale(value);
+          }
+        }
+        table[statName][key] = scaled;
       });
     });
   });
+
+  fieldStatNames(stats.fields).forEach(statName => {
+    table[statName] = {};
+    fields.forEach((f1, m) => {
+      const fieldStats = stats.fields[f1];
+      const scale = d3.scale.linear().domain([fieldStats.minval, fieldStats.maxval]).clamp(true);
+      const stat = scale(fieldStats[statName]);
+      table[statName][String(m)] = _.isNumber(stat) ? stat : 0.5;
+    });
+  });
+
+  // x-mean y-mean
+  // table[mean] = {'0': v, '1': v}
+
+  // scale each by the minval/maxval
+  // stdDev is weird
 
   return table;
 }
@@ -243,7 +279,8 @@ export function spawnEventsFromBrush(state) {
     getSound(state),
     getMapping(state),
     getXYMappingControls(state),
-    npoints
+    npoints,
+    statsTable(state)
   );
 }
 
@@ -254,11 +291,14 @@ export function spawnEventsFromBrush(state) {
  * Mapping may specify to map x (or y) to multiple synth params,
  * it isn't just mapped to a single value.
  *
- * @param  {Object}     mapping
+ * @param  {Object}     mapping  - Current state.mapping
  * @param  {Object}     mappingControls
+ * @param {number}      m
+ * @param {number}      n
+ * @param {Object}      stats - statsTable normalized to 0..1
  * @return {Function}   (x, y) -> {param: value, ... paramN: valueN}
  */
-function makeXYMappingFn(mapping, mappingControls) {
+function makeXYMappingFn(mapping, mappingControls, m, n, stats) {
   const paramsX = _.get(mapping, 'xy.x.params', {});
   const paramsY = _.get(mapping, 'xy.y.params', {});
 
@@ -274,15 +314,61 @@ function makeXYMappingFn(mapping, mappingControls) {
     paramsY,
     (v, paramY) => makeXYMapper(mappingControls, paramY) || alwaysNull
   );
+
+  const fixedArgs = makeFixedArgs(mapping, mappingControls, m, n, stats);
+
   // mapping function
   return (x, y) => {
     return _.assign(
       {},
+      fixedArgs,
       // {paramName: mappingFunction, ...} -> {paramName: mappedValue, ...}
       _.omitBy(_.mapValues(mappersX, mapper => mapper(x)), _.isNull),
       _.omitBy(_.mapValues(mappersY, mapper => mapper(y)), _.isNull)
+      // mapper for the dynamic ones like x-variance
     );
   };
+}
+
+function makeFixedArgs(mapping, mappingControls, m, n, stats) {
+  const fixedArgs = {};
+  mappingControls.forEach(mc => {
+    if (!mc.connected) {
+      fixedArgs[mc.name] = mc.natural.value;
+    }
+  });
+
+  const mn = `${m}@${n}`;
+
+  function mapSlot(slot) {
+    const sx = mapping.xy[slot];
+    if (sx) {
+      _.each(sx.params, (isSet, param) => {
+        if (isSet) {
+          mapParam(param);
+        }
+      });
+    }
+  }
+
+  function mapParam(param) {
+    const mnStats = stats[param];
+    if (mnStats) {
+      const stat = mnStats[mn];
+      if (_.isNumber(stat)) {
+        // mappingControls where name=param
+        const mapControl = _.find(mappingControls, { name: param });
+        const mappingFn = makeMapper(mapControl.natural.spec);
+        fixedArgs[param] = mappingFn(stat);
+      }
+    }
+  }
+
+  // TODO: x-variance etc. which you get as stats[param][m]
+
+  _.each(mapping.xy.selectableSlots, mapSlot);
+
+  return {};
 }
 
 export function xyPointsEnteringToSynthEvents(
@@ -292,7 +378,8 @@ export function xyPointsEnteringToSynthEvents(
   sound,
   mapping,
   mappingControls,
-  npoints
+  npoints,
+  stats
 ) {
   if (pointsEntering.length === 0) {
     return [];
@@ -302,14 +389,9 @@ export function xyPointsEnteringToSynthEvents(
     return [];
   }
 
-  const mapXY = makeXYMappingFn(mapping, mappingControls);
+  const mapXY = makeXYMappingFn(mapping, mappingControls, m, n, stats);
 
-  const fixedArgs = {};
-  mappingControls.forEach(mc => {
-    if (!mc.connected) {
-      fixedArgs[mc.name] = mc.natural.value;
-    }
-  });
+  const fixedArgs = makeFixedArgs(mapping, mappingControls, stats, m, n);
 
   return pointsEntering.map(index => {
     const x = npoints[m].values[index];
@@ -352,8 +434,8 @@ export function makeMapper(spec) {
  * @return {Object} events, loopTime, epoch
  */
 export const getLoopModePayload = createSelector(
-  [getSound, getLoop, getNormalizedPoints, getMapping, getXYMappingControls],
-  (sound, loopMode, npoints, mapping, mappingControls) => {
+  [getSound, getLoop, getNormalizedPoints, getMapping, getXYMappingControls, statsTable],
+  (sound, loopMode, npoints, mapping, mappingControls, stats) => {
     if (!sound || !loopMode.box) {
       return {
         events: []
@@ -368,7 +450,8 @@ export const getLoopModePayload = createSelector(
       mapping,
       mappingControls,
       sound,
-      loopMode.loopTime
+      loopMode.loopTime,
+      stats
     );
 
     return {
@@ -395,7 +478,7 @@ export const getLoopModePayload = createSelector(
  * @param  {float} loopTime         Loop time in seconds.
  * @return {Array<Object>}          Array of synth events
  */
-export function loopModeEvents(m, n, t, npoints, mapping, mappingControls, sound, loopTime) {
+export function loopModeEvents(m, n, t, npoints, mapping, mappingControls, sound, loopTime, stats) {
   // If size is wrong eg. after loading a new dataset and loopMode is set from
   // previous one
   if (!(npoints[m] && npoints[n])) {
@@ -403,7 +486,7 @@ export function loopModeEvents(m, n, t, npoints, mapping, mappingControls, sound
     return [];
   }
 
-  const mapXY = makeXYMappingFn(mapping, mappingControls);
+  const mapXY = makeXYMappingFn(mapping, mappingControls, m, n, stats);
 
   const timeSpec = {
     warp: 'lin',
