@@ -232,16 +232,16 @@ describe('sourcesFromStats', () => {
     expect(sources).to.have.same.members([
       'cor',
       'corRank',
-      'x.median',
-      'x.mean',
-      'x.variance',
-      'x.stdev',
-      'x.modeskew',
-      'y.median',
-      'y.mean',
-      'y.variance',
-      'y.stdev',
-      'y.modeskew'
+      'x-median',
+      'x-mean',
+      'x-variance',
+      'x-stdev',
+      'x-modeskew',
+      'y-median',
+      'y-mean',
+      'y-variance',
+      'y-stdev',
+      'y-modeskew'
     ]);
   });
 });

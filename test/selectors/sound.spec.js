@@ -194,7 +194,7 @@ describe('selectors/sound', () => {
     it('should set .natural', function() {
       const xym = selectors.xyMappingControls(mapping, sound);
       const pan = xym[2];
-      expect(pan.natural).to.be.a('object');
+      expect(typeof pan.natural).to.equal('object');
     });
 
     // if unipolarMappingRanges is set then use those
