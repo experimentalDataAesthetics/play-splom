@@ -17,6 +17,37 @@ export const getDatasetMetadata = createSelector([getDataset], dataset => {
 });
 
 /**
+ * Dataset statistics that can be used as modulation sources.
+ *
+ * These are names: 'cor' 'covariance'
+ * and x / y names: 'x-median' 'x-variance' 'y-median' 'y-variance'
+ *
+ * @type {Function}
+ * @returns {Array.<string>}
+ */
+export const getSelectableSources = createSelector([getDataset], dataset => {
+  return dataset ? sourcesFromStats(dataset.stats) : [];
+});
+
+export function pairwiseStatNames(pairwiseStats) {
+  return _.keys(_.head(_.values(pairwiseStats)));
+}
+
+export function fieldStatNames(fieldStats) {
+  const allNames = _.keys(_.head(_.values(fieldStats)));
+  return _.without(allNames, ['type', 'minval', 'maxval']);
+}
+
+export function sourcesFromStats(stats) {
+  const pairwise = pairwiseStatNames(stats.pairwise);
+  const firstFieldKey = _.head(_.keys(stats.fields));
+  const fieldStats = _.keys(stats.fields[firstFieldKey]);
+  const fields = _.without(fieldStats, 'type', 'minval', 'maxval', 'linearRegression');
+  const sources = [].concat(pairwise, _.map(fields, f => `x-${f}`), _.map(fields, f => `y-${f}`));
+  return sources;
+}
+
+/**
  * Extract each column as values with min, max, mean, std calculated
  *
  * Each feature is an object:

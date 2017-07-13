@@ -2,6 +2,7 @@ import { createSelector } from 'reselect';
 import { centeredSquareWithMargin } from '../utils/layout';
 import { getDatasetMetadata, getFeatures } from './dataset';
 import { getLoop } from './sound';
+import { OUTSIDE_MARGIN, MARGIN_BETWEEN_PLOTS, COLLAPSE, SIDEBAR_WIDTH } from '../constants';
 
 export const getWindowSize = state => state.ui.windowSize;
 
@@ -16,9 +17,6 @@ export const getNumFeatures = createSelector([getDatasetMetadata], dataset => {
   return 0;
 });
 
-const OUTSIDE_MARGIN = 48;
-const MARGIN_BETWEEN_PLOTS = 24;
-
 /**
  * Layout sizes and style depending on windowSize
  * and the dataset numFeatures
@@ -28,8 +26,8 @@ export const getLayout = createSelector(
   [getWindowSize, getNumFeatures, getMuiTheme],
   (windowSize, numFeatures, muiTheme) => {
     const layout = {};
-    const big = windowSize.width > 600;
-    const sidebarWidth = big ? 300 : 0;
+    const big = windowSize.width > COLLAPSE;
+    const sidebarWidth = big ? SIDEBAR_WIDTH : 0;
     layout.showSidebar = big;
     layout.svgWidth = windowSize.width - sidebarWidth;
 
@@ -51,9 +49,8 @@ export const getLayout = createSelector(
       muiTheme.spacing.desktopGutter
     );
     layout.scatterPlotsMargin = OUTSIDE_MARGIN;
-    layout.plotsWidth = layout.svgStyle.right -
-      layout.svgStyle.left -
-      2 * layout.scatterPlotsMargin;
+    layout.plotsWidth =
+      layout.svgStyle.right - layout.svgStyle.left - 2 * layout.scatterPlotsMargin;
 
     layout.sideLength = layout.plotsWidth / (numFeatures || 1);
     layout.margin = layout.sideLength > 150 ? MARGIN_BETWEEN_PLOTS : 8;

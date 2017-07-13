@@ -5,19 +5,26 @@ import connect from '../utils/reduxers';
 import XYParamTable from '../components/XYParamTable';
 import styles from './Sidebar.css';
 
-import { getSound, getXYMappingControls } from '../selectors/index';
-import { mapXYtoParam, setFixedParamUnipolar, setParamRangeUnipolar } from '../actions/mapping';
+import { getSound, getXYMappingControls, getSelectableSources } from '../selectors/index';
+import {
+  mapXYtoParam,
+  setFixedParamUnipolar,
+  setParamRangeUnipolar,
+  setSelectableSlot
+} from '../actions/mapping';
 
 const selectors = {
   sound: getSound,
   mapping: state => state.mapping,
-  xyMappingControls: getXYMappingControls
+  xyMappingControls: getXYMappingControls,
+  selectableSources: getSelectableSources
 };
 
 const handlers = {
   mapXYtoParam,
   setFixedParamUnipolar,
-  setParamRangeUnipolar
+  setParamRangeUnipolar,
+  setSelectableSlot
 };
 
 /**
@@ -42,9 +49,11 @@ class ParamMapping extends React.PureComponent {
           'sound',
           'mapping',
           'xyMappingControls',
+          'selectableSources',
           'mapXYtoParam',
           'setFixedParamUnipolar',
-          'setParamRangeUnipolar'
+          'setParamRangeUnipolar',
+          'setSelectableSlot'
         ])
       )
     ]);

@@ -1,42 +1,51 @@
 import u from 'updeep';
 import _ from 'lodash';
+import { sourcesFromStats } from '../selectors/dataset';
+import { NUM_SELECTABLE_SOURCE_SLOTS } from '../constants';
 
 export default {};
 
+/**
+ * Map any control source like 'x' 'y' or any named dataset stat
+ * to the named sound parameter.
+ *
+ * This sound parameter will stay mapped even if you change to a different
+ * sound that doesn't have that param (eg. 'dispersion').
+ * If you switch back to the previous sound or to a new sound that does have
+ * a param of that name, then it will come up as connected.
+ *
+ * @param {Object} state
+ * @param {Object} action
+ * @param {string} action.payload.xy control source name
+ * @param {string} action.payload.param sound param name
+ */
 export function mapXYtoParam(state, action) {
   const payload = action.payload;
-  // toggle: if already mapped to this then disconnect it
-  if (_.get(state, `xy.${payload.xy}.params.${payload.param}`)) {
-    return u(
-      {
-        mode: 'xy',
-        xy: {
-          [payload.xy]: {
-            // updeep: filter this param out of params
-            params: u.omit(payload.param)
-          }
+  const isConnected = _.get(state, `xy.${payload.xy}.params.${payload.param}`);
+
+  const editXY = {
+    [payload.xy]: {
+      // toggle it
+      params: isConnected
+        ? u.omit(payload.param)
+        : {
+          [payload.param]: true
         }
-      },
-      state
-    );
+    }
+  };
+
+  // x or y: disconnect the obverse
+  // you cannot map both x and y to the same param
+  if (payload.xy === 'x' || payload.xy === 'y') {
+    editXY[payload.xy === 'x' ? 'y' : 'x'] = {
+      params: u.omit(payload.param)
+    };
   }
 
-  // connect it
   return u(
     {
       mode: 'xy',
-      xy: {
-        [payload.xy]: {
-          params: {
-            [payload.param]: true
-          }
-        },
-        // disconnect the obverse if it is connected
-        // you cannot map both x and y to the same param
-        [payload.xy === 'x' ? 'y' : 'x']: {
-          params: u.omit(payload.param)
-        }
-      }
+      xy: editXY
     },
     state
   );
@@ -47,7 +56,7 @@ export function mapXYtoParam(state, action) {
  * mutate state so that mapping.xy[x,y].params[left,right] = controlName
  *
  * @param  {Object} state - state.mapping
- * @param  {[type]} sound - the sound to be selected and mapped to
+ * @param  {Object} action - payload.sound i the sound to be selected and mapped to
  * @return {Object}       new state
  */
 export function autoMap(state, action) {
@@ -70,7 +79,7 @@ export function autoMap(state, action) {
         return mapXYtoParam(nextState, { payload: { xy: 'y', param: controlNames[2] } });
       }
     } else {
-      // just select the first two as long as their are that many
+      // just select the first two as long as there are that many
       const nextState = mapXYtoParam(state, { payload: { xy: 'x', param: controlNames[1] } });
       return mapXYtoParam(nextState, { payload: { xy: 'y', param: controlNames[2] } });
     }
@@ -87,6 +96,53 @@ export function setFixedParam(state, action) {
     {
       unipolarMappingRanges: {
         [action.payload.param]: action.payload.values
+      }
+    },
+    state
+  );
+}
+
+export function setSelectableSlot(state, action) {
+  return u(
+    {
+      xy: {
+        selectableSlots: {
+          [action.payload.slot]: action.payload.datasource
+        }
+      }
+    },
+    state
+  );
+}
+
+/**
+ * Set initial default values for each of the selectable slots -
+ * the ones that map derived statistics to sound parameter targets.
+ *
+ * This only really needs to happen on app startup.
+ *
+ * @param {object} state
+ */
+export function autoSetSelectableSlots(state, action) {
+  // Already set
+  if (state.xy.selectableSlots) {
+    return state;
+  }
+
+  const dataset = action.payload.dataset;
+
+  // All those possible
+  const selectableSources = sourcesFromStats(dataset.stats);
+
+  const selectableSlots = {};
+  for (let index = 0; index < NUM_SELECTABLE_SOURCE_SLOTS; index += 1) {
+    selectableSlots[String(index)] = selectableSources[index];
+  }
+
+  return u(
+    {
+      xy: {
+        selectableSlots
       }
     },
     state
