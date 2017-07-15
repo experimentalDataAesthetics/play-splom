@@ -3,6 +3,41 @@ import _ from 'lodash';
 import { sourcesFromStats } from '../selectors/dataset';
 import { NUM_SELECTABLE_SOURCE_SLOTS } from '../constants';
 
+// interface Action {
+//   type: string;
+//   payload: any;
+// }
+//
+// interface XY {
+//   params: {
+//     [paramName: string]: boolean;
+//   };
+// }
+//
+// interface XYMode {
+//   selectableSlots?: {
+//     [slotName: string]: string; // datasource name
+//   };
+//   x: XY;
+//   y: XY;
+//   [selectableSlot: string]: XY;
+// }
+//
+// interface MappingState {
+//   mode: string;
+//   xy: XYMode;
+// }
+
+// const initial: MappingState = {
+//   mode: "xy",
+//   xy: {
+//     x: { params: {} },
+//     y: { params: {} }
+//   }
+// };
+//
+// export default initial;
+
 export default {};
 
 /**
@@ -20,35 +55,42 @@ export default {};
  * @param {string} action.payload.param sound param name
  */
 export function mapXYtoParam(state, action) {
-  const payload = action.payload;
-  const isConnected = _.get(state, `xy.${payload.xy}.params.${payload.param}`);
+  // const payload = action.payload; // {mode: "xy", xy: controlName, param: paramName}
+  const control = action.payload.xy;
+  const param = action.payload.param;
+  const isConnected = _.get(state, `xy.${control}.params.${param}`);
+  // toggle it
+  const connecting = !isConnected;
+  const selectableSlots = state.xy && state.xy.selectableSlots;
 
   const editXY = {
-    [payload.xy]: {
-      // toggle it
-      params: isConnected
-        ? u.omit(payload.param)
-        : {
-          [payload.param]: true
-        }
+    [control]: {
+      params: {
+        [param]: connecting
+      }
     }
   };
 
-  // x or y: disconnect the obverse
-  // you cannot map both x and y to the same param
-  if (payload.xy === 'x' || payload.xy === 'y') {
-    editXY[payload.xy === 'x' ? 'y' : 'x'] = {
-      params: u.omit(payload.param)
-    };
+  // Only one control may connect to a param
+  // set all controls to false for this param
+  if (connecting && selectableSlots) {
+    _.concat(['x', 'y'], _.values(selectableSlots)).forEach(ctrl => {
+      if (ctrl !== control) {
+        editXY[ctrl] = {
+          params: {
+            [param]: false
+          }
+        };
+      }
+    });
   }
 
-  return u(
-    {
-      mode: 'xy',
-      xy: editXY
-    },
-    state
-  );
+  const edit = {
+    mode: 'xy',
+    xy: editXY
+  };
+
+  return u(edit, state);
 }
 
 /**
