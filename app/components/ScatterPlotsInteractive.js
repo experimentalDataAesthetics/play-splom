@@ -39,7 +39,7 @@ class ScatterPlotsInteractive extends React.PureComponent {
   state = {};
 
   onMouseDown = event => {
-    // console.log({type: 'down', x: event.clientX, y: event.clientY});
+    // console.log({ type: 'down', x: event.clientX, y: event.clientY });
     const box = this._boxForEvent(event);
 
     if (event.buttons && event.metaKey) {
@@ -108,7 +108,9 @@ class ScatterPlotsInteractive extends React.PureComponent {
         // so the SelectArea will not get any mouse events
         // as they are outside of it's DOM element.
         // Call moved directly using the ref
-        this.selectArea.moved(event);
+        if (this.selectArea) {
+          this.selectArea.moved(event);
+        }
       }
     } else if (changed) {
       this.setHoveringBox(box);

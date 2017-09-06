@@ -156,7 +156,10 @@ export default class SelectArea extends React.Component {
     onMouseEnter: PropTypes.func,
     onClick: PropTypes.func,
     onMetaClick: PropTypes.func,
-    show: PropTypes.bool
+    mouseDownPointEvent: PropTypes.object,
+    show: PropTypes.bool,
+    overlayClassName: PropTypes.string,
+    selectionClassName: PropTypes.string
   };
 
   constructor(props, context) {
@@ -249,12 +252,15 @@ export default class SelectArea extends React.Component {
     if (event.buttons && event.metaKey) {
       if (this.props.onMetaClick) {
         this.props.onMetaClick(event);
+        event.stopPropagation();
       }
       return;
     }
 
     if (event.buttons && this.props.onClick) {
       this.props.onClick(event);
+      event.stopPropagation();
+      // return ?
     }
 
     if (!this._shouldHandleEvent(event)) {
