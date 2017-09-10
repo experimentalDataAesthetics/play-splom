@@ -1,16 +1,14 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import h from 'react-hyperscript';
 import _ from 'lodash';
+import PropTypes from 'prop-types';
+import React from 'react';
+import h from 'react-hyperscript';
+
+import { setLoopBox, setPointsUnderBrush } from '../actions/interaction';
+import { setHovering, toggleZoomScatterplot } from '../actions/ui';
 import connect from '../utils/reduxers';
-
-import { setPointsUnderBrush, setLoopBox } from '../actions/interaction';
-
-import { setHovering } from '../actions/ui';
-
 import HoveringAxis from './HoveringAxis';
-import SelectArea from './SelectArea';
 import style from './ScatterPlots.css';
+import SelectArea from './SelectArea';
 
 const unset = {};
 
@@ -33,7 +31,8 @@ class ScatterPlotsInteractive extends React.PureComponent {
     features: PropTypes.array.isRequired,
     setPointsUnderBrush: PropTypes.func.isRequired,
     setHovering: PropTypes.func.isRequired,
-    setLoopBox: PropTypes.func.isRequired
+    setLoopBox: PropTypes.func.isRequired,
+    toggleZoomScatterplot: PropTypes.func.isRequired
   };
 
   state = {};
@@ -131,6 +130,16 @@ class ScatterPlotsInteractive extends React.PureComponent {
         this.setHoveringBox(box);
       }
     }
+  };
+
+  /**
+     * Toggle zoom on double-click
+     */
+  onDoubleClick = event => {
+    // onMouseDown will fire once as well before this gets it
+    const box = this._boxForEvent(event);
+    this.props.toggleZoomScatterplot(box);
+    event.stopPropagation();
   };
 
   setPointsIn(area, box, points) {
@@ -322,6 +331,7 @@ class ScatterPlotsInteractive extends React.PureComponent {
         onTouchMove={this.onMouseMove}
         onMouseUp={this.onMouseUp}
         onTouchEnd={this.onMouseUp}
+        onDoubleClick={this.onDoubleClick}
       >
         {children}
       </g>
@@ -337,6 +347,7 @@ export default connect(
   {
     setPointsUnderBrush,
     setHovering,
-    setLoopBox
+    setLoopBox,
+    toggleZoomScatterplot
   }
 )(ScatterPlotsInteractive);
