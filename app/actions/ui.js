@@ -24,12 +24,15 @@ export function setHovering(m, n) {
   };
 }
 
-export function zoomScatterplot(id) {
+/**
+ * Zoom to this box. If already zoomed to this box then zoom back out to full.
+ *
+ * @param {m, n} box
+ */
+export function toggleZoomScatterplot(box) {
   return {
-    type: 'zoomScatterplot',
-    payload: {
-      id
-    }
+    type: 'toggleZoomScatterplot',
+    payload: box
   };
 }
 

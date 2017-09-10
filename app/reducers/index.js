@@ -34,7 +34,6 @@ import * as sound from './sound';
 import * as sounds from './sounds';
 import * as ui from './ui';
 import * as interaction from './interaction';
-import * as transport from './transport';
 
 // Combine all into a single reduction function
 // that can be passed to createStore
@@ -46,8 +45,7 @@ const reducers = combineReducers({
   sound: autoReducer(sound),
   mapping: autoReducer(mapping),
   ui: autoReducer(ui),
-  interaction: autoReducer(interaction),
-  transport: autoReducer(transport)
+  interaction: autoReducer(interaction)
 });
 
 export default function(state = {}, action) {
