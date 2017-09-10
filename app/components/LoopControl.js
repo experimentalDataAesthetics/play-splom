@@ -1,20 +1,26 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { scale, round } from 'd3';
+import { round, scale } from 'd3';
 import _ from 'lodash';
-import InputRange from 'react-input-range';
-import SelectField from 'material-ui/SelectField';
 import MenuItem from 'material-ui/MenuItem';
+import SelectField from 'material-ui/SelectField';
+import PropTypes from 'prop-types';
+import React from 'react';
+import InputRange from 'react-input-range';
+
+import { setLoopTime, setLoopTimeDimension, toggleLoopMode } from '../actions/interaction';
+import styles from '../containers/Sidebar.css';
+import { getDatasetMetadata, getLoop } from '../selectors';
 import connect from '../utils/reduxers';
-import { getLoop, getDatasetMetadata } from '../selectors';
-import { toggleLoopMode, setLoopTime, setLoopTimeDimension } from '../actions/interaction';
 import ToggleButton from './ToggleButton';
 import style from './XYParamTable.css';
-import styles from '../containers/Sidebar.css';
 
 const MIN = 0.05;
 const MAX = 60.0;
-const mapv = scale.pow().exponent(2).range([MIN, MAX]);
+const MIN_LOOP_SPEED = 0.001 * 1000;
+const MAX_LOOP_SPEED = 2.0 * 1000;
+const mapv = scale
+  .pow()
+  .exponent(2)
+  .range([MIN, MAX]);
 const unmapv = mapv.invert;
 
 /**
@@ -30,18 +36,41 @@ class LoopControl extends React.PureComponent {
   };
 
   setLoopTime = _.debounce(v => {
-    this.props.setLoopTime(mapv(v));
+    const loopTime = mapv(v);
+    this.props.setLoopTime(loopTime);
+  }, 100);
+
+  setLoopSpeed = _.debounce(v => {
+    const loopTime = _.clamp(1.0 / v * 1000, MIN_LOOP_SPEED, MAX_LOOP_SPEED);
+    this.props.setLoopTime(loopTime);
   }, 100);
 
   render() {
+    const loopTime = this.props.loopMode.loopTime || 10;
+    const loopSpeed = _.clamp(1.0 / loopTime * 1000, MIN_LOOP_SPEED, MAX_LOOP_SPEED);
+
     const slider = (
       <InputRange
         minValue={0}
         maxValue={1}
         step={0.001}
-        value={unmapv(this.props.loopMode.loopTime || 10)}
+        value={unmapv(loopTime)}
         onChange={this.setLoopTime}
         formatLabel={v => round(mapv(v), 2)}
+        style={{ width: '256px' }} // to match the select box
+      />
+    );
+
+    const numberInput = (
+      <input
+        type="number"
+        value={loopSpeed}
+        name="speed"
+        min={MIN_LOOP_SPEED}
+        max={MAX_LOOP_SPEED}
+        step={1}
+        onChange={e => this.setLoopSpeed(e.target.value)}
+        style={{ width: '8rem' }}
       />
     );
 
@@ -81,14 +110,19 @@ class LoopControl extends React.PureComponent {
 
     return (
       <div className={styles.loopControl}>
+        <h6>Loop</h6>
         <table className={style.table}>
           <tbody>
             <tr>
-              <th>Loop</th>
+              <th style={{ width: 100 }}>On</th>
               <td>{button}</td>
             </tr>
             <tr>
-              <th>Time</th>
+              <th style={{ verticalAlign: 'top' }}>Speed (mHz)</th>
+              <td style={{ paddingBottom: '12px' }}>{numberInput}</td>
+            </tr>
+            <tr>
+              <th>Time (seconds)</th>
               <td className={style.range}>{slider}</td>
             </tr>
             <tr>
@@ -123,7 +157,7 @@ const X = 200;
 const INDEX = 100;
 
 function valueToSelect(v) {
-  if (_.isNumber) {
+  if (_.isNumber(v)) {
     return v;
   }
   if (v === 'x') {
