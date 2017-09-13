@@ -195,8 +195,14 @@ class ScatterPlotsInteractive extends React.PureComponent {
 
   _boxForEvent(event) {
     const layout = this.props.layout;
+    // If you are zoomed in then that is the only box you can be on
+    if (layout.zoom.m !== undefined) {
+      return { m: layout.zoom.m, n: layout.zoom.n };
+    }
+
     const x = event.clientX;
     const y = event.clientY;
+    // this could be a function supplied on .layout
     const rx = x - layout.svgStyle.left - layout.scatterPlotsMargin;
     const ry = y - layout.svgStyle.top - layout.scatterPlotsMargin;
     const m = Math.floor(rx / layout.sideLength);
@@ -278,7 +284,7 @@ class ScatterPlotsInteractive extends React.PureComponent {
       const selectedArea = h(SelectArea, {
         key: 'box',
         // Store a reference to this child element
-        // so we can call initimate methods on it directly.
+        // so we can call protected methods.
         ref: this.setSelectArea,
         selected: {
           x: 0,
@@ -286,13 +292,14 @@ class ScatterPlotsInteractive extends React.PureComponent {
           width: 0,
           height: 0
         },
+        // Rect of the focused box,
+        // the maximum selectable area
         domain: {
           x: box.x,
           y: box.y,
           width: innerSideLength,
           height: innerSideLength
         },
-        base: [box.baseClientX, box.baseClientY],
         onChange: area => {
           this._selectedArea = area;
           this.setPointsIn(area, box, points);
