@@ -109,7 +109,7 @@ class LoopControl extends React.PureComponent {
     const timeValue = this.props.loopMode.timeDimension;
 
     return (
-      <div className={styles.loopControl}>
+      <div className={styles.loopControl} style={{ height: this.props.height }}>
         <h6>Loop</h6>
         <table className={style.table}>
           <tbody>

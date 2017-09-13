@@ -42,6 +42,16 @@ export const getLayout = createSelector(
         top: 0,
         bottom: windowSize.height
       };
+      const paramsHeight = 450;
+      const loopHeight = 200;
+      const others = windowSize.height - paramsHeight - loopHeight;
+      const other = Math.max(others / 2, 115);
+      layout.sideBarHeights = {
+        params: `${paramsHeight}px`,
+        loop: `${loopHeight}px`,
+        datasets: `${other}px`,
+        sounds: `${other}px`
+      };
     }
 
     // console.log(muiTheme);

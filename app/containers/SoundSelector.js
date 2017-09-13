@@ -9,9 +9,9 @@ const SelectableList = MakeSelectable(List);
 /**
  * Sidebar area for selecting the sound
  */
-function SoundSelector({ sounds, selectedSound, onSelect }) {
+function SoundSelector({ sounds, selectedSound, onSelect, height }) {
   return (
-    <div className={styles.soundSelector}>
+    <div className={styles.soundSelector} style={{ height }}>
       <h6>Sounds</h6>
       <SelectableList value={selectedSound} onChange={onSelect} className="selectable-list">
         {sounds.map(sound => (
