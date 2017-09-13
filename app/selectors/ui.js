@@ -64,6 +64,7 @@ export const getLayout = createSelector(
       windowSize.height,
       muiTheme.spacing.desktopGutter
     );
+    // could remove this when space is tight
     layout.scatterPlotsMargin = OUTSIDE_MARGIN;
     layout.plotsWidth =
       layout.svgStyle.right - layout.svgStyle.left - 2 * layout.scatterPlotsMargin;
@@ -108,10 +109,10 @@ export const getLayout = createSelector(
             zoom = {
               m,
               n,
-              x: x + OUTSIDE_MARGIN - 15,
-              y: y + OUTSIDE_MARGIN - 5,
-              width: layout.sideLength,
-              height: layout.sideLength
+              x: x + OUTSIDE_MARGIN - MARGIN_BETWEEN_PLOTS * 0.5,
+              y: y + OUTSIDE_MARGIN - MARGIN_BETWEEN_PLOTS * 0.5,
+              width: layout.sideLength + MARGIN_BETWEEN_PLOTS,
+              height: layout.sideLength + MARGIN_BETWEEN_PLOTS
             };
           }
         }
