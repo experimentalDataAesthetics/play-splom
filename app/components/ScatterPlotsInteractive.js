@@ -1,16 +1,14 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import h from 'react-hyperscript';
 import _ from 'lodash';
+import PropTypes from 'prop-types';
+import React from 'react';
+import h from 'react-hyperscript';
+
+import { setLoopBox, setPointsUnderBrush } from '../actions/interaction';
+import { setHovering, toggleZoomScatterplot } from '../actions/ui';
 import connect from '../utils/reduxers';
-
-import { setPointsUnderBrush, setLoopBox } from '../actions/interaction';
-
-import { setHovering } from '../actions/ui';
-
 import HoveringAxis from './HoveringAxis';
-import SelectArea from './SelectArea';
 import style from './ScatterPlots.css';
+import SelectArea from './SelectArea';
 
 const unset = {};
 
@@ -33,7 +31,8 @@ class ScatterPlotsInteractive extends React.PureComponent {
     features: PropTypes.array.isRequired,
     setPointsUnderBrush: PropTypes.func.isRequired,
     setHovering: PropTypes.func.isRequired,
-    setLoopBox: PropTypes.func.isRequired
+    setLoopBox: PropTypes.func.isRequired,
+    toggleZoomScatterplot: PropTypes.func.isRequired
   };
 
   state = {};
@@ -133,6 +132,16 @@ class ScatterPlotsInteractive extends React.PureComponent {
     }
   };
 
+  /**
+     * Toggle zoom on double-click
+     */
+  onDoubleClick = event => {
+    // onMouseDown will fire once as well before this gets it
+    const box = this._boxForEvent(event);
+    this.props.toggleZoomScatterplot(box);
+    event.stopPropagation();
+  };
+
   setPointsIn(area, box, points) {
     // area is inverted y
     // points are normal y
@@ -186,8 +195,14 @@ class ScatterPlotsInteractive extends React.PureComponent {
 
   _boxForEvent(event) {
     const layout = this.props.layout;
+    // If you are zoomed in then that is the only box you can be on
+    if (layout.zoom.m !== undefined) {
+      return { m: layout.zoom.m, n: layout.zoom.n };
+    }
+
     const x = event.clientX;
     const y = event.clientY;
+    // this could be a function supplied on .layout
     const rx = x - layout.svgStyle.left - layout.scatterPlotsMargin;
     const ry = y - layout.svgStyle.top - layout.scatterPlotsMargin;
     const m = Math.floor(rx / layout.sideLength);
@@ -269,7 +284,7 @@ class ScatterPlotsInteractive extends React.PureComponent {
       const selectedArea = h(SelectArea, {
         key: 'box',
         // Store a reference to this child element
-        // so we can call initimate methods on it directly.
+        // so we can call protected methods.
         ref: this.setSelectArea,
         selected: {
           x: 0,
@@ -277,13 +292,14 @@ class ScatterPlotsInteractive extends React.PureComponent {
           width: 0,
           height: 0
         },
+        // Rect of the focused box,
+        // the maximum selectable area
         domain: {
           x: box.x,
           y: box.y,
           width: innerSideLength,
           height: innerSideLength
         },
-        base: [box.baseClientX, box.baseClientY],
         onChange: area => {
           this._selectedArea = area;
           this.setPointsIn(area, box, points);
@@ -322,6 +338,7 @@ class ScatterPlotsInteractive extends React.PureComponent {
         onTouchMove={this.onMouseMove}
         onMouseUp={this.onMouseUp}
         onTouchEnd={this.onMouseUp}
+        onDoubleClick={this.onDoubleClick}
       >
         {children}
       </g>
@@ -337,6 +354,7 @@ export default connect(
   {
     setPointsUnderBrush,
     setHovering,
-    setLoopBox
+    setLoopBox,
+    toggleZoomScatterplot
   }
 )(ScatterPlotsInteractive);

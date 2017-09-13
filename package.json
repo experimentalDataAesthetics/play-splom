@@ -61,6 +61,7 @@
     "react-dom": "^15.5.4",
     "react-hyperscript": "^3.0.0",
     "react-input-range": "^1.1.4",
+    "react-motion": "^0.5.1",
     "react-redux": "^5.0.5",
     "react-tap-event-plugin": "^2.0.1",
     "react-textselect": "^0.2.0",

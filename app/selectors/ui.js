@@ -17,14 +17,16 @@ export const getNumFeatures = createSelector([getDatasetMetadata], dataset => {
   return 0;
 });
 
+const getZoomed = state => state.ui.zoomed;
+
 /**
  * Layout sizes and style depending on windowSize
  * and the dataset numFeatures
  * Will also include theme when that is added.
  */
 export const getLayout = createSelector(
-  [getWindowSize, getNumFeatures, getMuiTheme],
-  (windowSize, numFeatures, muiTheme) => {
+  [getWindowSize, getNumFeatures, getMuiTheme, getZoomed],
+  (windowSize, numFeatures, muiTheme, zoomed) => {
     const layout = {};
     const big = windowSize.width > COLLAPSE;
     const sidebarWidth = big ? SIDEBAR_WIDTH : 0;
@@ -55,6 +57,14 @@ export const getLayout = createSelector(
     layout.sideLength = layout.plotsWidth / (numFeatures || 1);
     layout.margin = layout.sideLength > 150 ? MARGIN_BETWEEN_PLOTS : 8;
 
+    // Default: zoomed out all the way
+    let zoom = {
+      x: 0,
+      y: 0,
+      width: layout.svgStyle.width,
+      height: layout.svgStyle.height
+    };
+
     // each box
     layout.boxes = [];
     if (layout.sideLength > 0) {
@@ -78,9 +88,23 @@ export const getLayout = createSelector(
             baseClientX: x + layout.svgStyle.left + layout.scatterPlotsMargin,
             baseClientY: y + layout.svgStyle.top + layout.scatterPlotsMargin
           });
+
+          // Set zoom
+          if (zoomed && (m === zoomed.m && n === zoomed.n)) {
+            zoom = {
+              m,
+              n,
+              x: x + OUTSIDE_MARGIN - 15,
+              y: y + OUTSIDE_MARGIN - 5,
+              width: layout.sideLength,
+              height: layout.sideLength
+            };
+          }
         }
       }
     }
+
+    layout.zoom = zoom;
 
     return layout;
   }
