@@ -1,13 +1,11 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import h from 'react-hyperscript';
 import RaisedButton from 'material-ui/RaisedButton';
-import { List, ListItem, MakeSelectable } from 'material-ui/List';
+import PropTypes from 'prop-types';
+import React from 'react';
+
+import { loadDataset, openDatasetDialog } from '../actions/datasets';
+import Select from '../components/Select';
 import connect from '../utils/reduxers';
 import styles from './Sidebar.css';
-import { loadDataset, openDatasetDialog } from '../actions/datasets';
-
-const SelectableList = MakeSelectable(List);
 
 /**
  * Component in right sidebar to select from available
@@ -17,44 +15,30 @@ class DatasetSelector extends React.PureComponent {
   static propTypes = {
     selected: PropTypes.string,
     datasets: PropTypes.array.isRequired,
-    openDialog: PropTypes.func.isRequired,
-    onSelect: PropTypes.func.isRequired,
+    openDatasetDialog: PropTypes.func.isRequired,
+    loadDataset: PropTypes.func.isRequired,
     height: PropTypes.string.isRequired
   };
 
   render() {
-    const selectableList = h(
-      SelectableList,
-      {
-        value: this.props.selected,
-        onChange: this.props.onSelect,
-        className: 'selectable-list',
-        style: { clear: 'both' }
-      },
-      this.props.datasets.map(dataset => {
-        return h(ListItem, {
-          primaryText: dataset.name,
-          value: dataset.path,
-          selected: dataset.name === this.props.selected,
-          style: {
-            fontSize: '1em'
-          },
-          innerDivStyle: {
-            padding: '8px'
-          }
-        });
-      })
-    );
+    const { datasets, selected, height } = this.props;
+    const options = datasets.map(dataset => ({ label: dataset.name, value: dataset.path }));
 
     return (
-      <div className={styles.datasetSelector} style={{ height: this.props.height }}>
+      <div className={styles.datasetSelector} style={{ height }}>
         <h6>
           Datasets
           <span className={styles.datasetButton}>
-            <RaisedButton label="Open..." onClick={this.props.openDialog} />
+            <RaisedButton label="Open..." onClick={this.props.openDatasetDialog} />
           </span>
         </h6>
-        {selectableList}
+        <Select
+          height={parseInt(height, 10)}
+          breakpoint={150}
+          options={options}
+          selected={selected}
+          action={this.props.loadDataset}
+        />
       </div>
     );
   }
@@ -66,7 +50,7 @@ export default connect(
     selected: state => state.dataset && state.dataset.path
   },
   {
-    onSelect: (e, path) => loadDataset(path),
-    openDialog: openDatasetDialog
+    loadDataset,
+    openDatasetDialog
   }
 )(DatasetSelector);

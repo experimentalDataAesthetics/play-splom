@@ -45,7 +45,11 @@ export const getLayout = createSelector(
       const paramsHeight = 450;
       const loopHeight = 200;
       const others = windowSize.height - paramsHeight - loopHeight;
-      const other = Math.max(others / 2, 115);
+      let other = Math.round(others / 2);
+      // If it is small then collapse them. They will use a different ui element.
+      if (other < 250) {
+        other = 80;
+      }
       layout.sideBarHeights = {
         params: `${paramsHeight}px`,
         loop: `${loopHeight}px`,

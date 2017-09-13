@@ -1,36 +1,31 @@
 import React from 'react';
-import { List, ListItem, MakeSelectable } from 'material-ui/List';
-import connect from '../utils/reduxers';
-import { selectSound } from '../actions/sounds';
-import styles from './Sidebar.css';
 
-const SelectableList = MakeSelectable(List);
+import { selectSound } from '../actions/sounds';
+import Select from '../components/Select';
+import connect from '../utils/reduxers';
+import styles from './Sidebar.css';
 
 /**
  * Sidebar area for selecting the sound
  */
-function SoundSelector({ sounds, selectedSound, onSelect, height }) {
-  return (
-    <div className={styles.soundSelector} style={{ height }}>
-      <h6>Sounds</h6>
-      <SelectableList value={selectedSound} onChange={onSelect} className="selectable-list">
-        {sounds.map(sound => (
-          <ListItem
-            key={sound.name}
-            primaryText={sound.name}
-            selected={sound.name === selectedSound}
-            style={{
-              fontSize: '1em'
-            }}
-            innerDivStyle={{
-              padding: '8px'
-            }}
-            value={sound.name}
-          />
-        ))}
-      </SelectableList>
-    </div>
-  );
+class SoundSelector extends React.PureComponent {
+  render() {
+    const { sounds, selectedSound, height } = this.props;
+    const options = sounds.map(sound => ({ label: sound.name, value: sound.name }));
+
+    return (
+      <div className={styles.soundSelector} style={{ height }}>
+        <h6>Sounds</h6>
+        <Select
+          height={parseInt(height, 10)}
+          breakpoint={150}
+          options={options}
+          selected={selectedSound}
+          action={this.props.selectSound}
+        />
+      </div>
+    );
+  }
 }
 
 export default connect(
@@ -39,6 +34,6 @@ export default connect(
     selectedSound: 'sound'
   },
   {
-    onSelect: (event, name) => selectSound(name)
+    selectSound
   }
 )(SoundSelector);
