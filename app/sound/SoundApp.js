@@ -52,6 +52,7 @@ export default class SoundApp {
     this.loopModeEventStream = new Bacon.Bus();
     this.playing = false;
     this.log = log;
+    this.watchingDirectory = undefined;
 
     this.masterArgs = {
       amp: 0.3
@@ -182,12 +183,11 @@ export default class SoundApp {
   }
 
   stop() {
-    if (this.player) {
-      // will not actually complete because of Group and Synth
-      return this.player.stop().timeout(1000);
-    }
-
-    return Promise.resolve();
+    this.unwatchDir();
+    const p = this.player ? this.player.stop() : Promise.resolve();
+    return p.timeout(1000);
+    // Will not actually complete because of Group and Synth
+    // it always timesout.
   }
 
   spawnSynth(event) {
@@ -249,10 +249,17 @@ export default class SoundApp {
   }
 
   watchDir(synthDefsDir, dispatch) {
-    watch.watchTree(synthDefsDir, { interval: 1 }, () => {
-      this.loadSounds(synthDefsDir, dispatch).catch(error => {
-        console.error(error);
+    if (!this.watchingDirectory) {
+      this.watchingDirectory = synthDefsDir;
+      watch.watchTree(synthDefsDir, { interval: 1 }, () => {
+        this.loadSounds(synthDefsDir, dispatch).catch(console.error);
       });
-    });
+    }
+  }
+
+  unwatchDir() {
+    if (this.watchingDirectory) {
+      watch.unwatchTree(this.watchingDirectory);
+    }
   }
 }
