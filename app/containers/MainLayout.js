@@ -1,14 +1,13 @@
 import _ from 'lodash';
-import React from 'react';
-import PropTypes from 'prop-types';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
-import connect from '../utils/reduxers';
+import PropTypes from 'prop-types';
+import React from 'react';
 
+import Notification from '../components/Notification';
+import { getLayout, getMuiTheme } from '../selectors/index';
+import connect from '../utils/reduxers';
 import Sidebar from './Sidebar';
 import SVGFrame from './SVGFrame';
-import Notification from '../components/Notification';
-
-import { getLayout, getMuiTheme } from '../selectors/index';
 
 /**
  * This is the layout of the application itself.
@@ -39,15 +38,19 @@ class MainLayout extends React.PureComponent {
 
     const svg = (
       <div style={svgStyle}>
-        <SVGFrame containerWidth={layout.svgStyle.width} containerHeight={layout.svgStyle.height} />
+        <SVGFrame
+          containerWidth={layout.svgStyle.width}
+          containerHeight={layout.svgStyle.height}
+          zoom={layout.zoom}
+        />
       </div>
     );
 
-    const sidebar = layout.showSidebar
-      ? (<div style={layout.sideBarStyle}>
+    const sidebar = layout.showSidebar ? (
+      <div style={layout.sideBarStyle}>
         <Sidebar />
-      </div>)
-      : null;
+      </div>
+    ) : null;
 
     return (
       <MuiThemeProvider muiTheme={this.props.muiTheme}>

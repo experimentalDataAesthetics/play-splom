@@ -30,6 +30,7 @@ export default class SVGFrame extends React.Component {
         className: 'svg-frame',
         height: this.props.containerHeight,
         width: this.props.containerWidth
+        viewBox: `${zoom.x} ${zoom.y} ${zoom.width} ${zoom.height}`,
       },
       children
     );
