@@ -55,12 +55,12 @@
     "electron"
   ],
   "dependencies": {
-    "baconjs": "^0.7.94",
+    "baconjs": "^0.7.95",
     "d3": "^3.5.17",
     "data-projector": "0.2.0",
-    "datalib": "^1.7.3",
-    "electron-debug": "^1.0.1",
-    "electron-log": "^1.2.2",
+    "datalib": "^1.8.0",
+    "electron-debug": "^1.4.0",
+    "electron-log": "^2.2.9",
     "font-awesome": "^4.6.3",
     "fs-jetpack": "^0.10.5",
     "keymirror": "^0.1.1",
@@ -79,7 +79,7 @@
     "redux-logger": "^3.0.6",
     "redux-thunk": "^2.1.0",
     "reselect": "^3.0.1",
-    "source-map-support": "^0.4.15",
+    "source-map-support": "^0.4.18",
     "supercolliderjs": "0.14.2",
     "updeep": "^1.0.0",
     "watch": "^1.0.1"
