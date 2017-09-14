@@ -3,6 +3,13 @@
 /* eslint import/extensions: 0 */
 /* eslint import/no-extraneous-dependencies: 0 */
 /* eslint no-console: 0 */
+import { app, BrowserWindow, ipcMain, Menu, powerSaveBlocker, shell } from 'electron';
+import log from 'electron-log';
+import path from 'path';
+
+import handleActionOnMain from './app/ipc/handleActionOnMain';
+import SoundApp from './app/sound/SoundApp';
+
 /**
  * The backend application that creates windows
  * and launches the frontend application app/index.js
@@ -11,12 +18,6 @@
 
  * main.development.js is transpiled to main.js when built for release.
  */
-
-import { BrowserWindow, app, powerSaveBlocker, Menu, shell, ipcMain } from 'electron';
-import path from 'path';
-import log from 'electron-log';
-import SoundApp from './app/sound/SoundApp';
-import handleActionOnMain from './app/ipc/handleActionOnMain';
 
 const pkg = require('./package.json');
 
@@ -77,18 +78,10 @@ function quit() {
     return;
   }
 
-  return soundApp.stop().then(
-    () => app.quit(),
-    error => {
-      console.log(error);
-      // known issue
-      // it will timeout because Synth and Group don't resolve
-      // console.error('soundApp failed to stop');
-      // console.error(error);
-      // soundApp.player.dump();
-      app.quit();
-    }
-  );
+  return soundApp.stop().then(app.quit, error => {
+    errorOnMain(error);
+    app.quit();
+  });
 }
 
 function loadWindow() {
@@ -101,15 +94,10 @@ function loadWindow() {
  * and then reloading app.html
  */
 function reload() {
-  soundApp.stop().then(
-    () => {
-      loadWindow();
-    },
-    () => {
-      // never stops because of Synth/Group not responding
-      loadWindow();
-    }
-  );
+  soundApp.stop().then(loadWindow, error => {
+    errorOnMain(error);
+    loadWindow();
+  });
 }
 
 // https://github.com/electron/electron/issues/973

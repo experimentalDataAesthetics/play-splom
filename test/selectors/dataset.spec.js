@@ -162,3 +162,86 @@ describe('selectors/dataset', () => {
     });
   });
 });
+
+describe('sourcesFromStats', () => {
+  const stats = {
+    fields: {
+      0: {
+        minval: 1,
+        maxval: 24,
+        type: {
+          type: 'number',
+          null: false
+        },
+        median: 11,
+        mean: 12.5,
+        variance: 50,
+        stdev: 7.0710678118654755,
+        modeskew: 0.21213203435596426
+      },
+      Date: {
+        minval: null,
+        maxval: null,
+        type: {
+          type: 'date',
+          null: false,
+          dateFormat: 'YYYY-MM-DD'
+        },
+        median: null,
+        mean: null,
+        variance: null,
+        stdev: null,
+        modeskew: null
+      }
+    },
+    pairwise: {
+      0: {
+        cor: {
+          0: 1,
+          Date: null,
+          Month: null,
+          Year: 0.9009311952825864,
+          Army: 0.8818957622757273,
+          Disease: -0.22811693680548575,
+          Wounds: 0.06166299881572622,
+          Other: -0.13163780045759335,
+          'Disease.rate': -0.25867046096413593,
+          'Wounds.rate': -0.031553107137757955,
+          'Other.rate': -0.1838433695656411
+        },
+        corRank: {
+          0: 1,
+          Date: -0.11304347826086958,
+          Month: 0.26521739130434785,
+          Year: -0.2760869565217392,
+          Army: -0.3182608695652174,
+          Disease: 0.24956521739130433,
+          Wounds: -0.3519565217391305,
+          Other: -0.3234782608695652,
+          'Disease.rate': 0.3052173913043478,
+          'Wounds.rate': -0.10586956521739133,
+          'Other.rate': 0.006086956521739184
+        }
+      }
+    }
+  };
+
+  it('should return sources array', () => {
+    const sources = selectors.sourcesFromStats(stats);
+    expect(sources.length).to.equal(12);
+    expect(sources).to.have.same.members([
+      'cor',
+      'corRank',
+      'x-median',
+      'x-mean',
+      'x-variance',
+      'x-stdev',
+      'x-modeskew',
+      'y-median',
+      'y-mean',
+      'y-variance',
+      'y-stdev',
+      'y-modeskew'
+    ]);
+  });
+});

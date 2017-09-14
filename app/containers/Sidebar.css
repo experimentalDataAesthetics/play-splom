@@ -3,21 +3,21 @@
  * and also by each of the items in it.
  */
 .sidebar {
-  width: 300px;
   display: flex;
   flex-direction: column;
   height: 100vh;
+  margin-right: 1rem;
 }
 
 .sidebar > div {
-  padding: .5rem;
+  padding: 0.5rem;
   padding-left: 0;
 }
 
 .sidebar h6 {
-  margin: 1rem 0 0;
+  margin: 0;
   font-weight: bold;
-  letter-spacing: .16em;
+  letter-spacing: 0.16em;
   font-variant: small-caps;
 }
 
@@ -25,18 +25,19 @@
  * These
  */
 .datasetSelector {
-  height: 25%;
-  margin-bottom: 2rem;
+  overflow: hidden;
 }
+.datasetButton {
+  float: right;
+  margin-bottom: 6px;
+}
+
 .loopControl {
-  /*height: 100px;*/
 }
 .soundSelector {
-  height: 25%;
+  overflow: hidden;
 }
 .paramMapping {
-  flex: 1;
 }
 .help {
-
 }

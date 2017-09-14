@@ -5,19 +5,26 @@ import connect from '../utils/reduxers';
 import XYParamTable from '../components/XYParamTable';
 import styles from './Sidebar.css';
 
-import { getSound, getXYMappingControls } from '../selectors/index';
-import { mapXYtoParam, setFixedParamUnipolar, setParamRangeUnipolar } from '../actions/mapping';
+import { getSound, getXYMappingControls, getSelectableSources } from '../selectors/index';
+import {
+  mapXYtoParam,
+  setFixedParamUnipolar,
+  setParamRangeUnipolar,
+  setSelectableSlot
+} from '../actions/mapping';
 
 const selectors = {
   sound: getSound,
   mapping: state => state.mapping,
-  xyMappingControls: getXYMappingControls
+  xyMappingControls: getXYMappingControls,
+  selectableSources: getSelectableSources
 };
 
 const handlers = {
   mapXYtoParam,
   setFixedParamUnipolar,
-  setParamRangeUnipolar
+  setParamRangeUnipolar,
+  setSelectableSlot
 };
 
 /**
@@ -34,20 +41,22 @@ const handlers = {
  */
 class ParamMapping extends React.PureComponent {
   render() {
-    return h(`div.${styles.paramMapping}`, [
-      h('h6', this.props.sound ? this.props.sound.name : ''),
-      h(
-        XYParamTable,
-        _.pick(this.props, [
-          'sound',
-          'mapping',
-          'xyMappingControls',
-          'mapXYtoParam',
-          'setFixedParamUnipolar',
-          'setParamRangeUnipolar'
-        ])
-      )
+    const params = _.pick(this.props, [
+      'sound',
+      'mapping',
+      'xyMappingControls',
+      'selectableSources',
+      'mapXYtoParam',
+      'setFixedParamUnipolar',
+      'setParamRangeUnipolar',
+      'setSelectableSlot'
     ]);
+    return (
+      <div className={styles.paramMapping} style={{ height: this.props.height }}>
+        <h6>{this.props.sound ? this.props.sound.name : ''}</h6>
+        <XYParamTable {...params} />
+      </div>
+    );
   }
 }
 

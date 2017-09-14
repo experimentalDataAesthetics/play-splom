@@ -1,11 +1,13 @@
 import { extname, basename, join } from 'path';
 import jetpack from 'fs-jetpack';
 import _ from 'lodash';
+import datalib from 'datalib';
 import { project } from 'data-projector';
 
 import callActionOnMain from '../ipc/callActionOnMain';
 import { notify } from './ui';
 import { clipLoopBox } from './interaction';
+import { autoSetSelectableSlots } from './mapping';
 
 /**
  * setDataset - having loaded and parsed a dataset, put that into the redux state
@@ -33,6 +35,32 @@ const parsers = {
   '.csv': true
 };
 
+// field stats functions must accept only one argument
+// but the datalib functions have optional extra arguments.
+const oneArg = fn => xs => fn(xs);
+const twoArg = fn => (x, y) => fn(x, y);
+
+const calculateStatsParams = {
+  global: {},
+  fields: {
+    median: oneArg(datalib.median),
+    mean: oneArg(datalib.mean),
+    // geometricMean: oneArg(datalib.mean.geometric),  positive numbers only
+    variance: oneArg(datalib.variance),
+    stdev: oneArg(datalib.stdev),
+    modeskew: oneArg(datalib.modeskew)
+    // quartile: oneArg(datalib.quartile)
+  },
+  pairwise: {
+    cor: twoArg(datalib.cor),
+    corRank: twoArg(datalib.cor.rank),
+    corDist: twoArg(datalib.cor.dist),
+    covariance: twoArg(datalib.covariance),
+    cohensd: twoArg(datalib.cohensd),
+    linearRegression: twoArg(datalib.linearRegression)
+  }
+};
+
 /**
  * loading should be moved to main
  *
@@ -41,10 +69,11 @@ const parsers = {
 export function loadDataset(path) {
   return dispatch => {
     dispatch(notify('inform', 'Loading...'));
-    project({}, path, {}, []).then(
+    project({}, path, calculateStatsParams, []).then(
       dataset => {
         dispatch(notify());
         dispatch(setDataset(dataset));
+        dispatch(autoSetSelectableSlots(dataset));
         dispatch(clipLoopBox());
       },
       error => {

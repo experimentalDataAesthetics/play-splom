@@ -36,10 +36,12 @@ export function setHovering(state, action) {
   );
 }
 
-export function zoomScatterplot(state, action) {
+export function toggleZoomScatterplot(state, action) {
+  const current = state.zoomed || {};
+  const alreadySet = current.m === action.payload.m && current.n === action.payload.n;
   return u(
     {
-      zoomed: action.payload
+      zoomed: alreadySet ? null : action.payload
     },
     state
   );

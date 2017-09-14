@@ -148,15 +148,21 @@ function clip(v, min, max) {
  * here ported to a simple reusable React component
  */
 export default class SelectArea extends React.Component {
+  static contextTypes = {
+    transformPoint: PropTypes.func
+  };
+
   static propTypes = {
     domain: PropTypes.object.isRequired,
-    base: PropTypes.array.isRequired,
     selected: PropTypes.object,
     onChange: PropTypes.func,
     onMouseEnter: PropTypes.func,
     onClick: PropTypes.func,
     onMetaClick: PropTypes.func,
-    show: PropTypes.bool
+    mouseDownPointEvent: PropTypes.object,
+    show: PropTypes.bool,
+    overlayClassName: PropTypes.string,
+    selectionClassName: PropTypes.string
   };
 
   constructor(props, context) {
@@ -178,6 +184,9 @@ export default class SelectArea extends React.Component {
     // A timer is used to cleanly detach
     // this stores the timer and marks it as in progress.
     this.touchending = null;
+
+    // Surrounding container box dom ref
+    this.container = null;
 
     // selected is supplied as {x y width height} relative to the domain.
     // It is stored in this.state as [[x1, y1], [x2, y2]]
@@ -223,59 +232,14 @@ export default class SelectArea extends React.Component {
     }
   }
 
+  setContainer = ref => {
+    this.container = ref;
+  };
+
   setSelected(bottomLeft, topRight) {
     this.setState({
       selected: [bottomLeft, topRight]
     });
-  }
-
-  _shouldHandleEvent(event) {
-    if (event.touches) {
-      if (event.changedTouches.length < event.touches.length) {
-        return false;
-      }
-    } else if (this.touchending) {
-      return false;
-    }
-
-    if (!this.eventFilter(event)) {
-      return false;
-    }
-
-    return true;
-  }
-
-  started(event, handle) {
-    if (event.buttons && event.metaKey) {
-      if (this.props.onMetaClick) {
-        this.props.onMetaClick(event);
-      }
-      return;
-    }
-
-    if (event.buttons && this.props.onClick) {
-      this.props.onClick(event);
-    }
-
-    if (!this._shouldHandleEvent(event)) {
-      return;
-    }
-
-    // mouse position within the g or svg I am on
-    // but the rest of the calculations are in absolute
-    if (event.metaKey) {
-      this.mouseMoveType = 'overlay';
-    } else {
-      this.mouseMoveType = handle ? handle.type : 'overlay';
-    }
-
-    if (this.mouseMoveType === 'selection') {
-      this.mouseMode = MODE_DRAG;
-    } else {
-      this.mouseMode = event.altKey ? MODE_CENTER : MODE_HANDLE;
-    }
-
-    this.setMouseDownPoint(this._eventPoint(event));
   }
 
   setDragMode() {
@@ -305,12 +269,64 @@ export default class SelectArea extends React.Component {
     }
   }
 
+  shouldHandleEvent(event) {
+    if (event.touches) {
+      if (event.changedTouches.length < event.touches.length) {
+        return false;
+      }
+    } else if (this.touchending) {
+      return false;
+    }
+
+    if (!this.eventFilter(event)) {
+      return false;
+    }
+
+    return true;
+  }
+
+  started(event, handle) {
+    if (event.buttons && event.metaKey) {
+      if (this.props.onMetaClick) {
+        this.props.onMetaClick(event);
+        event.stopPropagation();
+      }
+      return;
+    }
+
+    if (event.buttons && this.props.onClick) {
+      this.props.onClick(event);
+      event.stopPropagation();
+      // return ?
+    }
+
+    if (!this.shouldHandleEvent(event)) {
+      return;
+    }
+
+    // mouse position within the g or svg I am on
+    // but the rest of the calculations are in absolute
+    if (event.metaKey) {
+      this.mouseMoveType = 'overlay';
+    } else {
+      this.mouseMoveType = handle ? handle.type : 'overlay';
+    }
+
+    if (this.mouseMoveType === 'selection') {
+      this.mouseMode = MODE_DRAG;
+    } else {
+      this.mouseMode = event.altKey ? MODE_CENTER : MODE_HANDLE;
+    }
+
+    this.setMouseDownPoint(this._eventPoint(event));
+  }
+
   moved(event) {
     if (!this.mouseMode) {
       return;
     }
 
-    if (!this._shouldHandleEvent(event)) {
+    if (!this.shouldHandleEvent(event)) {
       return;
     }
 
@@ -485,13 +501,34 @@ export default class SelectArea extends React.Component {
 
   /**
    * Point in plotting terms relative to the parent element
-   * on which this SelectArea is plotted.
+   * on which this SelectArea is plotted
    */
   _eventPoint(event) {
-    return [
-      event.clientX - this.props.base[0] + this.props.domain.x,
-      event.clientY - this.props.base[1] + this.props.domain.y
-    ];
+    // Needs access to the top level SVG element.
+    // const point = document.getElementById('svg-frame').createSVGPoint();
+    // point.x = event.clientX;
+    // point.y = event.clientY;
+    // const ctm = this.container.getScreenCTM();
+    // const inverse = ctm.inverse();
+    // const p = point.matrixTransform(inverse);
+
+    // Top level SVG exposes this as a function in context available
+    // to any child component.
+    const p = this.context.transformPoint(event.clientX, event.clientY, this.container);
+
+    // // Relative to the focused box
+    // const t = {
+    //   x: p.x - this.props.domain.x,
+    //   y: p.y - this.props.domain.y
+    // };
+
+    // // Relative to the parent
+    // const r = {
+    //   x: t.x + this.props.domain.x,
+    //   y: t.y + this.props.domain.y
+    // };
+
+    return [p.x, p.y];
   }
 
   // TODO willsetProps copy extent
@@ -558,6 +595,7 @@ export default class SelectArea extends React.Component {
       <g
         fill="none"
         pointerEvents="all"
+        ref={this.setContainer}
         style={{
           pointerEvents: 'all',
           WebkitTapHighlightColor: 'rbga(0,0,0,0)',

@@ -2,6 +2,7 @@ import { createSelector } from 'reselect';
 import { centeredSquareWithMargin } from '../utils/layout';
 import { getDatasetMetadata, getFeatures } from './dataset';
 import { getLoop } from './sound';
+import { OUTSIDE_MARGIN, MARGIN_BETWEEN_PLOTS, COLLAPSE, SIDEBAR_WIDTH } from '../constants';
 
 export const getWindowSize = state => state.ui.windowSize;
 
@@ -16,8 +17,7 @@ export const getNumFeatures = createSelector([getDatasetMetadata], dataset => {
   return 0;
 });
 
-const OUTSIDE_MARGIN = 48;
-const MARGIN_BETWEEN_PLOTS = 24;
+const getZoomed = state => state.ui.zoomed;
 
 /**
  * Layout sizes and style depending on windowSize
@@ -25,11 +25,11 @@ const MARGIN_BETWEEN_PLOTS = 24;
  * Will also include theme when that is added.
  */
 export const getLayout = createSelector(
-  [getWindowSize, getNumFeatures, getMuiTheme],
-  (windowSize, numFeatures, muiTheme) => {
+  [getWindowSize, getNumFeatures, getMuiTheme, getZoomed],
+  (windowSize, numFeatures, muiTheme, zoomed) => {
     const layout = {};
-    const big = windowSize.width > 600;
-    const sidebarWidth = big ? 300 : 0;
+    const big = windowSize.width > COLLAPSE;
+    const sidebarWidth = big ? SIDEBAR_WIDTH : 0;
     layout.showSidebar = big;
     layout.svgWidth = windowSize.width - sidebarWidth;
 
@@ -42,6 +42,20 @@ export const getLayout = createSelector(
         top: 0,
         bottom: windowSize.height
       };
+      const paramsHeight = 450;
+      const loopHeight = 200;
+      const others = windowSize.height - paramsHeight - loopHeight;
+      let other = Math.round(others / 2);
+      // If it is small then collapse them. They will use a different ui element.
+      if (other < 250) {
+        other = 80;
+      }
+      layout.sideBarHeights = {
+        params: `${paramsHeight}px`,
+        loop: `${loopHeight}px`,
+        datasets: `${other}px`,
+        sounds: `${other}px`
+      };
     }
 
     // console.log(muiTheme);
@@ -50,13 +64,21 @@ export const getLayout = createSelector(
       windowSize.height,
       muiTheme.spacing.desktopGutter
     );
+    // could remove this when space is tight
     layout.scatterPlotsMargin = OUTSIDE_MARGIN;
-    layout.plotsWidth = layout.svgStyle.right -
-      layout.svgStyle.left -
-      2 * layout.scatterPlotsMargin;
+    layout.plotsWidth =
+      layout.svgStyle.right - layout.svgStyle.left - 2 * layout.scatterPlotsMargin;
 
     layout.sideLength = layout.plotsWidth / (numFeatures || 1);
     layout.margin = layout.sideLength > 150 ? MARGIN_BETWEEN_PLOTS : 8;
+
+    // Default: zoomed out all the way
+    let zoom = {
+      x: 0,
+      y: 0,
+      width: layout.svgStyle.width,
+      height: layout.svgStyle.height
+    };
 
     // each box
     layout.boxes = [];
@@ -81,9 +103,23 @@ export const getLayout = createSelector(
             baseClientX: x + layout.svgStyle.left + layout.scatterPlotsMargin,
             baseClientY: y + layout.svgStyle.top + layout.scatterPlotsMargin
           });
+
+          // Set zoom
+          if (zoomed && (m === zoomed.m && n === zoomed.n)) {
+            zoom = {
+              m,
+              n,
+              x: x + OUTSIDE_MARGIN - MARGIN_BETWEEN_PLOTS * 0.5,
+              y: y + OUTSIDE_MARGIN - MARGIN_BETWEEN_PLOTS * 0.5,
+              width: layout.sideLength + MARGIN_BETWEEN_PLOTS,
+              height: layout.sideLength + MARGIN_BETWEEN_PLOTS
+            };
+          }
         }
       }
     }
+
+    layout.zoom = zoom;
 
     return layout;
   }

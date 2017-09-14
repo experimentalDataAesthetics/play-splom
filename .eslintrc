@@ -9,13 +9,15 @@
   "rules": {
     "arrow-body-style": 0,
     "arrow-parens": 0,
+    "class-methods-use-this": 0,
     "comma-dangle": ["error", "never"],
     "consistent-return": 0,
     "func-names": 1,
     "max-len": 1,
     "new-cap": 0,
     "no-else-return": 0,
-    "no-mixed-operators": 1,
+    "no-mixed-operators": 0,
+    "no-restricted-syntax": ["error", "LabeledStatement", "WithStatement"],
     "no-return-assign": 1,
     "no-underscore-dangle": 0,
     "no-use-before-define": 0,
@@ -33,21 +35,15 @@
     "react/forbid-prop-types": 0,
     "react/jsx-filename-extension": 0,
     "react/jsx-no-bind": 0,
+    "react/no-multi-comp": 0,
+    "react/no-unused-prop-types": 1,
     "react/prefer-es6-class": 1,
     "react/prefer-stateless-function": 0,
     "react/prop-types": 1,
     "react/require-default-props": 0,
-    "react/sort-comp": 1,
-    "react/no-unused-prop-types" : 1,
+    "react/sort-comp": 0,
     "space-before-function-paren": 0,
-    "vars-on-top": 1,
-    "no-restricted-syntax": [
-      "error",
-      "LabeledStatement",
-      "WithStatement"
-    ],
+    "vars-on-top": 1
   },
-  "plugins": [
-    "react"
-  ]
+  "plugins": ["react"]
 }

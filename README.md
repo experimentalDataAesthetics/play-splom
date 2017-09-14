@@ -1,7 +1,5 @@
 # PlaySPLOM
 
-status: ALPHA / Work in Progress
-
 This application explores multi-variate datasets through scatter plot matrices and multi-parameter sonification. It is a downloadable, cross-platform application for visualization and sonification.
 
 Scatterplot matrices are a way to roughly determine if you have a linear correlation between multiple variables.
@@ -57,9 +55,9 @@ These instructions are for those who want to hack or explore the code.
 
 ### Node JS
 
-You should use `nodejs` >= `4.2.1`
+You should use `nodejs` >= `6.9.1`
 
-Probably the lastest in the 4 series (LTM) but the latest 6 should work as well. I developed using 4.2.1
+Probably the lastest in the 6 series (LTM) but the latest should work as well. I developed using 6.9.1
 
 The code is all transpiled anyway, so the latest language features aren't needed.
 
@@ -69,13 +67,13 @@ https://github.com/creationix/nvm
 
 This allows you to install different node versions and easily to switch between them.
 
-    nvm install 4.5.0
+    nvm install 6.9.1
 
 Switch to it:
 
-    nvm use 4.5.0
+    nvm use 6.9.1
 
-Now when you run `node` it is the `4.5.0` version
+Now when you run `node` it is the `6.9.1` version
 
 ### play-splom
 
@@ -151,7 +149,7 @@ exec "$DIR/scsynth" $ARGS;
 
 ## Run
 
-    npm run dev
+    yarn run start
 
 This will compile and open an Electron app in development mode with hot loading of code and stylesheets.
 
@@ -168,7 +166,7 @@ You only have to do this once; it should be there each time you open up this cop
 
 ## Build
 
-    npm run build
+    yarn run build
 
 ## Architecture
 
