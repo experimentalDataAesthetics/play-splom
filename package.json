@@ -47,7 +47,7 @@
   "dependencies": {
     "baconjs": "^0.7.94",
     "d3": "^3.5.17",
-    "data-projector": "^0.1.0",
+    "data-projector": "0.2.0",
     "datalib": "^1.7.3",
     "electron-debug": "^1.0.1",
     "electron-log": "^1.2.2",
