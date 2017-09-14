@@ -1,7 +1,5 @@
 # PlaySPLOM
 
-status: ALPHA / Work in Progress
-
 This application explores multi-variate datasets through scatter plot matrices and multi-parameter sonification. It is a downloadable, cross-platform application for visualization and sonification.
 
 Scatterplot matrices are a way to roughly determine if you have a linear correlation between multiple variables.
